@@ -4,15 +4,6 @@ plugins {
 
 }
 
-//buildscript {
-//    repositories {
-//        google()
-//    }
-//    dependencies {
-//        val nav_version = "2.7.0"
-//        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")
-//    }
-//}
 android {
     namespace = "com.ad.syncfiles"
     compileSdk = 33
@@ -59,7 +50,6 @@ android {
 dependencies {
 
     implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
@@ -76,25 +66,18 @@ dependencies {
 
     implementation("com.hierynomus:smbj:0.11.5")
 
-//    val nav_version = "2.7.0"
-//
-//    // Java language implementation
-//    implementation("androidx.navigation:navigation-fragment:$nav_version")
-//    implementation("androidx.navigation:navigation-ui:$nav_version")
-//
-//    // Kotlin
-//    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
-//    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
-//
-//    // Feature module Support
-//    implementation("androidx.navigation:navigation-dynamic-features-fragment:$nav_version")
-//
-//    // Testing Navigation
-//    androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
-//
-//    // Jetpack Compose Integration
-//    implementation("androidx.navigation:navigation-compose:$nav_version")
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${rootProject.extra["lifecycle_version"]}")
+    // ViewModel utilities for Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${rootProject.extra["lifecycle_version"]}")
+    // LiveData
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:${rootProject.extra["lifecycle_version"]}")
+    // Lifecycles only (without ViewModel or LiveData)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.extra["lifecycle_version"]}")
+    // Lifecycle utilities for Compose
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:${rootProject.extra["lifecycle_version"]}")
+    // Saved state module for ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:${rootProject.extra["lifecycle_version"]}")
 
-
-
+    implementation("androidx.navigation:navigation-compose:2.5.3")
 }
