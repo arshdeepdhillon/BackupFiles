@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -64,8 +64,6 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation("com.hierynomus:smbj:0.11.5")
-
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${rootProject.extra["lifecycle_version"]}")
     // ViewModel utilities for Compose
@@ -78,6 +76,19 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:${rootProject.extra["lifecycle_version"]}")
     // Saved state module for ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:${rootProject.extra["lifecycle_version"]}")
-
+    // Navigates between screens
     implementation("androidx.navigation:navigation-compose:2.5.3")
+    // SMB Client
+    implementation("com.hierynomus:smbj:0.11.5")
+
+    // Room
+    implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
+    annotationProcessor("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
+
+    // To use Kotlin Symbol Processing (KSP)
+    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
+
 }
