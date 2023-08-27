@@ -1,12 +1,16 @@
 <resources>
-    <string name="app_name">SyncFiles</string>
-    <string name="label_server_url">Server Name/Directory</string>
-    <string name="label_username">Username</string>
-    <string name="label_password">Password</string>
+    <string name="app_name">Sync Files</string>
+    <string name="label_server_url">Server Name/Directory*</string>
+    <string name="label_username">Username*</string>
+    <string name="label_password">Password*</string>
     <string name="label_add_connection">Add</string>
     <string name="label_connect">Connect</string>
     <string name="label_save_connection">Save</string>
     <string name="label_cancel_connection">Cancel</string>
     <string name="info_no_smb_connections">Add a SMB server to view shared files</string>
     <string name="label_edit">Edit</string>
+    <string name="back_button">Back</string>
+    <string name="shared_device_entry_title">Add Device Info</string>
+    <string name="label_shared_folder_name">Shared Folder*</string>
+    <string name="required_fields">Required Fields</string>
 </resources>
