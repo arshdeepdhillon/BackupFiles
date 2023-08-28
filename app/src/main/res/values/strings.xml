@@ -1,16 +1,23 @@
 <resources>
     <string name="app_name">Sync Files</string>
-    <string name="label_server_url">Server Name/Directory*</string>
-    <string name="label_username">Username*</string>
-    <string name="label_password">Password*</string>
-    <string name="label_add_connection">Add</string>
-    <string name="label_connect">Connect</string>
-    <string name="label_save_connection">Save</string>
-    <string name="label_cancel_connection">Cancel</string>
+    <string name="server_url_req">Server Name*</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="shared_folder_name_req">Shared Folder*</string>
+    <string name="server_url">Server Name</string>
+    <string name="shared_folder_name">Shared Folder</string>
+    <string name="add_connection">Add</string>
+    <string name="connect">Connect</string>
+    <string name="save_connection">Save</string>
+    <string name="cancel_connection">Cancel</string>
     <string name="info_no_smb_connections">Add a SMB server to view shared files</string>
-    <string name="label_edit">Edit</string>
+    <string name="edit_smb_server">Edit SMB Server Details</string>
     <string name="back_button">Back</string>
     <string name="shared_device_entry_title">Add Device Info</string>
-    <string name="label_shared_folder_name">Shared Folder*</string>
     <string name="required_fields">* Required</string>
+    <string name="delete">Delete</string>
+    <string name="attention">Confirm</string>
+    <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 </resources>

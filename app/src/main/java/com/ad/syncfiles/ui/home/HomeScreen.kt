@@ -77,7 +77,7 @@ fun HomeScreen(
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(id = R.string.label_add_connection))
+                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(id = R.string.add_connection))
             }
         }
     ) { innerPadding ->

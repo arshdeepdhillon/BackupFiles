@@ -3,12 +3,16 @@ package com.ad.syncfiles.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.ad.syncfiles.ui.home.HomeDestination
 import com.ad.syncfiles.ui.home.HomeScreen
 import com.ad.syncfiles.ui.smbServer.AddScreen
 import com.ad.syncfiles.ui.smbServer.AddScreenDestination
+import com.ad.syncfiles.ui.smbServer.DetailScreen
+import com.ad.syncfiles.ui.smbServer.DetailScreenDestination
 
 /**
  * Navigation graph for the application
@@ -23,7 +27,7 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
         composable(route = HomeDestination.route) {
             HomeScreen(
                 navigateToItemEntry = { navController.navigate(AddScreenDestination.route) },
-                navigateToItemUpdate = { navController.navigate("${AddScreenDestination.route}/${it}") }
+                navigateToItemUpdate = { navController.navigate("${DetailScreenDestination.route}/${it}") }
             )
         }
         //TODO fix url now showing on main screen and these destinations
@@ -31,6 +35,16 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
             AddScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
+            )
+        }
+        composable(route = DetailScreenDestination.routeArgs,
+            arguments = listOf(
+                navArgument(DetailScreenDestination.argKey) { type = NavType.IntType }
+            )
+        ) {
+            DetailScreen(
+                navigateBack = { navController.popBackStack() },
+                navigateToEditItem = { /*TODO*/ }
             )
         }
     }

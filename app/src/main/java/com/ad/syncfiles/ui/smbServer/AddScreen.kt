@@ -27,6 +27,10 @@ import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
 import kotlinx.coroutines.launch
 
+
+/**
+ * A stateless singleton representing navigation details
+ */
 object AddScreenDestination : NavigationDestination {
     override val route = "shared_device_entry"
     override val titleRes = R.string.shared_device_entry_title
@@ -76,7 +80,7 @@ fun Body(uiState: UIState, onSDValueChange: (SharedDeviceDetails) -> Unit, onSav
     ) {
         InputForm(sharedDirDetail = uiState.deviceDetails, onValueChange = onSDValueChange, modifier = Modifier.fillMaxWidth())
         Button(onClick = onSaveClick, enabled = uiState.isEntryValid, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth()) {
-            Text(text = stringResource(id = R.string.label_save_connection))
+            Text(text = stringResource(id = R.string.save_connection))
         }
     }
 }
@@ -95,7 +99,7 @@ fun InputForm(
             modifier = Modifier.fillMaxWidth(),
             value = sharedDirDetail.serverUrl,
             onValueChange = { onValueChange(sharedDirDetail.copy(serverUrl = it)) },
-            label = { Text(stringResource(R.string.label_server_url)) },
+            label = { Text(stringResource(R.string.server_url_req)) },
             singleLine = true,
             enabled = enabled,
             colors = OutlinedTextFieldDefaults.colors(
@@ -108,7 +112,7 @@ fun InputForm(
             modifier = Modifier.fillMaxWidth(),
             value = sharedDirDetail.username,
             onValueChange = { onValueChange(sharedDirDetail.copy(username = it)) },
-            label = { Text(stringResource(R.string.label_username)) },
+            label = { Text(stringResource(R.string.username)) },
             singleLine = true,
             enabled = enabled,
             colors = OutlinedTextFieldDefaults.colors(
@@ -121,7 +125,7 @@ fun InputForm(
             modifier = Modifier.fillMaxWidth(),
             value = sharedDirDetail.password,
             onValueChange = { onValueChange(sharedDirDetail.copy(password = it)) },
-            label = { Text(stringResource(R.string.label_password)) },
+            label = { Text(stringResource(R.string.password)) },
             singleLine = true,
             enabled = enabled,
             colors = OutlinedTextFieldDefaults.colors(
@@ -134,7 +138,7 @@ fun InputForm(
             modifier = Modifier.fillMaxWidth(),
             value = sharedDirDetail.sharedFolderName,
             onValueChange = { onValueChange(sharedDirDetail.copy(sharedFolderName = it)) },
-            label = { Text(stringResource(R.string.label_shared_folder_name)) },
+            label = { Text(stringResource(R.string.shared_folder_name_req)) },
             singleLine = true,
             enabled = enabled,
             colors = OutlinedTextFieldDefaults.colors(

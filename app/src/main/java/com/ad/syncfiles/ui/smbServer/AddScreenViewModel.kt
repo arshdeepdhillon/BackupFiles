@@ -27,7 +27,7 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : 
 
     suspend fun save() {
         if (validateInput()) {
-            serverInfoRepo.upsertSmbServer(uiState.deviceDetails.toServerInfo())
+            serverInfoRepo.upsertSmbServer(uiState.deviceDetails.toSmbServerInfo())
         }
     }
 
@@ -66,7 +66,18 @@ data class SharedDeviceDetails(
 /**
  * Extension function to convert [UIState] to [SmbServerInfo].
  */
-fun SharedDeviceDetails.toServerInfo(): SmbServerInfo = SmbServerInfo(
+fun SharedDeviceDetails.toSmbServerInfo(): SmbServerInfo = SmbServerInfo(
+    id = id,
+    serverUrl = serverUrl,
+    username = username,
+    password = password,
+    sharedFolderName = sharedFolderName
+)
+
+/**
+ * Extension function to convert [UIState] to [SmbServerInfo].
+ */
+fun SmbServerInfo.toDetails(): SharedDeviceDetails = SharedDeviceDetails(
     id = id,
     serverUrl = serverUrl,
     username = username,
