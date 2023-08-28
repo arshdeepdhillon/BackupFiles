@@ -7,7 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.ad.syncfiles.SyncFilesApplicationEntryPoint
 import com.ad.syncfiles.ui.home.HomeViewModel
-import com.ad.syncfiles.ui.smbServer.SDEntryViewModel
+import com.ad.syncfiles.ui.smbServer.AddScreenViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -19,7 +19,7 @@ object AppViewModelProvider {
 
         // Initializer for SDEntryViewModel
         initializer {
-            SDEntryViewModel(
+            AddScreenViewModel(
                 syncFilesApplication().container.smbServerRepository
             )
         }

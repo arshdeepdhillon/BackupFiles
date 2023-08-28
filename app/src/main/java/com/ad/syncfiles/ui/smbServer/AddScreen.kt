@@ -27,30 +27,30 @@ import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
 import kotlinx.coroutines.launch
 
-object SDEntryDestination : NavigationDestination {
+object AddScreenDestination : NavigationDestination {
     override val route = "shared_device_entry"
     override val titleRes = R.string.shared_device_entry_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SDEntryScreen(
+fun AddScreen(
     navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     canNavigateBack: Boolean = true,
-    viewModel: SDEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: AddScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             SyncFilesTopAppBar(
-                title = stringResource(SDEntryDestination.titleRes),
+                title = stringResource(AddScreenDestination.titleRes),
                 canNavigateBack = canNavigateBack,
                 navigateUp = onNavigateUp
             )
         }
     ) { innerPadding ->
-        SDEntryBody(
+        Body(
             uiState = viewModel.uiState,
             onSDValueChange = viewModel::updateUiState,
             onSaveClick = {
@@ -69,12 +69,12 @@ fun SDEntryScreen(
 }
 
 @Composable
-fun SDEntryBody(uiState: UIState, onSDValueChange: (SharedDeviceDetails) -> Unit, onSaveClick: () -> Unit, modifier: Modifier = Modifier) {
+fun Body(uiState: UIState, onSDValueChange: (SharedDeviceDetails) -> Unit, onSaveClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.medium_padding)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding))
     ) {
-        ShardDirInputForm(sharedDirDetail = uiState.deviceDetails, onValueChange = onSDValueChange, modifier = Modifier.fillMaxWidth())
+        InputForm(sharedDirDetail = uiState.deviceDetails, onValueChange = onSDValueChange, modifier = Modifier.fillMaxWidth())
         Button(onClick = onSaveClick, enabled = uiState.isEntryValid, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth()) {
             Text(text = stringResource(id = R.string.label_save_connection))
         }
@@ -82,7 +82,7 @@ fun SDEntryBody(uiState: UIState, onSDValueChange: (SharedDeviceDetails) -> Unit
 }
 
 @Composable
-fun ShardDirInputForm(
+fun InputForm(
     sharedDirDetail: SharedDeviceDetails,
     onValueChange: (SharedDeviceDetails) -> Unit = {},
     modifier: Modifier,
@@ -156,9 +156,9 @@ fun ShardDirInputForm(
 
 @Preview(showBackground = true)
 @Composable
-fun SDEntryScreenPreview() {
+fun AddScreenPreview() {
     SyncFilesTheme {
-        SDEntryBody(uiState = UIState(
+        Body(uiState = UIState(
             SharedDeviceDetails(
                 serverUrl = "192.123.123.123",
                 username = "Adding username",

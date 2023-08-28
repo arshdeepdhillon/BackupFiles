@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.ad.syncfiles.data.entity.SmbServerInfo
 import com.ad.syncfiles.data.repository.SmbServerInfoRepository
 
-class SDEntryViewModel(private val serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
+class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
     /**
      * Holds current UI state
      */

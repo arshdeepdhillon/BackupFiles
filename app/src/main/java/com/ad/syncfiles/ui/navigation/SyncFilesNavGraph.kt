@@ -7,8 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ad.syncfiles.ui.home.HomeDestination
 import com.ad.syncfiles.ui.home.HomeScreen
-import com.ad.syncfiles.ui.smbServer.SDEntryDestination
-import com.ad.syncfiles.ui.smbServer.SDEntryScreen
+import com.ad.syncfiles.ui.smbServer.AddScreen
+import com.ad.syncfiles.ui.smbServer.AddScreenDestination
 
 /**
  * Navigation graph for the application
@@ -22,13 +22,13 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
-                navigateToItemEntry = { navController.navigate(SDEntryDestination.route) },
-                navigateToItemUpdate = { navController.navigate("${SDEntryDestination.route}/${it}") }
+                navigateToItemEntry = { navController.navigate(AddScreenDestination.route) },
+                navigateToItemUpdate = { navController.navigate("${AddScreenDestination.route}/${it}") }
             )
         }
         //TODO fix url now showing on main screen and these destinations
-        composable(route = SDEntryDestination.route) {
-            SDEntryScreen(
+        composable(route = AddScreenDestination.route) {
+            AddScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
             )
