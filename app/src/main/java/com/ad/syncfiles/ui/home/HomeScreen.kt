@@ -91,7 +91,7 @@ fun HomeScreen(
 
 
 @Composable
-fun HomeBody(serverList: List<ServerInfo>, onItemClick: (Int) -> Unit, modifier: Modifier) {
+fun HomeBody(serverList: List<ServerInfo>, onItemClick: (Int) -> Unit, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -154,6 +154,28 @@ fun TextItemPreview() {
     SyncFilesTheme {
         TextItem(
             ServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir", System.currentTimeMillis())
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeBodyPreview() {
+    SyncFilesTheme {
+        HomeBody(
+            listOf(ServerInfo(1, "url1", "usr1", "pas1"), ServerInfo(2, "url2", "usr2", "pas2")),
+            onItemClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeBodyEmptyListPreview() {
+    SyncFilesTheme {
+        HomeBody(
+            listOf(),
+            onItemClick = {}
         )
     }
 }

@@ -17,7 +17,7 @@ import com.ad.syncfiles.ui.navigation.SyncFilesNavHost
 
 
 @Composable
-fun SyncFilesApps(navController: NavHostController = rememberNavController()) {
+fun SyncFilesApp(navController: NavHostController = rememberNavController()) {
     SyncFilesNavHost(navController = navController)
 }
 

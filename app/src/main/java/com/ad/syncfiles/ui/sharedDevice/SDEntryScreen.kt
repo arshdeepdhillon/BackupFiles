@@ -70,7 +70,10 @@ fun SDEntryScreen(
 
 @Composable
 fun SDEntryBody(uiState: UIState, onSDValueChange: (SharedDeviceDetails) -> Unit, onSaveClick: () -> Unit, modifier: Modifier = Modifier) {
-    Column() {
+    Column(
+        modifier = modifier.padding(dimensionResource(id = R.dimen.medium_padding)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding))
+    ) {
         ShardDirInputForm(sharedDirDetail = uiState.deviceDetails, onValueChange = onSDValueChange, modifier = Modifier.fillMaxWidth())
         Button(onClick = onSaveClick, enabled = uiState.isEntryValid, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth()) {
             Text(text = stringResource(id = R.string.label_save_connection))

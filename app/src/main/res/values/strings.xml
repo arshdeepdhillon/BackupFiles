@@ -12,5 +12,5 @@
     <string name="back_button">Back</string>
     <string name="shared_device_entry_title">Add Device Info</string>
     <string name="label_shared_folder_name">Shared Folder*</string>
-    <string name="required_fields">Required Fields</string>
+    <string name="required_fields">* Required</string>
 </resources>

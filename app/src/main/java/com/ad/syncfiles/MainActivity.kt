@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SyncFilesTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    SyncFilesApps()
+                    SyncFilesApp()
                 }
             }
         }

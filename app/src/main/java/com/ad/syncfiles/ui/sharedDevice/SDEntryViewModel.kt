@@ -21,7 +21,7 @@ class SDEntryViewModel(private val serverInfoRepo: ServerInfoRepository) : ViewM
 
     private fun validateInput(deviceDetails: SharedDeviceDetails = uiState.deviceDetails): Boolean {
         return with(deviceDetails) {
-            username.isNotBlank() && sharedFolderName.isNotBlank()
+            serverUrl.isNotBlank()
         }
     }
 
