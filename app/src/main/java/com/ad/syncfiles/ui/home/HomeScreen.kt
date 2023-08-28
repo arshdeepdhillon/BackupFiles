@@ -35,18 +35,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.syncfiles.R
 import com.ad.syncfiles.SyncFilesTopAppBar
-import com.ad.syncfiles.data.ServerInfo
+import com.ad.syncfiles.data.entity.SmbServerInfo
 import com.ad.syncfiles.ui.AppViewModelProvider
 import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
 
+/**
+ * A stateless singleton representing navigation details
+ */
 object HomeDestination : NavigationDestination {
     override val route = "Home"
     override val titleRes = R.string.app_name
 }
 
 /**
- * Shows list of shared connections or an informative text if [sharedDirs] is empty.
+ * Shows list of saved SMB servers or an informative text.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,7 +94,7 @@ fun HomeScreen(
 
 
 @Composable
-fun HomeBody(serverList: List<ServerInfo>, onItemClick: (Int) -> Unit, modifier: Modifier = Modifier) {
+fun HomeBody(serverList: List<SmbServerInfo>, onItemClick: (Int) -> Unit, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -113,8 +116,7 @@ fun HomeBody(serverList: List<ServerInfo>, onItemClick: (Int) -> Unit, modifier:
 }
 
 @Composable
-fun ServerList(itemList: List<ServerInfo>, onItemClick: (ServerInfo) -> Unit, modifier: Modifier) {
-//    LazyColumn(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.divider_thickness))) {
+fun ServerList(itemList: List<SmbServerInfo>, onItemClick: (SmbServerInfo) -> Unit, modifier: Modifier) {
     LazyColumn(modifier = modifier) {
         itemsIndexed(items = itemList) { index, item ->
             TextItem(item = item, modifier = Modifier
@@ -125,13 +127,11 @@ fun ServerList(itemList: List<ServerInfo>, onItemClick: (ServerInfo) -> Unit, mo
 }
 
 /**
- * A single Card that displays [item].
+ * A single Card that displays [SmbServerInfo].
  * @param item to display
- * @param selected  if true, highlights this [TextItem]
- * @param onClick invokes this callback when [TextItem] is clicked
  */
 @Composable
-fun TextItem(item: ServerInfo, modifier: Modifier = Modifier) {
+fun TextItem(item: SmbServerInfo, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -153,7 +153,7 @@ fun TextItem(item: ServerInfo, modifier: Modifier = Modifier) {
 fun TextItemPreview() {
     SyncFilesTheme {
         TextItem(
-            ServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir", System.currentTimeMillis())
+            SmbServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir", System.currentTimeMillis())
         )
     }
 }
@@ -163,7 +163,7 @@ fun TextItemPreview() {
 fun HomeBodyPreview() {
     SyncFilesTheme {
         HomeBody(
-            listOf(ServerInfo(1, "url1", "usr1", "pas1"), ServerInfo(2, "url2", "usr2", "pas2")),
+            listOf(SmbServerInfo(1, "url1", "usr1", "pas1"), SmbServerInfo(2, "url2", "usr2", "pas2")),
             onItemClick = {}
         )
     }

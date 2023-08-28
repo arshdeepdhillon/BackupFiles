@@ -1,13 +1,13 @@
-package com.ad.syncfiles.data
+package com.ad.syncfiles.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity(tableName = "server_info")
+@Entity(tableName = "smb_server_info")
 
-data class ServerInfo(
+data class SmbServerInfo(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val serverUrl: String,

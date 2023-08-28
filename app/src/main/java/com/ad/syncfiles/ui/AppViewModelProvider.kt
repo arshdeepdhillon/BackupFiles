@@ -14,13 +14,13 @@ object AppViewModelProvider {
 
         // Initializer for HomeViewModel
         initializer {
-            HomeViewModel(syncFilesApplication().container.serverInfoRepo)
+            HomeViewModel(syncFilesApplication().container.smbServerRepository)
         }
 
         // Initializer for SDEntryViewModel
         initializer {
             SDEntryViewModel(
-                syncFilesApplication().container.serverInfoRepo
+                syncFilesApplication().container.smbServerRepository
             )
         }
     }

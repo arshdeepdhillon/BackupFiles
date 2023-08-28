@@ -2,8 +2,8 @@ package com.ad.syncfiles.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ad.syncfiles.data.ServerInfo
-import com.ad.syncfiles.data.ServerInfoRepository
+import com.ad.syncfiles.data.entity.SmbServerInfo
+import com.ad.syncfiles.data.repository.SmbServerInfoRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.stateIn
 /**
  * ViewModel to retrieve all the servers in the Room database.
  */
-class HomeViewModel(serverInfoRepo: ServerInfoRepository) : ViewModel() {
+class HomeViewModel(serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
 
     /**
-     * Holds the state of [HomeUiState]. Items are retrieved from [ServerInfoRepository] and mapped to [HomeUiState]
+     * Holds the state of [HomeUiState]. Items are retrieved from [SmbServerInfoRepository] and mapped to [HomeUiState]
      */
-    val homeUiState: StateFlow<HomeUiState> = serverInfoRepo.getAllSharedServersAscStream().map { HomeUiState(it) }.stateIn(
+    val homeUiState: StateFlow<HomeUiState> = serverInfoRepo.getAllSmbServersAscStream().map { HomeUiState(it) }.stateIn(
         scope = viewModelScope, started = SharingStarted.WhileSubscribed(
             TIMEOUT_MILLIS
         ), initialValue = HomeUiState()
@@ -32,4 +32,4 @@ class HomeViewModel(serverInfoRepo: ServerInfoRepository) : ViewModel() {
 /**
  * Ui state for the Home screen
  */
-data class HomeUiState(val sharedServerList: List<ServerInfo> = listOf())
+data class HomeUiState(val sharedServerList: List<SmbServerInfo> = listOf())

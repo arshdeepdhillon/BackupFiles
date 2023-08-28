@@ -4,16 +4,18 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.ad.syncfiles.data.dao.SmbServerDao
+import com.ad.syncfiles.data.entity.SmbServerInfo
 
-@Database(entities = [ServerInfo::class], version = 1, exportSchema = false)
-abstract class ServerInfoDatabase : RoomDatabase() {
-    abstract fun serverInfoDao(): ServerInfoDao
+@Database(entities = [SmbServerInfo::class], version = 1, exportSchema = false)
+abstract class SmbServerDatabase : RoomDatabase() {
+    abstract fun smbServerDao(): SmbServerDao
 
     companion object {
-        private var Instance: ServerInfoDatabase? = null
-        fun getDatabase(context: Context): ServerInfoDatabase {
+        private var Instance: SmbServerDatabase? = null
+        fun getDatabase(context: Context): SmbServerDatabase {
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, ServerInfoDatabase::class.java, "server_info")
+                Room.databaseBuilder(context, SmbServerDatabase::class.java, "smb_server_info")
                     /**
                      * TODO: setup migration..
                      * Setting this option in app's database builder means that Room

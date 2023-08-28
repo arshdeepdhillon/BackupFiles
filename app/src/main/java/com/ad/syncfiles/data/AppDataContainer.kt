@@ -1,18 +1,22 @@
 package com.ad.syncfiles.data
 
 import android.content.Context
+import com.ad.syncfiles.data.repository.OfflineSmbServerRepository
+import com.ad.syncfiles.data.repository.SmbServerInfoRepository
 
-
+/**
+ * Application container for Dependency Injection
+ */
 interface AppContainer {
-    val serverInfoRepo: ServerInfoRepository
+    val smbServerRepository: SmbServerInfoRepository
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
 
     /**
-     * Implementation for [ServerInfoRepository]
+     * Implementation for [SmbServerInfoRepository]
      */
-    override val serverInfoRepo: ServerInfoRepository by lazy {
-        OfflineServerInfoRepository(ServerInfoDatabase.getDatabase(context).serverInfoDao())
+    override val smbServerRepository: SmbServerInfoRepository by lazy {
+        OfflineSmbServerRepository(SmbServerDatabase.getDatabase(context).smbServerDao())
     }
 }

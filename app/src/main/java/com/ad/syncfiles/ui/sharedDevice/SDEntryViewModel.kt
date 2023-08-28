@@ -4,10 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.ad.syncfiles.data.ServerInfo
-import com.ad.syncfiles.data.ServerInfoRepository
+import com.ad.syncfiles.data.entity.SmbServerInfo
+import com.ad.syncfiles.data.repository.SmbServerInfoRepository
 
-class SDEntryViewModel(private val serverInfoRepo: ServerInfoRepository) : ViewModel() {
+class SDEntryViewModel(private val serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
     /**
      * Holds current UI state
      */
@@ -27,7 +27,7 @@ class SDEntryViewModel(private val serverInfoRepo: ServerInfoRepository) : ViewM
 
     suspend fun save() {
         if (validateInput()) {
-            serverInfoRepo.upsertServerInfo(uiState.deviceDetails.toServerInfo())
+            serverInfoRepo.upsertSmbServer(uiState.deviceDetails.toServerInfo())
         }
     }
 
@@ -64,9 +64,9 @@ data class SharedDeviceDetails(
 )
 
 /**
- * Extension function to convert [UIState] to [ServerInfo].
+ * Extension function to convert [UIState] to [SmbServerInfo].
  */
-fun SharedDeviceDetails.toServerInfo(): ServerInfo = ServerInfo(
+fun SharedDeviceDetails.toServerInfo(): SmbServerInfo = SmbServerInfo(
     id = id,
     serverUrl = serverUrl,
     username = username,
