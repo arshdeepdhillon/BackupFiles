@@ -13,6 +13,8 @@ import com.ad.syncfiles.ui.smbServer.AddScreen
 import com.ad.syncfiles.ui.smbServer.AddScreenDestination
 import com.ad.syncfiles.ui.smbServer.DetailScreen
 import com.ad.syncfiles.ui.smbServer.DetailScreenDestination
+import com.ad.syncfiles.ui.smbServer.EditScreen
+import com.ad.syncfiles.ui.smbServer.EditScreenDestination
 
 /**
  * Navigation graph for the application
@@ -30,7 +32,6 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
                 navigateToItemUpdate = { navController.navigate("${DetailScreenDestination.route}/${it}") }
             )
         }
-        //TODO fix url now showing on main screen and these destinations
         composable(route = AddScreenDestination.route) {
             AddScreen(
                 navigateBack = { navController.popBackStack() },
@@ -44,7 +45,17 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
         ) {
             DetailScreen(
                 navigateBack = { navController.popBackStack() },
-                navigateToEditItem = { /*TODO*/ }
+                navigateToEditItem = { navController.navigate("${EditScreenDestination.route}/$it") }
+            )
+        }
+        composable(route = EditScreenDestination.routeArgs,
+            arguments = listOf(
+                navArgument(EditScreenDestination.argKey) { type = NavType.IntType }
+            )
+        ) {
+            EditScreen(
+                navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() }
             )
         }
     }

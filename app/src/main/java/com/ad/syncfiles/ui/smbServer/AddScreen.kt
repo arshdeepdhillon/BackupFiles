@@ -32,8 +32,8 @@ import kotlinx.coroutines.launch
  * A stateless singleton representing navigation details
  */
 object AddScreenDestination : NavigationDestination {
-    override val route = "shared_device_entry"
-    override val titleRes = R.string.shared_device_entry_title
+    override val route = "add_smb_server"
+    override val titleRes = R.string.smb_server_add_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,8 +55,8 @@ fun AddScreen(
         }
     ) { innerPadding ->
         Body(
-            uiState = viewModel.uiState,
-            onSDValueChange = viewModel::updateUiState,
+            deviceDetailsUiState = viewModel.uiState,
+            onDeviceDetailsValueChange = viewModel::updateUiState,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.save()
@@ -73,13 +73,27 @@ fun AddScreen(
 }
 
 @Composable
-fun Body(uiState: UIState, onSDValueChange: (SharedDeviceDetails) -> Unit, onSaveClick: () -> Unit, modifier: Modifier = Modifier) {
+fun Body(
+    deviceDetailsUiState: DeviceDetailsUiState,
+    onDeviceDetailsValueChange: (SharedDeviceDetails) -> Unit,
+    onSaveClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.medium_padding)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding))
     ) {
-        InputForm(sharedDirDetail = uiState.deviceDetails, onValueChange = onSDValueChange, modifier = Modifier.fillMaxWidth())
-        Button(onClick = onSaveClick, enabled = uiState.isEntryValid, shape = MaterialTheme.shapes.small, modifier = Modifier.fillMaxWidth()) {
+        InputForm(
+            sharedDirDetail = deviceDetailsUiState.deviceDetails,
+            onValueChange = onDeviceDetailsValueChange,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Button(
+            onClick = onSaveClick,
+            enabled = deviceDetailsUiState.isEntryValid,
+            shape = MaterialTheme.shapes.small,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text(text = stringResource(id = R.string.save_connection))
         }
     }
@@ -162,13 +176,13 @@ fun InputForm(
 @Composable
 fun AddScreenPreview() {
     SyncFilesTheme {
-        Body(uiState = UIState(
+        Body(deviceDetailsUiState = DeviceDetailsUiState(
             SharedDeviceDetails(
                 serverUrl = "192.123.123.123",
                 username = "Adding username",
                 password = "Adding password",
                 sharedFolderName = "SomeSharedFolderName"
             )
-        ), onSDValueChange = {}, onSaveClick = { })
+        ), onDeviceDetailsValueChange = {}, onSaveClick = { })
     }
 }

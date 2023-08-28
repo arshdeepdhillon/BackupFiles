@@ -11,9 +11,10 @@
     <string name="save_connection">Save</string>
     <string name="cancel_connection">Cancel</string>
     <string name="info_no_smb_connections">Add a SMB server to view shared files</string>
-    <string name="edit_smb_server">Edit SMB Server Details</string>
+    <string name="smb_server_add_title">Add Device Info</string>
+    <string name="smb_server_edit_title">Edit SMB Server Details</string>
+    <string name="smb_server_details_title">Details</string>
     <string name="back_button">Back</string>
-    <string name="shared_device_entry_title">Add Device Info</string>
     <string name="required_fields">* Required</string>
     <string name="delete">Delete</string>
     <string name="attention">Confirm</string>

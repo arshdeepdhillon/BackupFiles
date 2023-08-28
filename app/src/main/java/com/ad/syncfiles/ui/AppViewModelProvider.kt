@@ -10,6 +10,7 @@ import com.ad.syncfiles.SyncFilesApplicationEntryPoint
 import com.ad.syncfiles.ui.home.HomeViewModel
 import com.ad.syncfiles.ui.smbServer.AddScreenViewModel
 import com.ad.syncfiles.ui.smbServer.DetailScreenViewModel
+import com.ad.syncfiles.ui.smbServer.EditScreenViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -28,6 +29,13 @@ object AppViewModelProvider {
         // Initializer for DetailScreenViewModel
         initializer {
             DetailScreenViewModel(
+                this.createSavedStateHandle(),
+                syncFilesApplication().container.smbServerRepository
+            )
+        }
+        // Initializer for EditScreenViewModel
+        initializer {
+            EditScreenViewModel(
                 this.createSavedStateHandle(),
                 syncFilesApplication().container.smbServerRepository
             )

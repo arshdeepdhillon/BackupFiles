@@ -49,8 +49,8 @@ import kotlinx.coroutines.launch
  * A stateless singleton representing navigation details
  */
 object DetailScreenDestination : NavigationDestination {
-    override val route = "shared_device_entry"
-    override val titleRes = R.string.shared_device_entry_title
+    override val route = "details_smb_server"
+    override val titleRes = R.string.smb_server_details_title
 
     /**
      * Used for retrieving a specific [SmbServerInfo] to display
@@ -83,7 +83,7 @@ fun DetailScreen(
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
             ) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = stringResource(id = R.string.edit_smb_server))
+                Icon(imageVector = Icons.Default.Edit, contentDescription = stringResource(id = R.string.smb_server_edit_title))
             }
         },
         modifier = modifier
@@ -117,6 +117,22 @@ fun DetailBody(uiState: DetailUIState, onDelete: () -> Unit, modifier: Modifier 
         ) {
             Text(stringResource(R.string.delete))
         }
+//        Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+//            Button(
+//                onClick = { deleteConfirmationRequired = true },
+//                shape = MaterialTheme.shapes.small,
+//                modifier = Modifier.weight(1f)
+//            ) {
+//                Text(stringResource(R.string.delete))
+//            }
+//            Button(
+//                onClick = {/*TODO*/ },
+//                shape = MaterialTheme.shapes.small,
+//                modifier = Modifier.weight(1f)
+//            ) {
+//                Text(stringResource(R.string.connect))
+//            }
+//        }
         if (deleteConfirmationRequired) {
             DeleteConfirmationDialog(
                 onDeleteConfirm = {
@@ -207,7 +223,7 @@ fun DetailScreenPreview() {
                 password = "Editing pass",
                 sharedFolderName = "Editing really long shared directory name"
             )
-        ), onDelete = { /*TODO*/ })
+        ), onDelete = { })
     }
 }
 
@@ -215,6 +231,6 @@ fun DetailScreenPreview() {
 @Composable
 fun DeleteConfirmationDialogPreview() {
     SyncFilesTheme {
-        DeleteConfirmationDialog(onDeleteConfirm = { /*TODO*/ }, onDeleteCancel = { /*TODO*/ }, modifier = Modifier)
+        DeleteConfirmationDialog(onDeleteConfirm = { }, onDeleteCancel = { }, modifier = Modifier)
     }
 }

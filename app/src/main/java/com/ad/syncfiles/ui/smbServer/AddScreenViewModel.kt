@@ -11,12 +11,12 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : 
     /**
      * Holds current UI state
      */
-    var uiState by mutableStateOf(UIState())
+    var uiState by mutableStateOf(DeviceDetailsUiState())
         private set
 
 
     fun updateUiState(deviceDetails: SharedDeviceDetails) {
-        uiState = UIState(deviceDetails = deviceDetails, isEntryValid = validateInput(deviceDetails))
+        uiState = DeviceDetailsUiState(deviceDetails = deviceDetails, isEntryValid = validateInput(deviceDetails))
     }
 
     private fun validateInput(deviceDetails: SharedDeviceDetails = uiState.deviceDetails): Boolean {
@@ -50,7 +50,7 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : 
 /**
  * Represents Ui State of [SharedDeviceDetails].
  */
-data class UIState(
+data class DeviceDetailsUiState(
     val deviceDetails: SharedDeviceDetails = SharedDeviceDetails(),
     val isEntryValid: Boolean = false,
 )
@@ -64,7 +64,7 @@ data class SharedDeviceDetails(
 )
 
 /**
- * Extension function to convert [UIState] to [SmbServerInfo].
+ * Extension function to convert [DeviceDetailsUiState] to [SmbServerInfo].
  */
 fun SharedDeviceDetails.toSmbServerInfo(): SmbServerInfo = SmbServerInfo(
     id = id,
@@ -75,7 +75,7 @@ fun SharedDeviceDetails.toSmbServerInfo(): SmbServerInfo = SmbServerInfo(
 )
 
 /**
- * Extension function to convert [UIState] to [SmbServerInfo].
+ * Extension function to convert [DeviceDetailsUiState] to [SmbServerInfo].
  */
 fun SmbServerInfo.toDetails(): SharedDeviceDetails = SharedDeviceDetails(
     id = id,
@@ -83,4 +83,9 @@ fun SmbServerInfo.toDetails(): SharedDeviceDetails = SharedDeviceDetails(
     username = username,
     password = password,
     sharedFolderName = sharedFolderName
+)
+
+fun SmbServerInfo.toUiState(isEntryValid: Boolean): DeviceDetailsUiState = DeviceDetailsUiState(
+    deviceDetails = this.toDetails(),
+    isEntryValid = isEntryValid
 )
