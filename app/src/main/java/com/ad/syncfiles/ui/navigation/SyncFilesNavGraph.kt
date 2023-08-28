@@ -7,8 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ad.syncfiles.ui.home.HomeDestination
 import com.ad.syncfiles.ui.home.HomeScreen
-import com.ad.syncfiles.ui.sharedDevice.SDEntryDestination
-import com.ad.syncfiles.ui.sharedDevice.SDEntryScreen
+import com.ad.syncfiles.ui.smbServer.SDEntryDestination
+import com.ad.syncfiles.ui.smbServer.SDEntryScreen
 
 /**
  * Navigation graph for the application

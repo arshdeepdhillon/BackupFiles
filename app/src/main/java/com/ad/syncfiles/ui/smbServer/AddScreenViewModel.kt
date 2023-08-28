@@ -1,4 +1,4 @@
-package com.ad.syncfiles.ui.sharedDevice
+package com.ad.syncfiles.ui.smbServer
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

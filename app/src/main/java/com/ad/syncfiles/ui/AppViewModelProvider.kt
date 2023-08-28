@@ -7,7 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.ad.syncfiles.SyncFilesApplicationEntryPoint
 import com.ad.syncfiles.ui.home.HomeViewModel
-import com.ad.syncfiles.ui.sharedDevice.SDEntryViewModel
+import com.ad.syncfiles.ui.smbServer.SDEntryViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
