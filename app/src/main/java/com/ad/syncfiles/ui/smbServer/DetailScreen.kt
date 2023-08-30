@@ -29,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -64,6 +65,7 @@ object DetailScreenDestination : NavigationDestination {
 fun DetailScreen(
     navigateBack: () -> Unit,
     navigateToEditItem: (Int) -> Unit,
+    navigateToSharedContent: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DetailScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
@@ -96,6 +98,7 @@ fun DetailScreen(
                     navigateBack()
                 }
             },
+            onConnect = { navigateToSharedContent(uiState.value.deviceDetails.id) },
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
@@ -104,35 +107,30 @@ fun DetailScreen(
 }
 
 @Composable
-fun DetailBody(uiState: DetailUIState, onDelete: () -> Unit, modifier: Modifier = Modifier) {
+fun DetailBody(uiState: DetailUIState, onDelete: () -> Unit, modifier: Modifier = Modifier, onConnect: () -> Unit) {
     Column(
-        modifier = modifier, verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.medium_padding)),
+        modifier = modifier.padding(dimensionResource(id = R.dimen.small_padding)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.medium_padding)),
     ) {
         var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
         ItemDetail(item = uiState.deviceDetails.toSmbServerInfo(), modifier = Modifier.fillMaxWidth())
-        Button(
-            onClick = { deleteConfirmationRequired = true },
-            shape = MaterialTheme.shapes.small,
-            modifier = Modifier.fillMaxWidth()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(stringResource(R.string.delete))
+            Button(
+                onClick = { deleteConfirmationRequired = true },
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(R.string.delete))
+            }
+            Button(
+                onClick = onConnect,
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(id = R.string.connect))
+            }
         }
-//        Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-//            Button(
-//                onClick = { deleteConfirmationRequired = true },
-//                shape = MaterialTheme.shapes.small,
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Text(stringResource(R.string.delete))
-//            }
-//            Button(
-//                onClick = {/*TODO*/ },
-//                shape = MaterialTheme.shapes.small,
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                Text(stringResource(R.string.connect))
-//            }
-//        }
         if (deleteConfirmationRequired) {
             DeleteConfirmationDialog(
                 onDeleteConfirm = {
@@ -223,7 +221,7 @@ fun DetailScreenPreview() {
                 password = "Editing pass",
                 sharedFolderName = "Editing really long shared directory name"
             )
-        ), onDelete = { })
+        ), onDelete = { }, onConnect = {})
     }
 }
 
