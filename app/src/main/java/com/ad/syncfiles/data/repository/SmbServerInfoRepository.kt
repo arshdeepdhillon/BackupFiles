@@ -27,4 +27,9 @@ interface SmbServerInfoRepository {
      */
     suspend fun deleteSmbServer(smbServerInfo: SmbServerInfo)
 
+    /**
+     * Delete serverInfo from the data source
+     */
+    suspend fun addBackupDirPath(id: Int, dirPath: String)
+
 }

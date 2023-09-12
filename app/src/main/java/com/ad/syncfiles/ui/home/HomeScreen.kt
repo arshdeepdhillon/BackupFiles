@@ -153,7 +153,7 @@ fun TextItem(item: SmbServerInfo, modifier: Modifier = Modifier) {
 fun TextItemPreview() {
     SyncFilesTheme {
         TextItem(
-            SmbServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir", System.currentTimeMillis())
+            SmbServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir")
         )
     }
 }

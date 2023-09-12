@@ -1,12 +1,18 @@
 package com.ad.syncfiles.ui.smbServer
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,6 +45,7 @@ fun SharedContentScreen(
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SharedContentScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onAddSyncFolder: (Int) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
@@ -49,9 +56,21 @@ fun SharedContentScreen(
                 navigateUp = onNavigateUp
             )
         },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    onAddSyncFolder(viewModel.uiState.deviceDetails.id)
+                },
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(id = R.string.add_connection))
+            }
+        },
         modifier = modifier
     ) { innerPadding ->
-        Text("TODO", modifier = modifier.padding(innerPadding))
+        /*TODO*/
+        Text("T44ODO", modifier = modifier.padding(innerPadding))
     }
 }
 
@@ -60,7 +79,10 @@ fun SharedContentScreen(
 @Composable
 fun SharedContentScreenPreview() {
     SyncFilesTheme {
-        SharedContentScreen(navigateBack = {}, onNavigateUp = {})
+        SharedContentScreen(
+            navigateBack = {},
+            onNavigateUp = {},
+            onAddSyncFolder = {})
     }
 }
 

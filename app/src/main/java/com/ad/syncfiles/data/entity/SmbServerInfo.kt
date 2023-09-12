@@ -13,6 +13,7 @@ data class SmbServerInfo(
     val serverUrl: String,
     val username: String,
     val password: String,
+    val backupDirPath: String = "",
     val sharedFolderName: String = "shared-folder",
     @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
     val createdDate: Long = System.currentTimeMillis(),

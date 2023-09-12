@@ -3,7 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Required to access images/photos that other apps created. -->
+    <!--    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> &lt;!&ndash; Required to access videos that other apps created. &ndash;&gt;-->
+    <!--    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" /> &lt;!&ndash; Required to access audio files that other apps created. &ndash;&gt;-->
+    <!--    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />-->
+    <!--    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"-->
+    <!--        tools:ignore="ScopedStorage" />-->
 
     <application
         android:name=".SyncFilesApplicationEntryPoint"
@@ -16,6 +21,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SyncFiles"
         tools:targetApi="31">
+
+        <!--        <service-->
+        <!--            android:name=".background/workers.FileMonitorService"-->
+        <!--            android:enabled="true"-->
+        <!--            android:exported="true" />-->
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

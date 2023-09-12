@@ -17,6 +17,8 @@ import com.ad.syncfiles.ui.smbServer.EditScreen
 import com.ad.syncfiles.ui.smbServer.EditScreenDestination
 import com.ad.syncfiles.ui.smbServer.SharedContentScreen
 import com.ad.syncfiles.ui.smbServer.SharedContentScreenDestination
+import com.ad.syncfiles.ui.systemFolders.MediaBrowserScreen
+import com.ad.syncfiles.ui.systemFolders.MediaBrowserScreenDestination
 
 /**
  * Navigation graph for the application
@@ -61,14 +63,23 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
                 onNavigateUp = { navController.navigateUp() }
             )
         }
-        composable(route = SharedContentScreenDestination.routeArgs,
-            arguments = listOf(
-                navArgument(SharedContentScreenDestination.argKey) { type = NavType.IntType }
-            )
+        composable(
+            route = SharedContentScreenDestination.routeArgs,
+            arguments = listOf(navArgument(SharedContentScreenDestination.argKey) { type = NavType.IntType })
         ) {
             SharedContentScreen(
                 navigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
+                onNavigateUp = { navController.navigateUp() },
+                onAddSyncFolder = { navController.navigate("${MediaBrowserScreenDestination.route}/$it") }
+            )
+        }
+        composable(route = MediaBrowserScreenDestination.routeArgs,
+            arguments = listOf(
+                navArgument(MediaBrowserScreenDestination.argKey) { type = NavType.IntType }
+            )
+        ) {
+            MediaBrowserScreen(
+                navigateBack = { navController.popBackStack() }
             )
         }
     }

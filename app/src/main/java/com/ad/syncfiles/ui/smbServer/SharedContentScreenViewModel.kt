@@ -14,9 +14,13 @@ import kotlinx.coroutines.launch
 /**
  * Displays content from SMB server.
  */
-class SharedContentScreenViewModel(stateHandle: SavedStateHandle, private val serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
+class SharedContentScreenViewModel(
+    stateHandle: SavedStateHandle,
+    private val serverInfoRepo: SmbServerInfoRepository,
+) :
+    ViewModel() {
 
-
+    private val TAG: String = "SharedContentScreenViewModel"
     private val smbServerId: Int = checkNotNull(stateHandle[EditScreenDestination.argKey])
 
     /**

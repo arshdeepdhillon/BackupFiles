@@ -13,4 +13,6 @@ class OfflineSmbServerRepository(private val smbServerDao: SmbServerDao) : SmbSe
     override suspend fun upsertSmbServer(smbServerInfo: SmbServerInfo) = smbServerDao.upsert(smbServerInfo)
 
     override suspend fun deleteSmbServer(smbServerInfo: SmbServerInfo) = smbServerDao.delete(smbServerInfo)
+
+    override suspend fun addBackupDirPath(id: Int, dirPath: String) = smbServerDao.addBackupDirPath(id, dirPath)
 }

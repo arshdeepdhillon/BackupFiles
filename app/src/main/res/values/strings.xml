@@ -22,4 +22,6 @@
     <string name="delete_question">Are you sure you want to delete?</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="notification_title">"Monitoring Folders "</string>
+    <string name="notification_message">some detailed nm message</string>
 </resources>

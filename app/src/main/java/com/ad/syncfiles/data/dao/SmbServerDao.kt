@@ -24,4 +24,8 @@ interface SmbServerDao {
 
     @Query("SELECT * FROM smb_server_info WHERE id = :id LIMIT 1")
     fun getById(id: Int): Flow<SmbServerInfo>
+
+
+    @Query("UPDATE smb_server_info SET backupDirPath = :dirPath WHERE id = :id ")
+    fun addBackupDirPath(id: Int, dirPath: String)
 }
