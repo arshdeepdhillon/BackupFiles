@@ -1,5 +1,8 @@
 package com.ad.syncfiles.ui.smbServer
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -10,7 +13,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -22,6 +29,7 @@ import com.ad.syncfiles.data.entity.SmbServerInfo
 import com.ad.syncfiles.ui.AppViewModelProvider
 import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
+import kotlinx.coroutines.launch
 
 
 /**
@@ -41,13 +49,21 @@ object SharedContentScreenDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SharedContentScreen(
-    navigateBack: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SharedContentScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onAddSyncFolder: (Int) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    var selectedDirUri by remember { mutableStateOf<Uri?>(null) }
+    val dirPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { uri ->
+        selectedDirUri = uri
+        coroutineScope.launch {
+            uri?.let {
+                viewModel.addBackupDirInfo(uri.toString())
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             SyncFilesTopAppBar(
@@ -59,7 +75,7 @@ fun SharedContentScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    onAddSyncFolder(viewModel.uiState.deviceDetails.id)
+                    dirPickerLauncher.launch(null)
                 },
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
@@ -70,7 +86,7 @@ fun SharedContentScreen(
         modifier = modifier
     ) { innerPadding ->
         /*TODO*/
-        Text("T44ODO", modifier = modifier.padding(innerPadding))
+        Text("Load content from SMB server", modifier = modifier.padding(innerPadding))
     }
 }
 
@@ -79,10 +95,7 @@ fun SharedContentScreen(
 @Composable
 fun SharedContentScreenPreview() {
     SyncFilesTheme {
-        SharedContentScreen(
-            navigateBack = {},
-            onNavigateUp = {},
-            onAddSyncFolder = {})
+        SharedContentScreen(onNavigateUp = {})
     }
 }
 

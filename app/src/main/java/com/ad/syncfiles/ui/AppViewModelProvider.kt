@@ -12,7 +12,6 @@ import com.ad.syncfiles.ui.smbServer.AddScreenViewModel
 import com.ad.syncfiles.ui.smbServer.DetailScreenViewModel
 import com.ad.syncfiles.ui.smbServer.EditScreenViewModel
 import com.ad.syncfiles.ui.smbServer.SharedContentScreenViewModel
-import com.ad.syncfiles.ui.systemFolders.MediaBrowserViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -48,10 +47,6 @@ object AppViewModelProvider {
                 this.createSavedStateHandle(),
                 syncFilesApplication().container.smbServerRepository
             )
-        }
-        // Initializer for MediaBrowserViewModel
-        initializer {
-            MediaBrowserViewModel(this.createSavedStateHandle(), syncFilesApplication().container.smbServerRepository)
         }
     }
 }

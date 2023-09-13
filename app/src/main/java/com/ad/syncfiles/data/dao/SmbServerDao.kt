@@ -27,5 +27,5 @@ interface SmbServerDao {
 
 
     @Query("UPDATE smb_server_info SET backupDirPath = :dirPath WHERE id = :id ")
-    fun addBackupDirPath(id: Int, dirPath: String)
+    suspend fun addBackupDirPath(id: Int, dirPath: String)
 }

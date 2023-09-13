@@ -44,6 +44,10 @@ class SharedContentScreenViewModel(
         }
     }
 
+    suspend fun addBackupDirInfo(uri: String) {
+        serverInfoRepo.addBackupDirPath(smbServerId, uri)
+    }
+
     /**
      * Updates the [uiState] with the value provided in the argument. This method also triggers
      * a validation for input values.
