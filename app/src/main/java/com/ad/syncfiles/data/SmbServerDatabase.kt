@@ -4,12 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.ad.syncfiles.data.dao.SavedDirectoryDao
 import com.ad.syncfiles.data.dao.SmbServerDao
+import com.ad.syncfiles.data.entity.DirectoryInfo
 import com.ad.syncfiles.data.entity.SmbServerInfo
 
-@Database(entities = [SmbServerInfo::class], version = 1, exportSchema = false)
+@Database(entities = [SmbServerInfo::class, DirectoryInfo::class], version = 1, exportSchema = false)
 abstract class SmbServerDatabase : RoomDatabase() {
     abstract fun smbServerDao(): SmbServerDao
+    abstract fun savedDirDao(): SavedDirectoryDao
 
     companion object {
         private var Instance: SmbServerDatabase? = null

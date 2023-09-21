@@ -106,6 +106,7 @@ fun SharedContentScreen(
 
 /**
  * Converts list of [Uri] into list of [DocumentFile]
+ * TODO: is this needed?
  */
 fun getDocument(context: Context, uriPaths: List<String>): List<DocumentFile> {
     return uriPaths

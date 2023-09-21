@@ -45,7 +45,8 @@ object AppViewModelProvider {
         initializer {
             SharedContentScreenViewModel(
                 this.createSavedStateHandle(),
-                syncFilesApplication().container.smbServerRepository
+                syncFilesApplication().container.smbServerRepository,
+                syncFilesApplication().container.saveDirectoryRepository,
             )
         }
     }

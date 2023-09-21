@@ -108,7 +108,7 @@ fun HomeBody(serverList: List<SmbServerInfo>, onItemClick: (Int) -> Unit, modifi
         } else {
             ServerList(
                 itemList = serverList,
-                onItemClick = { onItemClick(it.id) },
+                onItemClick = { onItemClick(it.smbServerId) },
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.small_padding))
             )
         }

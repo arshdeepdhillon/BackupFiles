@@ -67,7 +67,7 @@ data class SharedDeviceDetails(
  * Extension function to convert [DeviceDetailsUiState] to [SmbServerInfo].
  */
 fun SharedDeviceDetails.toSmbServerInfo(): SmbServerInfo = SmbServerInfo(
-    id = id,
+    smbServerId = id,
     serverUrl = serverUrl,
     username = username,
     password = password,
@@ -78,7 +78,7 @@ fun SharedDeviceDetails.toSmbServerInfo(): SmbServerInfo = SmbServerInfo(
  * Extension function to convert [DeviceDetailsUiState] to [SmbServerInfo].
  */
 fun SmbServerInfo.toDetails(): SharedDeviceDetails = SharedDeviceDetails(
-    id = id,
+    id = smbServerId,
     serverUrl = serverUrl,
     username = username,
     password = password,

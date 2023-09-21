@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ad.syncfiles.data.entity.DirectoryInfo
+import com.ad.syncfiles.data.repository.SaveDirectoryRepository
 import com.ad.syncfiles.data.repository.SmbServerInfoRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.stateIn
 class SharedContentScreenViewModel(
     stateHandle: SavedStateHandle,
     private val serverInfoRepo: SmbServerInfoRepository,
+    private val saveDirRepo: SaveDirectoryRepository,
 ) : ViewModel() {
 
     private val smbServerId: Int = checkNotNull(stateHandle[SharedContentScreenDestination.argKey])
@@ -24,8 +27,13 @@ class SharedContentScreenViewModel(
     /**
      * Holds current UI state
      */
-    var uiState: StateFlow<SMBContentUiState> = serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().map {
-        SMBContentUiState(content = listOf(it.backupDirPath))
+    var uiState: StateFlow<SMBContentUiState> = saveDirRepo.getAllSavedDirectoriesStream(smbServerId).filterNotNull().map { dirs ->
+
+        SMBContentUiState(
+            dirs.savedDirs.map { dir ->
+                dir.dirPath
+            }.toList()
+        )
     }.stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS), initialValue = SMBContentUiState())
 
     companion object {
@@ -37,45 +45,20 @@ class SharedContentScreenViewModel(
         val PROVIDER_TO_EXT: Map<String, String> = mapOf(DOWNLOAD_PROVIDER_URI to DOWNLOAD_EXT_URI)
     }
 
-
-//    /**
-//     * Update the item in the [ItemsRepository]'s data source
-//     */
-//    suspend fun updateItem() {
-//        if (validateInput(uiState.deviceDetails)) {
-//            serverInfoRepo.upsertSmbServer(uiState.deviceDetails.toSmbServerInfo())
-//        }
-//    }
-
     suspend fun addBackupDirInfo(contentUri: Uri) {
         val contentUriToSave = when (contentUri.authority) {
             null -> contentUri
             else -> PROVIDER_TO_EXT.getOrDefault(contentUri.toString(), contentUri)
         }.toString()
 
-
-        serverInfoRepo.addBackupDirPath(smbServerId, contentUriToSave)
+        val dir = DirectoryInfo(smbServerId = smbServerId, dirPath = contentUriToSave)
+        saveDirRepo.upsertDirectory(dir)
     }
-
-//    /**
-//     * Updates the [uiState] with the value provided in the argument. This method also triggers
-//     * a validation for input values.
-//     */
-//    fun updateUiState(deviceDetails: SharedDeviceDetails) {
-//        uiState =
-//            DeviceDetailsUiState(deviceDetails = deviceDetails, isEntryValid = validateInput(deviceDetails))
-//    }
-
-    //
-//    private fun validateInput(deviceDetails: SharedDeviceDetails = uiState.deviceDetails): Boolean {
-//        return with(deviceDetails) {
-//            serverUrl.isNotBlank()
-//        }
-//    }
-
-
 }
 
 data class SMBContentUiState(
+    /**
+     * List of
+     */
     val content: List<String> = emptyList(),
 )
