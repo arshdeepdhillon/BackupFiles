@@ -27,10 +27,10 @@ class SharedContentScreenViewModel(
     /**
      * Holds current UI state
      */
-    var uiState: StateFlow<SMBContentUiState> = saveDirRepo.getAllSavedDirectoriesStream(smbServerId).filterNotNull().map { dirs ->
+    var uiState: StateFlow<SMBContentUiState> = saveDirRepo.getAllSavedDirectoriesStream(smbServerId).filterNotNull().map { smbServerWithSavedDir ->
 
         SMBContentUiState(
-            dirs.savedDirs.map { dir ->
+            smbServerWithSavedDir.savedDirs.map { dir ->
                 dir.dirPath
             }.toList()
         )
