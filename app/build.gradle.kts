@@ -92,6 +92,8 @@ dependencies {
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 
 
+    implementation("androidx.documentfile:documentfile:1.0.1")
+
     // WorkManger
     implementation("androidx.work:work-runtime-ktx:2.8.1")
 }

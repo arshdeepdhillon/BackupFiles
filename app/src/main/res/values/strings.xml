@@ -13,7 +13,7 @@
     <string name="info_no_smb_connections">Add a SMB server to view shared files</string>
     <string name="smb_server_add_title">Add Device Info</string>
     <string name="smb_server_edit_title">Edit SMB Server Details</string>
-    <string name="smb_server_gallery_title">Gallery</string>
+    <string name="smb_server_saved_title">Saved</string>
     <string name="smb_server_details_title">Details</string>
     <string name="back_button">Back</string>
     <string name="required_fields">* Required</string>

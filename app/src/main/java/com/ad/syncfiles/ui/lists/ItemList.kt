@@ -24,8 +24,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.documentfile.provider.DocumentFile
 import com.ad.syncfiles.R
-import java.io.File
 import java.text.DateFormat
 import java.util.Locale
 
@@ -33,7 +33,8 @@ import java.util.Locale
  * Displays the given list of data in a single column
  */
 @Composable
-fun ItemListBody(modifier: Modifier = Modifier, fileList: List<File>, onItemClick: (File) -> Unit = {}) {
+fun ItemListBody(modifier: Modifier = Modifier, fileList: List<DocumentFile>, onItemClick: (DocumentFile) -> Unit = {}) {
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(1), modifier = modifier
             .fillMaxSize()
@@ -43,14 +44,16 @@ fun ItemListBody(modifier: Modifier = Modifier, fileList: List<File>, onItemClic
         items(items = fileList) { item ->
             ItemDetails(
                 modifier = Modifier.clickable { onItemClick(item) },
-                itemName = item.name,
+                itemName = item.name.toString(),
                 modifiedTime = item.lastModified(),
-                numOfFiles = item.listFiles()?.size,
+                numOfFiles = item.listFiles().size,
                 isDir = item.isDirectory
             )
+
         }
     }
 }
+
 
 @Composable
 fun ItemDetails(itemName: String, modifier: Modifier = Modifier, modifiedTime: Long, numOfFiles: Int?, isDir: Boolean) {
@@ -113,7 +116,7 @@ fun formatDate(timestampMillis: Long): String {
 @Preview(showBackground = true)
 @Composable
 fun ItemListBodyPreview() {
-    ItemListBody(
-        fileList = (0..10).toList().map { File("temp${it}") }
-    )
+//    ItemListBody(
+//        fileList = (0..10).toList().map { File("temp${it}") }
+//    )
 }

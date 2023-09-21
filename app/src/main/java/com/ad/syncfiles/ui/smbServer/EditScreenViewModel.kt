@@ -36,6 +36,9 @@ class EditScreenViewModel(stateHandle: SavedStateHandle, private val serverInfoR
      */
     suspend fun updateItem() {
         if (validateInput(uiState.deviceDetails)) {
+            /*
+            TODO: fix me. When saving, this results in dirpath getting wiped.
+             */
             serverInfoRepo.upsertSmbServer(uiState.deviceDetails.toSmbServerInfo())
         }
     }
