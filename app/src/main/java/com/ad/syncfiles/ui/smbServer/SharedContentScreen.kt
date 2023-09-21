@@ -69,11 +69,11 @@ fun SharedContentScreen(
     var selectedDirUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val dirPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { contentUri ->
+    val dirPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { contentUri: Uri? ->
         selectedDirUri = contentUri
         coroutineScope.launch {
             contentUri?.let {
-                viewModel.addBackupDirInfo(contentUri.toString())
+                viewModel.addBackupDirInfo(contentUri)
             }
         }
     }
@@ -104,12 +104,15 @@ fun SharedContentScreen(
 }
 
 
+/**
+ * Converts list of [Uri] into list of [DocumentFile]
+ */
 fun getDocument(context: Context, uriPaths: List<String>): List<DocumentFile> {
-    // TODO fix uriPaths
-    if (uriPaths.isEmpty()) {
-        return emptyList()
-    }
-    return DocumentFile.fromTreeUri(context, Uri.parse(uriPaths.get(0)))?.listFiles()?.toList() ?: emptyList()
+    return uriPaths
+        .mapNotNull { uriPath ->
+            DocumentFile.fromTreeUri(context, Uri.parse(uriPath))
+        }.toList()
+        .ifEmpty { emptyList() }
 }
 
 @Preview(showBackground = true)

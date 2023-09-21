@@ -1,5 +1,6 @@
 package com.ad.syncfiles.ui.smbServer
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +30,11 @@ class SharedContentScreenViewModel(
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
+        private const val DOWNLOAD_PROVIDER_URI = "content://com.android.providers.downloads.documents/tree/downloads"
+        private const val DOWNLOAD_EXT_URI = "content://com.android.externalstorage.documents/tree/primary%3ADownload"
+
+        /** Maps __Provider__ content to __External storage__ */
+        val PROVIDER_TO_EXT: Map<String, String> = mapOf(DOWNLOAD_PROVIDER_URI to DOWNLOAD_EXT_URI)
     }
 
 
@@ -41,8 +47,14 @@ class SharedContentScreenViewModel(
 //        }
 //    }
 
-    suspend fun addBackupDirInfo(contentUri: String) {
-        serverInfoRepo.addBackupDirPath(smbServerId, contentUri)
+    suspend fun addBackupDirInfo(contentUri: Uri) {
+        val contentUriToSave = when (contentUri.authority) {
+            null -> contentUri
+            else -> PROVIDER_TO_EXT.getOrDefault(contentUri.toString(), contentUri)
+        }.toString()
+
+
+        serverInfoRepo.addBackupDirPath(smbServerId, contentUriToSave)
     }
 
 //    /**
