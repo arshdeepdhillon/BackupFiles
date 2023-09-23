@@ -22,6 +22,7 @@ interface SmbServerDao {
     @Query("SELECT * FROM smb_server_info ORDER BY createdDate ASC")
     fun getByAddedDate(): Flow<List<SmbServerInfo>>
 
-    @Query("SELECT * FROM smb_server_info WHERE id = :id LIMIT 1")
+    @Query("SELECT * FROM smb_server_info WHERE smbServerId = :id LIMIT 1")
     fun getById(id: Int): Flow<SmbServerInfo>
+
 }

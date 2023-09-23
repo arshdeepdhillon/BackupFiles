@@ -4,26 +4,37 @@ import com.ad.syncfiles.data.entity.SmbServerInfo
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Repository that provides insert, update, delete, and retrieve of [SmbServerInfo] from a given data source.
+ * Repository that provides data access to [SmbServerInfo].
  */
 interface SmbServerInfoRepository {
+
     /**
-     * Retrieve all the items from the the given data source.
+     * Retrieves a flow of lists containing SMB server information in ascending order.
+     * @return A [Flow] emitting lists of [SmbServerInfo] objects.
      */
     fun getAllSmbServersAscStream(): Flow<List<SmbServerInfo>>
 
     /**
-     * Retrieve an serverInfo from the given data source that matches with the [id].
+     * Retrieves a flow of an [SmbServerInfo] object with the specified [id].
+     * If the specified [id] does not match any server, it emits `null`.
+     *
+     * @param id The unique identifier of the SMB server to retrieve.
+     * @return A [Flow] emitting [SmbServerInfo] objects or `null` if not found.
      */
     fun getSmbServerStream(id: Int): Flow<SmbServerInfo?>
 
     /**
-     * Upsert serverInfo in the data source
+     * Inserts or updates an [SmbServerInfo] object in the data source.
+     * If the specified [smbServerInfo] already exists, it will be updated; otherwise, a new server entry will be inserted.
+     *
+     * @param smbServerInfo The [SmbServerInfo] object to insert or update.
      */
     suspend fun upsertSmbServer(smbServerInfo: SmbServerInfo)
 
     /**
-     * Delete serverInfo from the data source
+     * Deletes a [SmbServerInfo] specified by [smbServerInfo].
+     *
+     * @param smbServerInfo The [SmbServerInfo] object to be deleted.
      */
     suspend fun deleteSmbServer(smbServerInfo: SmbServerInfo)
 

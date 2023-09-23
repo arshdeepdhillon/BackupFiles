@@ -15,6 +15,8 @@ import com.ad.syncfiles.ui.smbServer.DetailScreen
 import com.ad.syncfiles.ui.smbServer.DetailScreenDestination
 import com.ad.syncfiles.ui.smbServer.EditScreen
 import com.ad.syncfiles.ui.smbServer.EditScreenDestination
+import com.ad.syncfiles.ui.smbServer.SharedContentScreen
+import com.ad.syncfiles.ui.smbServer.SharedContentScreenDestination
 
 /**
  * Navigation graph for the application
@@ -45,7 +47,8 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
         ) {
             DetailScreen(
                 navigateBack = { navController.popBackStack() },
-                navigateToEditItem = { navController.navigate("${EditScreenDestination.route}/$it") }
+                navigateToEditItem = { navController.navigate("${EditScreenDestination.route}/$it") },
+                navigateToSharedContent = { navController.navigate("${SharedContentScreenDestination.route}/$it") }
             )
         }
         composable(route = EditScreenDestination.routeArgs,
@@ -55,6 +58,14 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
         ) {
             EditScreen(
                 navigateBack = { navController.popBackStack() },
+                onNavigateUp = { navController.navigateUp() }
+            )
+        }
+        composable(
+            route = SharedContentScreenDestination.routeArgs,
+            arguments = listOf(navArgument(SharedContentScreenDestination.argKey) { type = NavType.IntType })
+        ) {
+            SharedContentScreen(
                 onNavigateUp = { navController.navigateUp() }
             )
         }

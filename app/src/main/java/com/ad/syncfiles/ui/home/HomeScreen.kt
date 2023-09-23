@@ -108,7 +108,7 @@ fun HomeBody(serverList: List<SmbServerInfo>, onItemClick: (Int) -> Unit, modifi
         } else {
             ServerList(
                 itemList = serverList,
-                onItemClick = { onItemClick(it.id) },
+                onItemClick = { onItemClick(it.smbServerId) },
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.small_padding))
             )
         }
@@ -153,7 +153,7 @@ fun TextItem(item: SmbServerInfo, modifier: Modifier = Modifier) {
 fun TextItemPreview() {
     SyncFilesTheme {
         TextItem(
-            SmbServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir", System.currentTimeMillis())
+            SmbServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir")
         )
     }
 }

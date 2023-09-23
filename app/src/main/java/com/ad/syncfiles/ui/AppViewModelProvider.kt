@@ -11,6 +11,7 @@ import com.ad.syncfiles.ui.home.HomeViewModel
 import com.ad.syncfiles.ui.smbServer.AddScreenViewModel
 import com.ad.syncfiles.ui.smbServer.DetailScreenViewModel
 import com.ad.syncfiles.ui.smbServer.EditScreenViewModel
+import com.ad.syncfiles.ui.smbServer.SharedContentScreenViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -38,6 +39,14 @@ object AppViewModelProvider {
             EditScreenViewModel(
                 this.createSavedStateHandle(),
                 syncFilesApplication().container.smbServerRepository
+            )
+        }
+        // Initializer for SharedContentScreenViewModel
+        initializer {
+            SharedContentScreenViewModel(
+                this.createSavedStateHandle(),
+                syncFilesApplication().container.smbServerRepository,
+                syncFilesApplication().container.saveDirectoryRepository,
             )
         }
     }
