@@ -11,6 +11,8 @@ class OfflineSaveDirectoryRepository(private val savedDirectoryDao: SavedDirecto
     override fun getAllSavedDirectoriesStream(smbServerId: Int) =
         savedDirectoryDao.getSmbServerWithDirectories(smbServerId)
 
+    override suspend fun isDirectorySaved(smbServerId: Int, dirPath: String): Boolean = savedDirectoryDao.isDirectorySaved(smbServerId, dirPath)
+
     /**
      * @see SaveDirectoryRepository.upsertDirectory
      */

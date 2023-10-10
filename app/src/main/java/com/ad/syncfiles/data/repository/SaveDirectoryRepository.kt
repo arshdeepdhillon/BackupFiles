@@ -20,6 +20,17 @@ interface SaveDirectoryRepository {
     fun getAllSavedDirectoriesStream(smbServerId: Int): Flow<SMBServerWithSavedDirs>
 
     /**
+     * Checks if [dirPath] is saved for [smbServerId].
+     *
+     * @param smbServerId The unique identifier of the SMB server to query.
+     *
+     * @param dirPath The path of directory to check.
+     *
+     * @return true if the folder is already saved otherwise false.
+     */
+    suspend fun isDirectorySaved(smbServerId: Int, dirPath: String): Boolean
+
+    /**
      * Inserts or updates a [DirectoryInfo] object in the data source. If the specified [dir] already exists,
      * it will be updated; otherwise, a new directory entry will be inserted.
      *

@@ -47,6 +47,7 @@ object AppViewModelProvider {
                 this.createSavedStateHandle(),
                 syncFilesApplication().container.smbServerRepository,
                 syncFilesApplication().container.saveDirectoryRepository,
+                syncFilesApplication().applicationContext
             )
         }
     }

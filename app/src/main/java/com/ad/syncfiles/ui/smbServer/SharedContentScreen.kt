@@ -1,7 +1,9 @@
 package com.ad.syncfiles.ui.smbServer
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
@@ -15,10 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -28,6 +27,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.syncfiles.R
 import com.ad.syncfiles.SyncFilesTopAppBar
+import com.ad.syncfiles.Util
 import com.ad.syncfiles.data.entity.SmbServerInfo
 import com.ad.syncfiles.ui.AppViewModelProvider
 import com.ad.syncfiles.ui.lists.ItemListBody
@@ -50,9 +50,9 @@ object SharedContentScreenDestination : NavigationDestination {
     val routeArgs = "$route/{$argKey}"
 }
 
+
 /*
  TODO:
-    * When a directory is selected for backup, show that directory in UI instead of its contents.
     * After a directory is selected for backup, start saving its content to the SMB server.
     * When directory is being saved, disallow clicks on it.
     * Allow touch events on that directory, once directory is fully saved.
@@ -66,14 +66,21 @@ fun SharedContentScreen(
     viewModel: SharedContentScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var selectedDirUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val dirPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { contentUri: Uri? ->
-        selectedDirUri = contentUri
+    val dirPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { dirUri: Uri? ->
         coroutineScope.launch {
-            contentUri?.let {
-                viewModel.addBackupDirInfo(contentUri)
+            if (dirUri == null) {
+                Util.makeToast(context, R.string.null_uri)
+            } else {
+                // Persist the permission of this Uri inorder to access it after a app/phone restart
+                context.contentResolver.takePersistableUriPermission(
+                    dirUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+                if (!viewModel.saveDirectory(dirUri)) {
+                    Util.makeToast(context, R.string.failed_to_save_dir, Toast.LENGTH_LONG)
+                }
             }
         }
     }

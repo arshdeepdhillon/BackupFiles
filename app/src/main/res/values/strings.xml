@@ -24,4 +24,6 @@
     <string name="yes">Yes</string>
     <string name="notification_title">"Monitoring Folders "</string>
     <string name="notification_message">some detailed nm message</string>
+    <string name="failed_to_save_dir">Folder already saved. Choose another.</string>
+    <string name="null_uri">Cannot save this folder. Choose another.</string>
 </resources>
