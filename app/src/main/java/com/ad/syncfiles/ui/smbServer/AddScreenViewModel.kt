@@ -30,21 +30,6 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : 
             serverInfoRepo.upsertSmbServer(uiState.deviceDetails.toSmbServerInfo())
         }
     }
-
-
-//    fun getSharedFiles() {
-//        val smbClient = SMB()
-//        smbClient.listFiles()
-////        viewModelScope.launch {
-//////            SMB().listFiles()
-////            val result = withContext(Dispatchers.IO){
-////                delay(2000)
-////                true
-////            }
-////            Log.d("getSharedFiles", "$result")
-////        }
-//    }
-
 }
 
 /**

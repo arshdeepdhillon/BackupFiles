@@ -11,16 +11,16 @@ import com.hierynomus.mssmb2.SMB2CreateOptions
 import com.hierynomus.mssmb2.SMB2ShareAccess
 import com.hierynomus.smbj.SMBClient
 import com.hierynomus.smbj.auth.AuthenticationContext
-import com.hierynomus.smbj.share.Directory
+import com.hierynomus.smbj.common.SMBRuntimeException
 import com.hierynomus.smbj.share.DiskShare
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.util.Base64
+import com.hierynomus.smbj.share.File
+import java.io.FileNotFoundException
+import java.io.IOException
 import java.util.Deque
 
 
 class SMB : SMBApi {
-    private val TAG = Companion::class.java.simpleName
+    private val TAG = SMB::class.java.simpleName
 
     companion object {
         @Volatile
@@ -35,95 +35,100 @@ class SMB : SMBApi {
         }
     }
 
+    /**
+     * Get a DiskShare.
+     *
+     * @return A DiskShare instance.
+     * @throws IOException If the connection could not be established.
+     */
+    @Throws(IOException::class)
     private fun getDiskShare(): DiskShare {
         val ac = AuthenticationContext("ad", "adhil8211".toCharArray(), "WORKGROUP")
         return getInstance().connect("192.168.1.95").authenticate(ac).connectShare("shared-folder") as DiskShare
-
-
-//        return withContext(Dispatchers.IO) {
-//            getInstance().connect("192.168.1.95").use { connection ->
-//                val ac = AuthenticationContext("ad", "adhil8211".toCharArray(), "WORKGROUP")
-//                val session: Session = connection.authenticate(ac)
-//                session.connectShare("shared-folder") as DiskShare
-//            }
-//        }
     }
 
-    private fun save(
-        stringData: String, path: String, fileShare: DiskShare,
-    ): String? {
-        var pathResponse: String? = null
-        val encodedString: String = Base64.getEncoder().encodeToString(stringData.toByteArray())
-        val data: ByteArray = Base64.getDecoder().decode(encodedString)
-        try {
-            fileShare.openFile(
-                path,
+
+    /**
+     * Copies the files and its subdirectories from the specified [uri] and saves it (TODO) to the provided SMB server.
+     *
+     * @param context The Android context used for accessing resources and file operations.
+     * @param uri The [Uri] representing the folder to be saved.
+     */
+    override suspend fun saveFolder(context: Context, uri: Uri) {
+        val dirName = FileUtils.getDirName(context, uri) ?: return
+        val dirContentList: Deque<DocumentFile> = FileUtils.getFilesInDir(context, uri)
+
+        if (dirContentList.isEmpty()) {
+            return
+        }
+        getDiskShare().use { diskShare ->
+            Log.d(TAG, "Folder exists on SMB server?: " + diskShare.folderExists(dirName))
+            //Create the directory
+            diskShare.openDirectory(
+                dirName,
                 setOf<AccessMask>(AccessMask.FILE_WRITE_DATA),
                 setOf<FileAttributes>(FileAttributes.FILE_ATTRIBUTE_NORMAL),
                 setOf<SMB2ShareAccess>(SMB2ShareAccess.FILE_SHARE_WRITE),
-                SMB2CreateDisposition.FILE_OVERWRITE_IF,
+                SMB2CreateDisposition.FILE_OPEN_IF,
                 setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY)
-            ).use { file ->
-                file?.outputStream?.use { outputStream ->
-                    outputStream.write(data)
-                    outputStream.flush()
-                    outputStream.close()
-                    pathResponse = path
-                }
+            )
+            var path: String
+            while (dirContentList.isNotEmpty()) {
+                Log.d(TAG, "Files remaining ${dirContentList.size}")
+                val docOnDevice = dirContentList.poll()
+                // We should have read permission (on Uri) at this point, if not (then 'name' will be null) then complain loudly
+                path = "$dirName\\${docOnDevice!!.name}"
+                saveSingleFile(context, docOnDevice, path, diskShare)
             }
-        } catch (e: Exception) {
-            throw e
         }
-        return pathResponse
+
     }
 
-    override suspend fun saveFolder(context: Context, uri: Uri) {
-        withContext(Dispatchers.IO) {
-            val dirName = FileUtils.getDirName(context, uri)
-            if (dirName != null) {
-                val dirContentList: Deque<DocumentFile> = FileUtils.getFilesInDir(context, uri)
-                getDiskShare().use { diskShare ->
-                    Log.d(TAG, "Folder exist: " + diskShare.folderExists(dirName))
-                    try {
-                        diskShare.openDirectory(
-                            dirName,
-                            setOf<AccessMask>(AccessMask.FILE_WRITE_DATA),
-                            setOf<FileAttributes>(FileAttributes.FILE_ATTRIBUTE_NORMAL),
-                            setOf<SMB2ShareAccess>(SMB2ShareAccess.FILE_SHARE_WRITE),
-                            SMB2CreateDisposition.FILE_OPEN_IF,
-                            setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY)
-                        ).use { file: Directory ->
-                            val dirInfo = file
-                            Log.d(TAG, "Folder fileInformation: ${dirInfo.fileInformation}")
-                            Log.d(TAG, "Folder            path: ${dirInfo.path}")
-                            Log.d(TAG, "Folder         dirInfo: $dirInfo")
-                            var path = ""
-                            while (dirContentList.isNotEmpty()) {
-                                val fileOnDisk = dirContentList.poll()
-                                path = "$dirName\\${fileOnDisk.name}"
-                                context.contentResolver.openInputStream(fileOnDisk.uri).use { fOnDiskStream ->
-                                    if (fOnDiskStream != null) {
-                                        val data: ByteArray = fOnDiskStream.readBytes()
-                                        getDiskShare().openFile(
-                                            path,
-                                            setOf<AccessMask>(AccessMask.FILE_WRITE_DATA),
-                                            setOf<FileAttributes>(FileAttributes.FILE_ATTRIBUTE_NORMAL),
-                                            setOf<SMB2ShareAccess>(SMB2ShareAccess.FILE_SHARE_WRITE),
-                                            SMB2CreateDisposition.FILE_OVERWRITE_IF,
-                                            setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY)
-                                        ).use { file ->
-                                            file?.outputStream?.use { outputStream ->
-                                                outputStream.write(data)
-                                                outputStream.flush()
-                                                outputStream.close()
-                                            }
-                                        }
-                                    }
-                                }
+    /**
+     * Saves a single file from a DocumentFile to a specified path on SMB server using a provided DiskShare.
+     *
+     * @param context The context.
+     * @param docOnDevice The DocumentFile representing the file to be saved.
+     * @param path The destination path on disk where the file will be saved.
+     * @param diskShare The DiskShare used for performing the save operation.
+     *
+     * @throws SMBRuntimeException if there is an SMB-specific runtime exception.
+     * @throws IOException if we are unable to read from a file and write to a file.
+     * @throws FileNotFoundException if there is no data associated with the [Uri] of [docOnDevice].
+     */
+    @Throws(SMBRuntimeException::class, IOException::class, FileNotFoundException::class)
+    private fun saveSingleFile(context: Context, docOnDevice: DocumentFile, path: String, diskShare: DiskShare) {
+        context.contentResolver.openInputStream(docOnDevice.uri).use { inStream ->
+            if (inStream != null) {
+                // Create file on SMB server
+                val fileOnSmbServer = diskShare.openFile(
+                    path,
+                    setOf<AccessMask>(AccessMask.FILE_WRITE_DATA),
+                    setOf<FileAttributes>(FileAttributes.FILE_ATTRIBUTE_NORMAL),
+                    setOf<SMB2ShareAccess>(SMB2ShareAccess.FILE_SHARE_WRITE),
+                    SMB2CreateDisposition.FILE_OVERWRITE_IF, //TODO change it to SMB2CreateDisposition.FILE_CREATE
+                    setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY)
+                )
+                var prog: Int
+                var totalBytesRead = 0
+                val size: Long = docOnDevice.length()
+                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                var bytesRead = inStream.read(buffer)
+
+                fileOnSmbServer.use { file: File ->
+                    file.outputStream.use { outputStream ->
+                        Log.d(TAG, "Saving file...")
+                        while (bytesRead >= 0) {
+                            outputStream.write(buffer, 0, bytesRead)
+                            totalBytesRead += bytesRead
+                            prog = ((totalBytesRead.toFloat() / size) * 100).toInt()
+                            if (prog % 10 == 0) {
+                                Log.d(TAG, "Progress $prog")
                             }
+                            bytesRead = inStream.read(buffer)
                         }
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Failed to save $dirName", e)
+                        outputStream.flush()
+                        Log.d(TAG, "Saving file...Done")
                     }
                 }
             }

@@ -13,23 +13,15 @@ const val CHANNEL_NAME = "Backup Information"
 const val CHANNEL_DESC = "Displays Live Backup Information"
 
 const val NOTIFICATION_ID = 1
-val NOTIFICATION_TITLE: CharSequence = "Backing Up Your Data"
+val NOTIFICATION_TITLE: CharSequence = "Backing Up Data"
 
 
 // The name of the backup work
 const val BACK_UP_FILES_WORK_NAME = "backup_files_work"
 
 fun makeStatusNotification(message: String, ctx: Context) {
-//    val builder = NotificationCompat.Builder(ctx, CHANNEL_ID)
-//        .setSmallIcon(R.drawable.ic_launcher_foreground)
-//        .setContentTitle(NOTIFICATION_TITLE)
-//        .setContentText(message)
-//        .setPriority(NotificationCompat.PRIORITY_HIGH)
-//        .setVibrate(LongArray(0))
-//
-//
+    // Check notification is enabled before creating it.
     if (NotificationManagerCompat.from(ctx).areNotificationsEnabled()) {
-        // Create the notification
         val builder = NotificationCompat.Builder(ctx, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(NOTIFICATION_TITLE)

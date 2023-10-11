@@ -5,14 +5,15 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.BackoffPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.WorkRequest.Companion.MIN_BACKOFF_MILLIS
 import androidx.work.workDataOf
 import com.ad.syncfiles.data.entity.DirectoryInfo
 import com.ad.syncfiles.data.repository.SaveDirectoryRepository
 import com.ad.syncfiles.data.repository.SmbServerInfoRepository
-import com.ad.syncfiles.smb.SMB
 import com.ad.syncfiles.worker.BACK_UP_FILES_WORK_NAME
 import com.ad.syncfiles.worker.BackupFilesWorker
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 val TAG = "SharedContentScreenViewModel"
 
@@ -32,12 +34,11 @@ class SharedContentScreenViewModel(
     stateHandle: SavedStateHandle,
     private val serverInfoRepo: SmbServerInfoRepository,
     private val saveDirRepo: SaveDirectoryRepository,
-    appContext: Context,
+    private val appContext: Context,
 ) : ViewModel() {
 
     private val smbServerId: Int = checkNotNull(stateHandle[SharedContentScreenDestination.argKey])
     private val workManager = WorkManager.getInstance(appContext)
-    private val smb = SMB()
 
     /**
      * Holds current UI state
@@ -69,12 +70,14 @@ class SharedContentScreenViewModel(
      */
     internal suspend fun saveDirectory(contentUri: Uri): Boolean {
         return withContext(Dispatchers.IO) {
+            //TODO add a force sync button to update files on SMB server..maybe?
+            runBackupWorker(contentUri)
             if (!saveDirRepo.isDirectorySaved(smbServerId, contentUri.toString())) {
                 addBackupDirInfo(contentUri)
-                //runBackupWorker(contentUri)
+//                runBackupWorker(contentUri)
                 return@withContext true
             }
-            return@withContext false
+            return@withContext true
         }
     }
 
@@ -93,6 +96,7 @@ class SharedContentScreenViewModel(
 //            .setInputData(getWorkData())
             .setInputData(workDataOf("DIR_URI" to contentUri.toString()))
             .addTag("backup_files_tag")
+            .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
             .build()
         workManager.beginUniqueWork(
             BACK_UP_FILES_WORK_NAME,
