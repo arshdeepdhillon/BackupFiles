@@ -9,6 +9,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

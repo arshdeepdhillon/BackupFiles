@@ -4,6 +4,11 @@ import com.ad.syncfiles.data.entity.DirectoryInfo
 import com.ad.syncfiles.data.entity.SMBServerWithSavedDirs
 import kotlinx.coroutines.flow.Flow
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 /**
  * Repository that provides access to backed up [DirectoryInfo]s of SMB servers.
  */
@@ -18,6 +23,17 @@ interface SaveDirectoryRepository {
      * The flow emits updates whenever the saved directories associated with the specified SMB server change.
      */
     fun getAllSavedDirectoriesStream(smbServerId: Int): Flow<SMBServerWithSavedDirs>
+
+    /**
+     * Checks if [dirPath] is saved for [smbServerId].
+     *
+     * @param smbServerId The unique identifier of the SMB server to query.
+     *
+     * @param dirPath The path of directory to check.
+     *
+     * @return true if the folder is already saved otherwise false.
+     */
+    suspend fun isDirectorySaved(smbServerId: Int, dirPath: String): Boolean
 
     /**
      * Inserts or updates a [DirectoryInfo] object in the data source. If the specified [dir] already exists,

@@ -18,6 +18,11 @@ import com.ad.syncfiles.ui.smbServer.EditScreenDestination
 import com.ad.syncfiles.ui.smbServer.SharedContentScreen
 import com.ad.syncfiles.ui.smbServer.SharedContentScreenDestination
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 /**
  * Navigation graph for the application
  */
@@ -30,14 +35,14 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
-                navigateToItemEntry = { navController.navigate(AddScreenDestination.route) },
-                navigateToItemUpdate = { navController.navigate("${DetailScreenDestination.route}/${it}") }
+                handleFABClick = { navController.navigate(AddScreenDestination.route) },
+                handleItemClick = { navController.navigate("${DetailScreenDestination.route}/${it}") }
             )
         }
         composable(route = AddScreenDestination.route) {
             AddScreen(
-                navigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
+                handleNavBack = { navController.popBackStack() },
+                handleNavUp = { navController.navigateUp() }
             )
         }
         composable(route = DetailScreenDestination.routeArgs,
@@ -46,9 +51,9 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
             )
         ) {
             DetailScreen(
-                navigateBack = { navController.popBackStack() },
-                navigateToEditItem = { navController.navigate("${EditScreenDestination.route}/$it") },
-                navigateToSharedContent = { navController.navigate("${SharedContentScreenDestination.route}/$it") }
+                handleNavBack = { navController.popBackStack() },
+                handleItemClicked = { navController.navigate("${EditScreenDestination.route}/$it") },
+                handleConnect = { navController.navigate("${SharedContentScreenDestination.route}/$it") }
             )
         }
         composable(route = EditScreenDestination.routeArgs,
@@ -57,8 +62,8 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
             )
         ) {
             EditScreen(
-                navigateBack = { navController.popBackStack() },
-                onNavigateUp = { navController.navigateUp() }
+                handleNavBack = { navController.popBackStack() },
+                handleNavUp = { navController.navigateUp() }
             )
         }
         composable(
@@ -66,7 +71,7 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
             arguments = listOf(navArgument(SharedContentScreenDestination.argKey) { type = NavType.IntType })
         ) {
             SharedContentScreen(
-                onNavigateUp = { navController.navigateUp() }
+                handleNavUp = { navController.navigateUp() }
             )
         }
     }

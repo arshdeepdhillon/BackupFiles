@@ -10,6 +10,11 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 class DetailScreenViewModel(stateHandle: SavedStateHandle, private val serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
 
     companion object {
@@ -34,6 +39,6 @@ class DetailScreenViewModel(stateHandle: SavedStateHandle, private val serverInf
 }
 
 /**
- * Represents Ui State of [SharedDeviceDetails].
+ * Represents Ui State of [ServerDetails].
  */
-data class DetailUIState(val deviceDetails: SharedDeviceDetails = SharedDeviceDetails())
+data class DetailUIState(val deviceDetails: ServerDetails = ServerDetails())

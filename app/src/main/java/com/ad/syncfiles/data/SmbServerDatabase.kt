@@ -9,6 +9,11 @@ import com.ad.syncfiles.data.dao.SmbServerDao
 import com.ad.syncfiles.data.entity.DirectoryInfo
 import com.ad.syncfiles.data.entity.SmbServerInfo
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 @Database(entities = [SmbServerInfo::class, DirectoryInfo::class], version = 1, exportSchema = false)
 abstract class SmbServerDatabase : RoomDatabase() {
     abstract fun smbServerDao(): SmbServerDao

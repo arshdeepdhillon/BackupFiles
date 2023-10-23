@@ -9,8 +9,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 /**
- * ViewModel to retrieve all the servers in the Room database.
+ * ViewModel for the [HomeScreen]
  */
 class HomeViewModel(serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
 
@@ -24,7 +29,6 @@ class HomeViewModel(serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
     )
 
     companion object {
-        // TODO reason for this wait...?
         private const val TIMEOUT_MILLIS = 5_000L
     }
 }
@@ -32,4 +36,4 @@ class HomeViewModel(serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
 /**
  * Ui state for the Home screen
  */
-data class HomeUiState(val sharedServerList: List<SmbServerInfo> = listOf())
+data class HomeUiState(val sharedServers: List<SmbServerInfo> = listOf())

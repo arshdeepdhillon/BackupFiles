@@ -15,6 +15,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ad.syncfiles.ui.navigation.SyncFilesNavHost
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
 
 @Composable
 fun SyncFilesApp(navController: NavHostController = rememberNavController()) {
@@ -25,18 +29,18 @@ fun SyncFilesApp(navController: NavHostController = rememberNavController()) {
 @Composable
 fun SyncFilesTopAppBar(
     title: String,
-    canNavigateBack: Boolean,
+    canNavBack: Boolean,
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    navigateUp: () -> Unit = {},
+    onNavUp: () -> Unit = {},
 ) {
     CenterAlignedTopAppBar(title = {
         Text(title)
     }, modifier = modifier,
         scrollBehavior = scrollBehavior,
         navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(onClick = navigateUp) {
+            if (canNavBack) {
+                IconButton(onClick = onNavUp) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(id = R.string.back_button)

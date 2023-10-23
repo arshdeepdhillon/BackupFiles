@@ -1,6 +1,11 @@
 package com.ad.syncfiles.ui.home
 
 
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,11 +32,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.syncfiles.R
 import com.ad.syncfiles.SyncFilesTopAppBar
@@ -39,6 +46,11 @@ import com.ad.syncfiles.data.entity.SmbServerInfo
 import com.ad.syncfiles.ui.AppViewModelProvider
 import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
+
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
 
 /**
  * A stateless singleton representing navigation details
@@ -49,31 +61,37 @@ object HomeDestination : NavigationDestination {
 }
 
 /**
- * Shows list of saved SMB servers or an informative text.
+ * Composable function to display the saved SMB servers or an informative text.
+
+ * @param modifier Modifier for customizing the layout of the HomeScreen.
+ * @param handleFABClick Callback function to handle when user wants to create a new SMB server.
+ * @param handleItemClick Callback function invoked when an item is clicked. SMBServerId of the clicked item is returned.
+ * @param viewModel The [HomeViewModel] used to manage and retrieve data for the home screen.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navigateToItemEntry: () -> Unit,
-    navigateToItemUpdate: (Int) -> Unit,
+    handleFABClick: () -> Unit,
+    handleItemClick: (Int) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-
-    Scaffold(modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { _ -> }
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SyncFilesTopAppBar(
                 title = stringResource(id = HomeDestination.titleRes),
-                canNavigateBack = false,
+                canNavBack = false,
                 scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = navigateToItemEntry,
+                onClick = handleFABClick,
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
             ) {
@@ -81,25 +99,35 @@ fun HomeScreen(
             }
         }
     ) { innerPadding ->
+        if (ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                launcher.launch(POST_NOTIFICATIONS)
+            }
+        }
         HomeBody(
-            serverList = homeUiState.sharedServerList,
-            onItemClick = navigateToItemUpdate,
             modifier = modifier
                 .padding(innerPadding)
-                .fillMaxSize()
+                .fillMaxSize(),
+            servers = homeUiState.sharedServers,
+            onItemClick = handleItemClick
         )
     }
-
 }
 
-
+/**
+ * Composable function to display the list of saved SMB items.
+ *
+ * @param modifier Modifier for customizing the layout and appearance of the HomeBody.
+ * @param servers A list of SmbServerInfo objects to display.
+ * @param onItemClick Callback function invoked when an item is clicked. SMBServerId of the clicked item is returned.
+ */
 @Composable
-fun HomeBody(serverList: List<SmbServerInfo>, onItemClick: (Int) -> Unit, modifier: Modifier = Modifier) {
+fun HomeBody(modifier: Modifier = Modifier, servers: List<SmbServerInfo>, onItemClick: (Int) -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        if (serverList.isEmpty()) {
+        if (servers.isEmpty()) {
             Text(
                 text = stringResource(R.string.info_no_smb_connections),
                 textAlign = TextAlign.Center,
@@ -107,31 +135,43 @@ fun HomeBody(serverList: List<SmbServerInfo>, onItemClick: (Int) -> Unit, modifi
             )
         } else {
             ServerList(
-                itemList = serverList,
-                onItemClick = { onItemClick(it.smbServerId) },
+                servers = servers,
+                handleClick = { onItemClick(it.smbServerId) },
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.small_padding))
             )
         }
     }
 }
 
+/**
+ * Composable function to display a list of SMB servers.
+ *
+ * @param servers The list of SMB servers to display.
+ * @param handleClick A callback function that handles item clicks when a server is selected. Returns the server object which was clicked.
+ * @param modifier Modifier for customizing the layout and appearance of the ServerList.
+ */
 @Composable
-fun ServerList(itemList: List<SmbServerInfo>, onItemClick: (SmbServerInfo) -> Unit, modifier: Modifier) {
+fun ServerList(servers: List<SmbServerInfo>, handleClick: (SmbServerInfo) -> Unit, modifier: Modifier) {
     LazyColumn(modifier = modifier) {
-        itemsIndexed(items = itemList) { index, item ->
-            TextItem(item = item, modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.small_padding))
-                .clickable { onItemClick(item) })
+        itemsIndexed(items = servers) { index, server ->
+            ServerItem(
+                server = server,
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.small_padding))
+                    .clickable { handleClick(server) }
+            )
         }
     }
 }
 
 /**
- * A single Card that displays [SmbServerInfo].
- * @param item to display
+ * Composable function to display information about a single SMB server.
+ *
+ * @param server A SMB server to be displayed.
+ * @param modifier Modifier for customizing the layout and appearance of the ServerItem.
  */
 @Composable
-fun TextItem(item: SmbServerInfo, modifier: Modifier = Modifier) {
+fun ServerItem(server: SmbServerInfo, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -143,16 +183,16 @@ fun TextItem(item: SmbServerInfo, modifier: Modifier = Modifier) {
                 .padding(vertical = 10.dp, horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = item.serverUrl, style = MaterialTheme.typography.labelLarge)
+            Text(text = server.serverAddress, style = MaterialTheme.typography.labelLarge)
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun TextItemPreview() {
+fun ServerItemPreview() {
     SyncFilesTheme {
-        TextItem(
+        ServerItem(
             SmbServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir")
         )
     }
@@ -163,7 +203,10 @@ fun TextItemPreview() {
 fun HomeBodyPreview() {
     SyncFilesTheme {
         HomeBody(
-            listOf(SmbServerInfo(1, "url1", "usr1", "pas1"), SmbServerInfo(2, "url2", "usr2", "pas2")),
+            servers = listOf(
+                SmbServerInfo(1, "url1", "usr1", "pas1", "shared-folder"),
+                SmbServerInfo(2, "url2", "usr2", "pas2", "shared-folder")
+            ),
             onItemClick = {}
         )
     }
@@ -174,7 +217,7 @@ fun HomeBodyPreview() {
 fun HomeBodyEmptyListPreview() {
     SyncFilesTheme {
         HomeBody(
-            listOf(),
+            servers = listOf(),
             onItemClick = {}
         )
     }

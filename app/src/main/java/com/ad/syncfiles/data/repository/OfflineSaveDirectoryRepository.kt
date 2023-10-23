@@ -3,6 +3,11 @@ package com.ad.syncfiles.data.repository
 import com.ad.syncfiles.data.dao.SavedDirectoryDao
 import com.ad.syncfiles.data.entity.DirectoryInfo
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 class OfflineSaveDirectoryRepository(private val savedDirectoryDao: SavedDirectoryDao) : SaveDirectoryRepository {
 
     /**
@@ -10,6 +15,8 @@ class OfflineSaveDirectoryRepository(private val savedDirectoryDao: SavedDirecto
      */
     override fun getAllSavedDirectoriesStream(smbServerId: Int) =
         savedDirectoryDao.getSmbServerWithDirectories(smbServerId)
+
+    override suspend fun isDirectorySaved(smbServerId: Int, dirPath: String): Boolean = savedDirectoryDao.isDirectorySaved(smbServerId, dirPath)
 
     /**
      * @see SaveDirectoryRepository.upsertDirectory
