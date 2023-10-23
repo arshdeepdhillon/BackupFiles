@@ -3,6 +3,11 @@ package com.ad.syncfiles.data.repository
 import com.ad.syncfiles.data.entity.SmbServerInfo
 import kotlinx.coroutines.flow.Flow
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 /**
  * Repository that provides data access to [SmbServerInfo].
  */
@@ -38,4 +43,10 @@ interface SmbServerInfoRepository {
      */
     suspend fun deleteSmbServer(smbServerInfo: SmbServerInfo)
 
+    /**
+     * Retrieves a an [SmbServerInfo] object with the specified [id].
+     * @param id The unique identifier of the SMB server to retrieve.
+     * @return A [SmbServerInfo] object.
+     */
+    suspend fun getSmbServer(toInt: Int): SmbServerInfo
 }

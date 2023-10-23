@@ -1,4 +1,4 @@
-package com.ad.syncfiles.ui.lists
+package com.ad.syncfiles.ui.utils
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,15 +19,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.documentfile.provider.DocumentFile
 import com.ad.syncfiles.R
+import java.io.File
 import java.text.DateFormat
 import java.util.Locale
+
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
 
 /**
  * Displays the given list of data in a single column
@@ -63,7 +68,6 @@ fun ItemDetails(itemName: String, modifier: Modifier = Modifier, modifiedTime: L
         Card(
             modifier = modifier
                 .fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             shape = RoundedCornerShape(size = 6.dp)
         ) {
@@ -116,7 +120,7 @@ fun formatDate(timestampMillis: Long): String {
 @Preview(showBackground = true)
 @Composable
 fun ItemListBodyPreview() {
-//    ItemListBody(
-//        fileList = (0..10).toList().map { File("temp${it}") }
-//    )
+    ItemListBody(
+        fileList = (0..10).toList().map { DocumentFile.fromFile(File("temp${it}")) }
+    )
 }

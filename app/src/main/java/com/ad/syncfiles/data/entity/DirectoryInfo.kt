@@ -6,6 +6,10 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
 
 @Entity(
     tableName = "directory_info",

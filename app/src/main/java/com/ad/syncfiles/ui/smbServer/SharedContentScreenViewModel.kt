@@ -13,9 +13,11 @@ import androidx.work.WorkRequest.Companion.MIN_BACKOFF_MILLIS
 import androidx.work.workDataOf
 import com.ad.syncfiles.data.entity.DirectoryInfo
 import com.ad.syncfiles.data.repository.SaveDirectoryRepository
-import com.ad.syncfiles.data.repository.SmbServerInfoRepository
+import com.ad.syncfiles.worker.BACK_UP_FILES_TAG
 import com.ad.syncfiles.worker.BACK_UP_FILES_WORK_NAME
 import com.ad.syncfiles.worker.BackupFilesWorker
+import com.ad.syncfiles.worker.DIR_URI_KEY
+import com.ad.syncfiles.worker.SMB_SERVER_KEY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,14 +27,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
-val TAG = "SharedContentScreenViewModel"
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 
 /**
  * Displays content from SMB server.
  */
 class SharedContentScreenViewModel(
     stateHandle: SavedStateHandle,
-    private val serverInfoRepo: SmbServerInfoRepository,
     private val saveDirRepo: SaveDirectoryRepository,
     private val appContext: Context,
 ) : ViewModel() {
@@ -74,7 +79,6 @@ class SharedContentScreenViewModel(
             runBackupWorker(contentUri)
             if (!saveDirRepo.isDirectorySaved(smbServerId, contentUri.toString())) {
                 addBackupDirInfo(contentUri)
-//                runBackupWorker(contentUri)
                 return@withContext true
             }
             return@withContext true
@@ -93,9 +97,8 @@ class SharedContentScreenViewModel(
 
     private fun runBackupWorker(contentUri: Uri) {
         val backupWorker = OneTimeWorkRequestBuilder<BackupFilesWorker>()
-//            .setInputData(getWorkData())
-            .setInputData(workDataOf("DIR_URI" to contentUri.toString()))
-            .addTag("backup_files_tag")
+            .setInputData(workDataOf(DIR_URI_KEY to contentUri.toString(), SMB_SERVER_KEY to smbServerId.toString()))
+            .addTag(BACK_UP_FILES_TAG)
             .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
             .build()
         workManager.beginUniqueWork(
@@ -104,17 +107,6 @@ class SharedContentScreenViewModel(
             backupWorker
         ).enqueue()
     }
-
-
-//    private fun getWorkData(): Data {
-//        if (uiState.value.content.isNotEmpty()) {
-//            Log.d(TAG, "getWorkData size: " + uiState.value.content.size.toString())
-//            return workDataOf("DIR_URI" to uiState.value.content.first())
-//        } else {
-//            Log.d(TAG, "getWorkData size: empty")
-//            return workDataOf()
-//        }
-//    }
 }
 
 data class SMBContentUiState(

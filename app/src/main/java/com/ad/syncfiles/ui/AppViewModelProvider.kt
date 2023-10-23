@@ -13,6 +13,11 @@ import com.ad.syncfiles.ui.smbServer.DetailScreenViewModel
 import com.ad.syncfiles.ui.smbServer.EditScreenViewModel
 import com.ad.syncfiles.ui.smbServer.SharedContentScreenViewModel
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 object AppViewModelProvider {
     val Factory = viewModelFactory {
 
@@ -45,7 +50,6 @@ object AppViewModelProvider {
         initializer {
             SharedContentScreenViewModel(
                 this.createSavedStateHandle(),
-                syncFilesApplication().container.smbServerRepository,
                 syncFilesApplication().container.saveDirectoryRepository,
                 syncFilesApplication().applicationContext
             )

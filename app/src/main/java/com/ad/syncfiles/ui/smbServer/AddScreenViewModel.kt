@@ -4,73 +4,94 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.ad.syncfiles.data.entity.SmbServerDto
 import com.ad.syncfiles.data.entity.SmbServerInfo
 import com.ad.syncfiles.data.repository.SmbServerInfoRepository
+import com.ad.syncfiles.smb.SMBClientWrapper
+
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
 
 class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
+    private val TAG = AddScreenViewModel::class.java.simpleName
+
+    private val smb = SMBClientWrapper()
+
     /**
      * Holds current UI state
      */
-    var uiState by mutableStateOf(DeviceDetailsUiState())
+    var uiState by mutableStateOf(ServerInfoUiState())
         private set
 
 
-    fun updateUiState(deviceDetails: SharedDeviceDetails) {
-        uiState = DeviceDetailsUiState(deviceDetails = deviceDetails, isEntryValid = validateInput(deviceDetails))
+    /**
+     * Syncs the UI state with the given [deviceDetails] and determines whether the input is valid.
+     * Typically used to update the internal state in response to changes in [AddScreen].
+     *
+     * @param deviceDetails The server details to update the UI state with.
+     */
+    fun handleUiStateChange(deviceDetails: ServerDetails) {
+        uiState = ServerInfoUiState(serverDetails = deviceDetails, isValid = validateInput(deviceDetails))
     }
 
-    private fun validateInput(deviceDetails: SharedDeviceDetails = uiState.deviceDetails): Boolean {
+    private fun validateInput(deviceDetails: ServerDetails = uiState.serverDetails): Boolean {
         return with(deviceDetails) {
-            serverUrl.isNotBlank()
+            serverAddress.isNotBlank()
         }
     }
 
+    /**
+     * Asynchronously saves the SMB server information after validating the input.
+     */
     suspend fun save() {
         if (validateInput()) {
-            serverInfoRepo.upsertSmbServer(uiState.deviceDetails.toSmbServerInfo())
+            serverInfoRepo.upsertSmbServer(uiState.serverDetails.toSmbServerInfo())
         }
     }
 }
 
 /**
- * Represents Ui State of [SharedDeviceDetails].
+ * Represents Ui State of [ServerDetails].
  */
-data class DeviceDetailsUiState(
-    val deviceDetails: SharedDeviceDetails = SharedDeviceDetails(),
-    val isEntryValid: Boolean = false,
+data class ServerInfoUiState(
+    val serverDetails: ServerDetails = ServerDetails(),
+    val isValid: Boolean = false,
 )
 
-data class SharedDeviceDetails(
+fun ServerInfoUiState.toDto(): SmbServerDto {
+    this.serverDetails.let {
+        return SmbServerDto(username = it.username, password = it.password, serverAddress = it.serverAddress, sharedFolder = it.sharedFolderName)
+    }
+}
+
+data class ServerDetails(
     val id: Int = 0,
-    val serverUrl: String = "",
+    val serverAddress: String = "",
     val username: String = "",
     val password: String = "",
     val sharedFolderName: String = "",
 )
 
 /**
- * Extension function to convert [DeviceDetailsUiState] to [SmbServerInfo].
+ * Extension function to convert [ServerInfoUiState] to [SmbServerInfo].
  */
-fun SharedDeviceDetails.toSmbServerInfo(): SmbServerInfo = SmbServerInfo(
+fun ServerDetails.toSmbServerInfo(): SmbServerInfo = SmbServerInfo(
     smbServerId = id,
-    serverUrl = serverUrl,
+    serverAddress = serverAddress,
     username = username,
     password = password,
     sharedFolderName = sharedFolderName
 )
 
 /**
- * Extension function to convert [DeviceDetailsUiState] to [SmbServerInfo].
+ * Extension function to convert [ServerInfoUiState] to [SmbServerInfo].
  */
-fun SmbServerInfo.toDetails(): SharedDeviceDetails = SharedDeviceDetails(
+fun SmbServerInfo.toDetails(): ServerDetails = ServerDetails(
     id = smbServerId,
-    serverUrl = serverUrl,
+    serverAddress = serverAddress,
     username = username,
     password = password,
     sharedFolderName = sharedFolderName
-)
-
-fun SmbServerInfo.toUiState(isEntryValid: Boolean): DeviceDetailsUiState = DeviceDetailsUiState(
-    deviceDetails = this.toDetails(),
-    isEntryValid = isEntryValid
 )

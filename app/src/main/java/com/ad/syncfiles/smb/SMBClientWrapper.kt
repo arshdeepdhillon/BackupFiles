@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.documentfile.provider.DocumentFile
+import com.ad.syncfiles.data.entity.SmbServerDto
+import com.ad.syncfiles.smb.api.SMBClientApi
 import com.hierynomus.msdtyp.AccessMask
 import com.hierynomus.msfscc.FileAttributes
 import com.hierynomus.mssmb2.SMB2CreateDisposition
@@ -18,9 +20,19 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.Deque
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
 
-class SMB : SMBApi {
-    private val TAG = SMB::class.java.simpleName
+/**
+ * This wrapper class serves as an interface to interact with SMB servers and provides
+ * methods for various SMB-related operations.
+ *
+ * @see SMBClientApi
+ */
+class SMBClientWrapper : SMBClientApi {
+    private val TAG = SMBClientWrapper::class.java.simpleName
 
     companion object {
         @Volatile
@@ -36,53 +48,20 @@ class SMB : SMBApi {
     }
 
     /**
-     * Get a DiskShare.
-     *
-     * @return A DiskShare instance.
-     * @throws IOException If the connection could not be established.
+     * Connects to a network share on a remote server using the provided credentials.
+     * @param username The username for authentication.
+     * @param password The password for authentication.
+     * @param serverAddress The address of the remote server.
+     * @param sharedFolder The name of the shared folder to connect to.
+     * @return A [DiskShare] representing the connected share.
+     * @throws IOException if an I/O error occurs during the connection.
      */
     @Throws(IOException::class)
-    private fun getDiskShare(): DiskShare {
-        val ac = AuthenticationContext("ad", "adhil8211".toCharArray(), "WORKGROUP")
-        return getInstance().connect("192.168.1.95").authenticate(ac).connectShare("shared-folder") as DiskShare
+    private fun getDiskShare(username: String, password: String, serverAddress: String, sharedFolder: String): DiskShare {
+        val ac = AuthenticationContext(username, password.toCharArray(), "WORKGROUP")
+        return getInstance().connect(serverAddress).authenticate(ac).connectShare(sharedFolder) as DiskShare
     }
 
-
-    /**
-     * Copies the files and its subdirectories from the specified [uri] and saves it (TODO) to the provided SMB server.
-     *
-     * @param context The Android context used for accessing resources and file operations.
-     * @param uri The [Uri] representing the folder to be saved.
-     */
-    override suspend fun saveFolder(context: Context, uri: Uri) {
-        val dirName = FileUtils.getDirName(context, uri) ?: return
-        val dirContentList: Deque<DocumentFile> = FileUtils.getFilesInDir(context, uri)
-
-        if (dirContentList.isEmpty()) {
-            return
-        }
-        getDiskShare().use { diskShare ->
-            Log.d(TAG, "Folder exists on SMB server?: " + diskShare.folderExists(dirName))
-            //Create the directory
-            diskShare.openDirectory(
-                dirName,
-                setOf<AccessMask>(AccessMask.FILE_WRITE_DATA),
-                setOf<FileAttributes>(FileAttributes.FILE_ATTRIBUTE_NORMAL),
-                setOf<SMB2ShareAccess>(SMB2ShareAccess.FILE_SHARE_WRITE),
-                SMB2CreateDisposition.FILE_OPEN_IF,
-                setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY)
-            )
-            var path: String
-            while (dirContentList.isNotEmpty()) {
-                Log.d(TAG, "Files remaining ${dirContentList.size}")
-                val docOnDevice = dirContentList.poll()
-                // We should have read permission (on Uri) at this point, if not (then 'name' will be null) then complain loudly
-                path = "$dirName\\${docOnDevice!!.name}"
-                saveSingleFile(context, docOnDevice, path, diskShare)
-            }
-        }
-
-    }
 
     /**
      * Saves a single file from a DocumentFile to a specified path on SMB server using a provided DiskShare.
@@ -133,5 +112,49 @@ class SMB : SMBApi {
                 }
             }
         }
+    }
+
+    override suspend fun saveFolder(context: Context, smbServerDto: SmbServerDto, folderToSave: Uri) {
+        val (username, password, serverAddress, sharedFolder) = smbServerDto
+        val dirName = FileUtils.getDirName(context, folderToSave) ?: return
+        val dirContentList: Deque<DocumentFile> = FileUtils.getFilesInDir(context, folderToSave)
+
+        if (dirContentList.isEmpty()) {
+            return
+        }
+        AuthenticationContext(username, password.toCharArray(), "WORKGROUP")
+        getDiskShare(username, password, serverAddress, sharedFolder).use { diskShare ->
+            Log.d(TAG, "Folder exists on SMB server?: " + diskShare.folderExists(dirName))
+            //Create the directory
+            diskShare.openDirectory(
+                dirName,
+                setOf<AccessMask>(AccessMask.FILE_WRITE_DATA),
+                setOf<FileAttributes>(FileAttributes.FILE_ATTRIBUTE_NORMAL),
+                setOf<SMB2ShareAccess>(SMB2ShareAccess.FILE_SHARE_WRITE),
+                SMB2CreateDisposition.FILE_OPEN_IF,
+                setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY)
+            )
+            var path: String
+            while (dirContentList.isNotEmpty()) {
+                Log.d(TAG, "Files remaining ${dirContentList.size}")
+                val docOnDevice = dirContentList.poll()
+                // We should have read permission (on Uri) at this point, if not (then 'name' will be null) then complain loudly
+                path = "$dirName\\${docOnDevice!!.name}"
+                saveSingleFile(context, docOnDevice, path, diskShare)
+            }
+        }
+
+    }
+
+    override suspend fun canConnect(smbServerDto: SmbServerDto): Boolean {
+        val (username, password, serverAddress, sharedFolder) = smbServerDto
+        try {
+            getDiskShare(username, password, serverAddress, sharedFolder).use {
+                return true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to connect with SMB server", e)
+        }
+        return false
     }
 }

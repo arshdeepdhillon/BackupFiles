@@ -4,6 +4,11 @@ import com.ad.syncfiles.data.dao.SmbServerDao
 import com.ad.syncfiles.data.entity.SmbServerInfo
 import kotlinx.coroutines.flow.Flow
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 class OfflineSmbServerRepository(private val smbServerDao: SmbServerDao) : SmbServerInfoRepository {
 
     /**
@@ -14,7 +19,12 @@ class OfflineSmbServerRepository(private val smbServerDao: SmbServerDao) : SmbSe
     /**
      * @see SmbServerInfoRepository.getSmbServerStream
      */
-    override fun getSmbServerStream(id: Int): Flow<SmbServerInfo?> = smbServerDao.getById(id)
+    override fun getSmbServerStream(id: Int): Flow<SmbServerInfo?> = smbServerDao.getByIdStream(id)
+
+    /**
+     * @see SmbServerInfoRepository.getSmbServer
+     */
+    override suspend fun getSmbServer(id: Int): SmbServerInfo = smbServerDao.getById(id)
 
     /**
      * @see SmbServerInfoRepository.upsertSmbServer

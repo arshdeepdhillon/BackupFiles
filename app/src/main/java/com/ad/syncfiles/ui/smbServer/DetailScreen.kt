@@ -45,6 +45,11 @@ import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
 import kotlinx.coroutines.launch
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 
 /**
  * A stateless singleton representing navigation details
@@ -63,9 +68,9 @@ object DetailScreenDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
-    navigateBack: () -> Unit,
-    navigateToEditItem: (Int) -> Unit,
-    navigateToSharedContent: (Int) -> Unit,
+    handleNavBack: () -> Unit,
+    handleItemClicked: (Int) -> Unit,
+    handleConnect: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DetailScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
@@ -75,13 +80,13 @@ fun DetailScreen(
         topBar = {
             SyncFilesTopAppBar(
                 title = stringResource(DetailScreenDestination.titleRes),
-                canNavigateBack = true,
-                navigateUp = navigateBack
+                canNavBack = true,
+                onNavUp = handleNavBack
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navigateToEditItem(uiState.value.deviceDetails.id) },
+                onClick = { handleItemClicked(uiState.value.deviceDetails.id) },
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
             ) {
@@ -92,13 +97,13 @@ fun DetailScreen(
     ) { innerPadding ->
         DetailBody(
             uiState = uiState.value,
-            onDelete = {
+            handleDelete = {
                 coroutineScope.launch {
                     viewModel.deleteSmbServer()
-                    navigateBack()
+                    handleNavBack()
                 }
             },
-            onConnect = { navigateToSharedContent(uiState.value.deviceDetails.id) },
+            handleConnect = { handleConnect(uiState.value.deviceDetails.id) },
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
@@ -107,45 +112,51 @@ fun DetailScreen(
 }
 
 @Composable
-fun DetailBody(uiState: DetailUIState, onDelete: () -> Unit, modifier: Modifier = Modifier, onConnect: () -> Unit) {
+fun DetailBody(uiState: DetailUIState, handleDelete: () -> Unit, modifier: Modifier = Modifier, handleConnect: () -> Unit) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.small_padding)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.medium_padding)),
     ) {
-        var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
-        ItemDetail(item = uiState.deviceDetails.toSmbServerInfo(), modifier = Modifier.fillMaxWidth())
+        var isDeleteDialogActive by rememberSaveable { mutableStateOf(false) }
+        ServerDetails(item = uiState.deviceDetails.toSmbServerInfo(), modifier = Modifier.fillMaxWidth())
         Row(
             modifier = Modifier
                 .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
-                onClick = { deleteConfirmationRequired = true },
+                onClick = { isDeleteDialogActive = true },
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(stringResource(R.string.delete))
             }
             Button(
-                onClick = onConnect,
+                onClick = handleConnect,
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(stringResource(id = R.string.connect))
             }
         }
-        if (deleteConfirmationRequired) {
-            DeleteConfirmationDialog(
-                onDeleteConfirm = {
-                    deleteConfirmationRequired = false
-                    onDelete()
+        if (isDeleteDialogActive) {
+            DeleteAlert(
+                handleAccept = {
+                    isDeleteDialogActive = false
+                    handleDelete()
                 },
-                onDeleteCancel = { deleteConfirmationRequired = false },
+                handleCancel = { isDeleteDialogActive = false },
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
             )
         }
     }
 }
 
+/**
+ * Composable function to display details of a server.
+ *
+ * @param item The server information to display.
+ * @param modifier Modifier for customizing the layout.
+ */
 @Composable
-fun ItemDetail(item: SmbServerInfo, modifier: Modifier) {
+fun ServerDetails(item: SmbServerInfo, modifier: Modifier) {
     Card(
         modifier = modifier, colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -156,21 +167,21 @@ fun ItemDetail(item: SmbServerInfo, modifier: Modifier) {
             modifier = modifier.padding(dimensionResource(id = R.dimen.small_padding)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_padding))
         ) {
-            ItemDetailsRow(
+            DetailRow(
                 labelResID = R.string.server_url,
-                itemDetail = item.serverUrl,
+                itemDetail = item.serverAddress,
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(id = R.dimen.small_padding)
                 )
             )
-            ItemDetailsRow(
+            DetailRow(
                 labelResID = R.string.username,
                 itemDetail = item.username,
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(id = R.dimen.small_padding)
                 )
             )
-            ItemDetailsRow(
+            DetailRow(
                 labelResID = R.string.shared_folder_name,
                 itemDetail = item.sharedFolderName,
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.small_padding))
@@ -180,8 +191,15 @@ fun ItemDetail(item: SmbServerInfo, modifier: Modifier) {
     }
 }
 
+/**
+ * Composable function to display a single detail row within the [ServerDetails].
+ *
+ * @param labelResID The [StringRes] for the label.
+ * @param itemDetail The specific detail information to be displayed.
+ * @param modifier Modifier for customizing the layout.
+ */
 @Composable
-private fun ItemDetailsRow(
+private fun DetailRow(
     @StringRes labelResID: Int, itemDetail: String, modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
@@ -191,19 +209,26 @@ private fun ItemDetailsRow(
     }
 }
 
+/**
+ * Composable function to display a delete confirmation alert dialog.
+ *
+ * @param handleAccept Callback function to handle the user's acceptance of the delete action.
+ * @param handleCancel Callback function to handle the user's cancellation of the delete action.
+ * @param modifier Modifier for customizing the layout.
+ */
 @Composable
-fun DeleteConfirmationDialog(onDeleteConfirm: () -> Unit, onDeleteCancel: () -> Unit, modifier: Modifier) {
+fun DeleteAlert(handleAccept: () -> Unit, handleCancel: () -> Unit, modifier: Modifier) {
     AlertDialog(onDismissRequest = { /* Do nothing */ },
         title = { Text(stringResource(R.string.attention)) },
         text = { Text(stringResource(R.string.delete_question)) },
         modifier = modifier,
         dismissButton = {
-            TextButton(onClick = onDeleteCancel) {
+            TextButton(onClick = handleCancel) {
                 Text(text = stringResource(R.string.no))
             }
         },
         confirmButton = {
-            TextButton(onClick = onDeleteConfirm) {
+            TextButton(onClick = handleAccept) {
                 Text(text = stringResource(R.string.yes))
             }
         }
@@ -215,13 +240,13 @@ fun DeleteConfirmationDialog(onDeleteConfirm: () -> Unit, onDeleteCancel: () -> 
 fun DetailScreenPreview() {
     SyncFilesTheme {
         DetailBody(uiState = DetailUIState(
-            deviceDetails = SharedDeviceDetails(
-                serverUrl = "192.123.123.123",
+            deviceDetails = ServerDetails(
+                serverAddress = "192.123.123.123",
                 username = "Editing name",
                 password = "Editing pass",
                 sharedFolderName = "Editing really long shared directory name"
             )
-        ), onDelete = { }, onConnect = {})
+        ), handleDelete = { }, handleConnect = {})
     }
 }
 
@@ -229,6 +254,6 @@ fun DetailScreenPreview() {
 @Composable
 fun DeleteConfirmationDialogPreview() {
     SyncFilesTheme {
-        DeleteConfirmationDialog(onDeleteConfirm = { }, onDeleteCancel = { }, modifier = Modifier)
+        DeleteAlert(handleAccept = { }, handleCancel = { }, modifier = Modifier)
     }
 }

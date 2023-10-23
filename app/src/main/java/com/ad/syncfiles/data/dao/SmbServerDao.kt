@@ -7,6 +7,11 @@ import androidx.room.Upsert
 import com.ad.syncfiles.data.entity.SmbServerInfo
 import kotlinx.coroutines.flow.Flow
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
+
 /**
  * DAO of [SmbServerInfo] database
  */
@@ -23,6 +28,8 @@ interface SmbServerDao {
     fun getByAddedDate(): Flow<List<SmbServerInfo>>
 
     @Query("SELECT * FROM smb_server_info WHERE smbServerId = :id LIMIT 1")
-    fun getById(id: Int): Flow<SmbServerInfo>
+    fun getByIdStream(id: Int): Flow<SmbServerInfo>
 
+    @Query("SELECT * FROM smb_server_info WHERE smbServerId = :id LIMIT 1")
+    fun getById(id: Int): SmbServerInfo
 }

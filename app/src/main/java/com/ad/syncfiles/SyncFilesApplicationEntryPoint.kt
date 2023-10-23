@@ -11,6 +11,10 @@ import com.ad.syncfiles.worker.CHANNEL_DESC
 import com.ad.syncfiles.worker.CHANNEL_ID
 import com.ad.syncfiles.worker.CHANNEL_NAME
 
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
 class SyncFilesApplicationEntryPoint : Application() {
 
     lateinit var container: AppContainer

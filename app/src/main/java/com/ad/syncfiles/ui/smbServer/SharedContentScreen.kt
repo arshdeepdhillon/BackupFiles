@@ -29,10 +29,15 @@ import com.ad.syncfiles.SyncFilesTopAppBar
 import com.ad.syncfiles.Util
 import com.ad.syncfiles.data.entity.SmbServerInfo
 import com.ad.syncfiles.ui.AppViewModelProvider
-import com.ad.syncfiles.ui.lists.ItemListBody
 import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
+import com.ad.syncfiles.ui.utils.ItemListBody
 import kotlinx.coroutines.launch
+
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
 
 
 /**
@@ -60,7 +65,7 @@ object SharedContentScreenDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SharedContentScreen(
-    onNavigateUp: () -> Unit,
+    handleNavUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SharedContentScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
@@ -86,8 +91,8 @@ fun SharedContentScreen(
         topBar = {
             SyncFilesTopAppBar(
                 title = stringResource(SharedContentScreenDestination.titleRes),
-                canNavigateBack = true,
-                navigateUp = onNavigateUp
+                canNavBack = true,
+                onNavUp = handleNavUp
             )
         },
         floatingActionButton = {
@@ -124,7 +129,7 @@ fun getDocument(context: Context, uriPaths: List<String>): List<DocumentFile> {
 @Composable
 fun SharedContentScreenPreview() {
     SyncFilesTheme {
-        SharedContentScreen(onNavigateUp = {})
+        SharedContentScreen(handleNavUp = {})
     }
 }
 

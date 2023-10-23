@@ -9,10 +9,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -25,7 +23,13 @@ import com.ad.syncfiles.SyncFilesTopAppBar
 import com.ad.syncfiles.ui.AppViewModelProvider
 import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
+import com.ad.syncfiles.ui.utils.InputForm
 import kotlinx.coroutines.launch
+
+/*
+ * @author : Arshdeep Dhillon
+ * @created : 23-Oct-23
+ */
 
 
 /**
@@ -36,12 +40,20 @@ object AddScreenDestination : NavigationDestination {
     override val titleRes = R.string.smb_server_add_title
 }
 
+/**
+ * Composable function to display the Add Screen.
+ *
+ * @param handleNavBack Callback function to handle navigating back to the previous screen.
+ * @param handleNavUp Callback function to handle navigating up within the screen hierarchy.
+ * @param canNavBack Flag indicating whether the user can navigate back to the previous screen.
+ * @param viewModel The [AddScreenViewModel] used for managing the data and logic of the Add Screen.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddScreen(
-    navigateBack: () -> Unit,
-    onNavigateUp: () -> Unit,
-    canNavigateBack: Boolean = true,
+    handleNavBack: () -> Unit,
+    handleNavUp: () -> Unit,
+    canNavBack: Boolean = true,
     viewModel: AddScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -49,18 +61,18 @@ fun AddScreen(
         topBar = {
             SyncFilesTopAppBar(
                 title = stringResource(AddScreenDestination.titleRes),
-                canNavigateBack = canNavigateBack,
-                navigateUp = onNavigateUp
+                canNavBack = canNavBack,
+                onNavUp = handleNavUp
             )
         }
     ) { innerPadding ->
-        Body(
-            deviceDetailsUiState = viewModel.uiState,
-            onDeviceDetailsValueChange = viewModel::updateUiState,
+        AddScreenBody(
+            uiState = viewModel.uiState,
+            onFieldChange = viewModel::handleUiStateChange,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.save()
-                    navigateBack()
+                    handleNavBack()
                 }
             },
             modifier = Modifier
@@ -72,10 +84,19 @@ fun AddScreen(
 
 }
 
+
+/**
+ * Composable function to display the body of an "Add Screen".
+ *
+ * @param uiState The UI state representing the latest server information.
+ * @param onFieldChange Callback function to handle changes in the UI fields.
+ * @param onSaveClick Callback function to handle the "Save" button click.
+ * @param modifier Modifier for customizing the layout of the AddScreenBody.
+ */
 @Composable
-fun Body(
-    deviceDetailsUiState: DeviceDetailsUiState,
-    onDeviceDetailsValueChange: (SharedDeviceDetails) -> Unit,
+fun AddScreenBody(
+    uiState: ServerInfoUiState,
+    onFieldChange: (ServerDetails) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -84,13 +105,13 @@ fun Body(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding))
     ) {
         InputForm(
-            sharedDirDetail = deviceDetailsUiState.deviceDetails,
-            onValueChange = onDeviceDetailsValueChange,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            sharedDirDetail = uiState.serverDetails,
+            onFieldChange = onFieldChange
         )
         Button(
             onClick = onSaveClick,
-            enabled = deviceDetailsUiState.isEntryValid,
+            enabled = uiState.isValid,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -99,90 +120,21 @@ fun Body(
     }
 }
 
-@Composable
-fun InputForm(
-    sharedDirDetail: SharedDeviceDetails,
-    onValueChange: (SharedDeviceDetails) -> Unit = {},
-    modifier: Modifier,
-    enabled: Boolean = true,
-) {
-    Column(
-        modifier = modifier, verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.medium_padding))
-    ) {
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = sharedDirDetail.serverUrl,
-            onValueChange = { onValueChange(sharedDirDetail.copy(serverUrl = it)) },
-            label = { Text(stringResource(R.string.server_url_req)) },
-            singleLine = true,
-            enabled = enabled,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            )
-        )
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = sharedDirDetail.username,
-            onValueChange = { onValueChange(sharedDirDetail.copy(username = it)) },
-            label = { Text(stringResource(R.string.username)) },
-            singleLine = true,
-            enabled = enabled,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            )
-        )
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = sharedDirDetail.password,
-            onValueChange = { onValueChange(sharedDirDetail.copy(password = it)) },
-            label = { Text(stringResource(R.string.password)) },
-            singleLine = true,
-            enabled = enabled,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            )
-        )
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = sharedDirDetail.sharedFolderName,
-            onValueChange = { onValueChange(sharedDirDetail.copy(sharedFolderName = it)) },
-            label = { Text(stringResource(R.string.shared_folder_name_req)) },
-            singleLine = true,
-            enabled = enabled,
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-            )
-        )
-        if (enabled) {
-            Text(
-                text = stringResource(R.string.required_fields),
-                modifier = Modifier.padding(start = dimensionResource(id = R.dimen.medium_padding))
-            )
-        }
-
-    }
-
-}
-
 @Preview(showBackground = true)
 @Composable
 fun AddScreenPreview() {
     SyncFilesTheme {
-        Body(deviceDetailsUiState = DeviceDetailsUiState(
-            SharedDeviceDetails(
-                serverUrl = "192.123.123.123",
-                username = "Adding username",
-                password = "Adding password",
-                sharedFolderName = "SomeSharedFolderName"
-            )
-        ), onDeviceDetailsValueChange = {}, onSaveClick = { })
+        AddScreenBody(
+            uiState = ServerInfoUiState(
+                ServerDetails(
+                    serverAddress = "192.123.123.123",
+                    username = "Adding username",
+                    password = "Adding password",
+                    sharedFolderName = "SomeSharedFolderName"
+                )
+            ),
+            onFieldChange = {},
+            onSaveClick = {}
+        )
     }
 }

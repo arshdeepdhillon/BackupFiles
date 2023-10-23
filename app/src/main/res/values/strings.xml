@@ -12,7 +12,7 @@
     <string name="cancel_connection">Cancel</string>
     <string name="info_no_smb_connections">Add a SMB server to view shared files</string>
     <string name="smb_server_add_title">Add Device Info</string>
-    <string name="smb_server_edit_title">Edit SMB Server Details</string>
+    <string name="smb_server_edit_title">Edit Server Details</string>
     <string name="smb_server_saved_title">Saved</string>
     <string name="smb_server_details_title">Details</string>
     <string name="back_button">Back</string>
@@ -23,7 +23,11 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="notification_title">"Monitoring Folders "</string>
-    <string name="notification_message">some detailed nm message</string>
+    <string name="connection_issue_with_smb">Connection Failed</string>
+    <string name="connection_success_with_smb">Connection Succeeded</string>
     <string name="failed_to_save_dir">Folder already saved. Choose another.</string>
     <string name="null_uri">Cannot save this folder. Choose another.</string>
+    <string name="shared_folder_placeholder">shared-folder</string>
+    <string name="server_address_placeholder">192.168.1.95</string>
+    <string name="Test">Test Connection</string>
 </resources>
