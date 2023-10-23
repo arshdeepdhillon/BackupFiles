@@ -48,19 +48,27 @@ class SharedContentScreenViewModel(
     /**
      * Holds current UI state
      */
-    var uiState: StateFlow<SMBContentUiState> = saveDirRepo.getAllSavedDirectoriesStream(smbServerId).filterNotNull().map { smbServerWithSavedDir ->
+    var uiState: StateFlow<SMBContentUiState> =
+        saveDirRepo.getAllSavedDirectoriesStream(smbServerId).filterNotNull()
+            .map { smbServerWithSavedDir ->
 
-        SMBContentUiState(
-            smbServerWithSavedDir.savedDirs.map { dir ->
-                dir.dirPath
-            }.toList()
-        )
-    }.stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS), initialValue = SMBContentUiState())
+                SMBContentUiState(
+                    smbServerWithSavedDir.savedDirs.map { dir ->
+                        dir.dirPath
+                    }.toList()
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                initialValue = SMBContentUiState()
+            )
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
-        private const val DOWNLOAD_PROVIDER_URI = "content://com.android.providers.downloads.documents/tree/downloads"
-        private const val DOWNLOAD_EXT_URI = "content://com.android.externalstorage.documents/tree/primary%3ADownload"
+        private const val DOWNLOAD_PROVIDER_URI =
+            "content://com.android.providers.downloads.documents/tree/downloads"
+        private const val DOWNLOAD_EXT_URI =
+            "content://com.android.externalstorage.documents/tree/primary%3ADownload"
 
         /** Maps __Provider__ content to __External storage__ */
         val PROVIDER_TO_EXT: Map<String, String> = mapOf(DOWNLOAD_PROVIDER_URI to DOWNLOAD_EXT_URI)
@@ -97,7 +105,12 @@ class SharedContentScreenViewModel(
 
     private fun runBackupWorker(contentUri: Uri) {
         val backupWorker = OneTimeWorkRequestBuilder<BackupFilesWorker>()
-            .setInputData(workDataOf(DIR_URI_KEY to contentUri.toString(), SMB_SERVER_KEY to smbServerId.toString()))
+            .setInputData(
+                workDataOf(
+                    DIR_URI_KEY to contentUri.toString(),
+                    SMB_SERVER_KEY to smbServerId.toString()
+                )
+            )
             .addTag(BACK_UP_FILES_TAG)
             .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
             .build()

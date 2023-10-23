@@ -22,11 +22,12 @@ class HomeViewModel(serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
     /**
      * Holds the state of [HomeUiState]. Items are retrieved from [SmbServerInfoRepository] and mapped to [HomeUiState]
      */
-    val homeUiState: StateFlow<HomeUiState> = serverInfoRepo.getAllSmbServersAscStream().map { HomeUiState(it) }.stateIn(
-        scope = viewModelScope, started = SharingStarted.WhileSubscribed(
-            TIMEOUT_MILLIS
-        ), initialValue = HomeUiState()
-    )
+    val homeUiState: StateFlow<HomeUiState> =
+        serverInfoRepo.getAllSmbServersAscStream().map { HomeUiState(it) }.stateIn(
+            scope = viewModelScope, started = SharingStarted.WhileSubscribed(
+                TIMEOUT_MILLIS
+            ), initialValue = HomeUiState()
+        )
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L

@@ -23,7 +23,12 @@ data class SmbServerInfo(
     val createdDate: Long = System.currentTimeMillis(),
 )
 
-data class SmbServerDto(val username: String, val password: String, val serverAddress: String, val sharedFolder: String)
+data class SmbServerDto(
+    val username: String,
+    val password: String,
+    val serverAddress: String,
+    val sharedFolder: String
+)
 
 fun SmbServerInfo.toDto(): SmbServerDto = SmbServerDto(
     serverAddress = this.serverAddress,

@@ -57,9 +57,15 @@ class SMBClientWrapper : SMBClientApi {
      * @throws IOException if an I/O error occurs during the connection.
      */
     @Throws(IOException::class)
-    private fun getDiskShare(username: String, password: String, serverAddress: String, sharedFolder: String): DiskShare {
+    private fun getDiskShare(
+        username: String,
+        password: String,
+        serverAddress: String,
+        sharedFolder: String
+    ): DiskShare {
         val ac = AuthenticationContext(username, password.toCharArray(), "WORKGROUP")
-        return getInstance().connect(serverAddress).authenticate(ac).connectShare(sharedFolder) as DiskShare
+        return getInstance().connect(serverAddress).authenticate(ac)
+            .connectShare(sharedFolder) as DiskShare
     }
 
 
@@ -76,7 +82,12 @@ class SMBClientWrapper : SMBClientApi {
      * @throws FileNotFoundException if there is no data associated with the [Uri] of [docOnDevice].
      */
     @Throws(SMBRuntimeException::class, IOException::class, FileNotFoundException::class)
-    private fun saveSingleFile(context: Context, docOnDevice: DocumentFile, path: String, diskShare: DiskShare) {
+    private fun saveSingleFile(
+        context: Context,
+        docOnDevice: DocumentFile,
+        path: String,
+        diskShare: DiskShare
+    ) {
         context.contentResolver.openInputStream(docOnDevice.uri).use { inStream ->
             if (inStream != null) {
                 // Create file on SMB server
@@ -114,7 +125,11 @@ class SMBClientWrapper : SMBClientApi {
         }
     }
 
-    override suspend fun saveFolder(context: Context, smbServerDto: SmbServerDto, folderToSave: Uri) {
+    override suspend fun saveFolder(
+        context: Context,
+        smbServerDto: SmbServerDto,
+        folderToSave: Uri
+    ) {
         val (username, password, serverAddress, sharedFolder) = smbServerDto
         val dirName = FileUtils.getDirName(context, folderToSave) ?: return
         val dirContentList: Deque<DocumentFile> = FileUtils.getFilesInDir(context, folderToSave)

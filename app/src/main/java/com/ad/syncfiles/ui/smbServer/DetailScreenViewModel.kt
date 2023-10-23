@@ -15,7 +15,10 @@ import kotlinx.coroutines.flow.stateIn
  * @created : 23-Oct-23
  */
 
-class DetailScreenViewModel(stateHandle: SavedStateHandle, private val serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
+class DetailScreenViewModel(
+    stateHandle: SavedStateHandle,
+    private val serverInfoRepo: SmbServerInfoRepository
+) : ViewModel() {
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
@@ -26,9 +29,14 @@ class DetailScreenViewModel(stateHandle: SavedStateHandle, private val serverInf
     /**
      * Holds current UI state
      */
-    var uiState: StateFlow<DetailUIState> = serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().map {
-        DetailUIState(deviceDetails = it.toDetails())
-    }.stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS), initialValue = DetailUIState())
+    var uiState: StateFlow<DetailUIState> =
+        serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().map {
+            DetailUIState(deviceDetails = it.toDetails())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = DetailUIState()
+        )
 
 
     suspend fun deleteSmbServer() {

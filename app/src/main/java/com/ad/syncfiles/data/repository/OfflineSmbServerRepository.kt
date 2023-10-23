@@ -14,7 +14,8 @@ class OfflineSmbServerRepository(private val smbServerDao: SmbServerDao) : SmbSe
     /**
      * @see SmbServerInfoRepository.getAllSmbServersAscStream
      */
-    override fun getAllSmbServersAscStream(): Flow<List<SmbServerInfo>> = smbServerDao.getByAddedDate()
+    override fun getAllSmbServersAscStream(): Flow<List<SmbServerInfo>> =
+        smbServerDao.getByAddedDate()
 
     /**
      * @see SmbServerInfoRepository.getSmbServerStream
@@ -29,10 +30,12 @@ class OfflineSmbServerRepository(private val smbServerDao: SmbServerDao) : SmbSe
     /**
      * @see SmbServerInfoRepository.upsertSmbServer
      */
-    override suspend fun upsertSmbServer(smbServerInfo: SmbServerInfo) = smbServerDao.upsert(smbServerInfo)
+    override suspend fun upsertSmbServer(smbServerInfo: SmbServerInfo) =
+        smbServerDao.upsert(smbServerInfo)
 
     /**
      * @see SmbServerInfoRepository.deleteSmbServer
      */
-    override suspend fun deleteSmbServer(smbServerInfo: SmbServerInfo) = smbServerDao.delete(smbServerInfo)
+    override suspend fun deleteSmbServer(smbServerInfo: SmbServerInfo) =
+        smbServerDao.delete(smbServerInfo)
 }

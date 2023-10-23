@@ -17,7 +17,11 @@ object Util {
      * @param resourceId the resource ID of the string to be displayed as the toast message.
      * @param duration the duration for which the toast should be displayed (default is [Toast.LENGTH_SHORT]).
      */
-    fun makeToast(context: Context, @StringRes resourceId: Int, duration: Int = Toast.LENGTH_SHORT) {
+    fun makeToast(
+        context: Context,
+        @StringRes resourceId: Int,
+        duration: Int = Toast.LENGTH_SHORT
+    ) {
         toast(context, context.getText(resourceId).toString(), duration)
     }
 

@@ -79,7 +79,8 @@ fun HomeScreen(
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { _ -> }
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { _ -> }
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -95,11 +96,18 @@ fun HomeScreen(
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(id = R.string.add_connection))
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(id = R.string.add_connection)
+                )
             }
         }
     ) { innerPadding ->
-        if (ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 launcher.launch(POST_NOTIFICATIONS)
             }
@@ -122,7 +130,11 @@ fun HomeScreen(
  * @param onItemClick Callback function invoked when an item is clicked. SMBServerId of the clicked item is returned.
  */
 @Composable
-fun HomeBody(modifier: Modifier = Modifier, servers: List<SmbServerInfo>, onItemClick: (Int) -> Unit) {
+fun HomeBody(
+    modifier: Modifier = Modifier,
+    servers: List<SmbServerInfo>,
+    onItemClick: (Int) -> Unit
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -151,7 +163,11 @@ fun HomeBody(modifier: Modifier = Modifier, servers: List<SmbServerInfo>, onItem
  * @param modifier Modifier for customizing the layout and appearance of the ServerList.
  */
 @Composable
-fun ServerList(servers: List<SmbServerInfo>, handleClick: (SmbServerInfo) -> Unit, modifier: Modifier) {
+fun ServerList(
+    servers: List<SmbServerInfo>,
+    handleClick: (SmbServerInfo) -> Unit,
+    modifier: Modifier
+) {
     LazyColumn(modifier = modifier) {
         itemsIndexed(items = servers) { index, server ->
             ServerItem(

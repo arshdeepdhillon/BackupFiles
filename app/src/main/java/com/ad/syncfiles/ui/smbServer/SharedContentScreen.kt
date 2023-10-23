@@ -72,20 +72,21 @@ fun SharedContentScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
-    val dirPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { dirUri: Uri? ->
-        coroutineScope.launch {
-            if (dirUri == null) {
-                Util.makeToast(context, R.string.null_uri)
-            } else {
-                // Persist the permission of this Uri inorder to access it after a app/phone restart
-                context.contentResolver.takePersistableUriPermission(
-                    dirUri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                )
-                viewModel.saveDirectory(dirUri)
+    val dirPickerLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { dirUri: Uri? ->
+            coroutineScope.launch {
+                if (dirUri == null) {
+                    Util.makeToast(context, R.string.null_uri)
+                } else {
+                    // Persist the permission of this Uri inorder to access it after a app/phone restart
+                    context.contentResolver.takePersistableUriPermission(
+                        dirUri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                    viewModel.saveDirectory(dirUri)
+                }
             }
         }
-    }
 
     Scaffold(
         topBar = {
@@ -103,12 +104,18 @@ fun SharedContentScreen(
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(id = R.string.add_connection))
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(id = R.string.add_connection)
+                )
             }
         },
         modifier = modifier
     ) { innerPadding ->
-        ItemListBody(modifier = Modifier.padding(innerPadding), fileList = getDocument(context, uiState.content))
+        ItemListBody(
+            modifier = Modifier.padding(innerPadding),
+            fileList = getDocument(context, uiState.content)
+        )
     }
 }
 

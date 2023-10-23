@@ -38,7 +38,8 @@ fun InputForm(
     enabled: Boolean = true,
 ) {
     Column(
-        modifier = modifier, verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.medium_padding))
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.medium_padding))
     ) {
         TextField(
             modifier = Modifier.fillMaxWidth(),

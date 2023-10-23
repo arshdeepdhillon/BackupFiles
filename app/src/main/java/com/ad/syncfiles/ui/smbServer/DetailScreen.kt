@@ -90,7 +90,10 @@ fun DetailScreen(
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
             ) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = stringResource(id = R.string.smb_server_edit_title))
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(id = R.string.smb_server_edit_title)
+                )
             }
         },
         modifier = modifier
@@ -112,16 +115,26 @@ fun DetailScreen(
 }
 
 @Composable
-fun DetailBody(uiState: DetailUIState, handleDelete: () -> Unit, modifier: Modifier = Modifier, handleConnect: () -> Unit) {
+fun DetailBody(
+    uiState: DetailUIState,
+    handleDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+    handleConnect: () -> Unit
+) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.small_padding)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.medium_padding)),
     ) {
         var isDeleteDialogActive by rememberSaveable { mutableStateOf(false) }
-        ServerDetails(item = uiState.deviceDetails.toSmbServerInfo(), modifier = Modifier.fillMaxWidth())
+        ServerDetails(
+            item = uiState.deviceDetails.toSmbServerInfo(),
+            modifier = Modifier.fillMaxWidth()
+        )
         Row(
             modifier = Modifier
-                .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
                 onClick = { isDeleteDialogActive = true },
@@ -205,7 +218,12 @@ private fun DetailRow(
     Row(modifier = modifier) {
         Text(text = stringResource(labelResID))
         Spacer(modifier = Modifier.weight(1f))
-        Text(text = itemDetail, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(
+            text = itemDetail,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 

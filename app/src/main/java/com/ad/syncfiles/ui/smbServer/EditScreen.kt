@@ -147,7 +147,11 @@ fun EditScreenBody(
  * @param checkConnection Callback function invoked when the test connection button is pressed.
  */
 @Composable
-fun EditScreenFooter(uiState: ServerInfoUiState, onSaveClick: () -> Unit, checkConnection: () -> Unit) {
+fun EditScreenFooter(
+    uiState: ServerInfoUiState,
+    onSaveClick: () -> Unit,
+    checkConnection: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

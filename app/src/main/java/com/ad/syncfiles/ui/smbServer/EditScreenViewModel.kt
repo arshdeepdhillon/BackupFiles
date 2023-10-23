@@ -41,7 +41,8 @@ class EditScreenViewModel(
 
     init {
         viewModelScope.launch {
-            uiState = serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().first().toUiState(true)
+            uiState = serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().first()
+                .toUiState(true)
         }
     }
 

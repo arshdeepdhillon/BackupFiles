@@ -32,10 +32,12 @@ class BackupFilesWorker(ctx: Context, params: WorkerParameters) : CoroutineWorke
             val appCtx = applicationContext
 
             val smbClientWrapper = SMBClientWrapper()
-            val dirUriInput = inputData.getString(DIR_URI_KEY) ?: return@withContext Result.failure()
+            val dirUriInput = inputData.getString(DIR_URI_KEY)
+                ?: return@withContext Result.failure()
             val dirToSaveUri: Uri = Uri.parse(dirUriInput)
 
-            val smbServerId = inputData.getString(SMB_SERVER_KEY) ?: return@withContext Result.failure()
+            val smbServerId = inputData.getString(SMB_SERVER_KEY)
+                ?: return@withContext Result.failure()
 
             val smbDto: SmbServerDto = appContainer.smbServerRepository
                 .getSmbServer(smbServerId.toInt())

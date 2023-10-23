@@ -38,7 +38,11 @@ import java.util.Locale
  * Displays the given list of data in a single column
  */
 @Composable
-fun ItemListBody(modifier: Modifier = Modifier, fileList: List<DocumentFile>, onItemClick: (DocumentFile) -> Unit = {}) {
+fun ItemListBody(
+    modifier: Modifier = Modifier,
+    fileList: List<DocumentFile>,
+    onItemClick: (DocumentFile) -> Unit = {}
+) {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(1), modifier = modifier
@@ -61,7 +65,13 @@ fun ItemListBody(modifier: Modifier = Modifier, fileList: List<DocumentFile>, on
 
 
 @Composable
-fun ItemDetails(itemName: String, modifier: Modifier = Modifier, modifiedTime: Long, numOfFiles: Int?, isDir: Boolean) {
+fun ItemDetails(
+    itemName: String,
+    modifier: Modifier = Modifier,
+    modifiedTime: Long,
+    numOfFiles: Int?,
+    isDir: Boolean
+) {
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -77,15 +87,23 @@ fun ItemDetails(itemName: String, modifier: Modifier = Modifier, modifiedTime: L
                     .padding(dimensionResource(id = R.dimen.small_padding)),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     Icon(
-                        painter = if (isDir) painterResource(id = R.drawable.folder_24) else painterResource(id = R.drawable.text_snippet_24),
+                        painter = if (isDir) painterResource(id = R.drawable.folder_24) else painterResource(
+                            id = R.drawable.text_snippet_24
+                        ),
                         contentDescription = "Content Type",
                         modifier = Modifier.padding(dimensionResource(id = R.dimen.small_padding))
                     )
                     Column {
                         Text(text = itemName)
-                        Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
                             Text(
                                 text = formatDate(modifiedTime),
                                 style = MaterialTheme.typography.labelSmall
@@ -113,7 +131,8 @@ fun ItemDetails(itemName: String, modifier: Modifier = Modifier, modifiedTime: L
 
 fun formatDate(timestampMillis: Long): String {
     val locale = Locale.getDefault()
-    return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale).format(timestampMillis)
+    return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale)
+        .format(timestampMillis)
 }
 
 

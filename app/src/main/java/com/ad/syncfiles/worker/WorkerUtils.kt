@@ -51,7 +51,11 @@ fun makeStatusNotification(message: String, ctx: Context) {
             .setVibrate(LongArray(0))
 
         // Show the notification
-        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                ctx,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             NotificationManagerCompat.from(ctx).notify(NOTIFICATION_ID, builder.build())
         }
     }
@@ -60,24 +64,29 @@ fun makeStatusNotification(message: String, ctx: Context) {
 
 /**
  * Handles exceptions that may occur during a specific operation.
- *
+ * @param tag For logging purposes.
  * @param e The exception that was caught and needs to be handled.
  * @param appCtx The Android application context.
  * @param uri The URI associated with the operation.
  * @return A ListenableWorker.Result value indicating whether the operation should be retried or marked as a failure.
  */
-internal fun handleException(TAG: String, e: Exception, appCtx: Context, uri: Uri): ListenableWorker.Result {
+internal fun handleException(
+    tag: String,
+    e: Exception,
+    appCtx: Context,
+    uri: Uri
+): ListenableWorker.Result {
     when (e) {
         is TimeoutException -> {
-            Log.w(TAG, "Connection timeout!", e)
+            Log.w(tag, "Connection timeout!", e)
             makeStatusNotification("Backup failed, we'll retry shortly.", appCtx)
             return ListenableWorker.Result.retry()
         }
 
         is ConnectException -> {
-            Log.w(TAG, "SMB server is offline", e)
+            Log.w(tag, "SMB server is offline", e)
             if (e.localizedMessage?.contains("EHOSTUNREACH") == true) {
-                Log.e(TAG, "Incorrect IP address of backup server", e)
+                Log.e(tag, "Incorrect IP address of backup server", e)
                 makeStatusNotification("Backup server does not exist", appCtx)
                 return ListenableWorker.Result.failure()
             }
@@ -86,7 +95,7 @@ internal fun handleException(TAG: String, e: Exception, appCtx: Context, uri: Ur
         }
 
         is SocketTimeoutException -> {
-            Log.w(TAG, "SMB server connection timeout", e)
+            Log.w(tag, "SMB server connection timeout", e)
             makeStatusNotification("Backup server offline, we'll retry shortly.", appCtx)
             return ListenableWorker.Result.retry()
         }
@@ -98,20 +107,34 @@ internal fun handleException(TAG: String, e: Exception, appCtx: Context, uri: Ur
 
         is SMBApiException -> {
             if (e.statusCode == NtStatus.STATUS_SHARING_VIOLATION.value) {
-                Log.w(TAG, "Failed to a create file, opened file on SMB server must first be closed.", e)
-                makeStatusNotification("Please close all files from '${FileUtils.getDirName(appCtx, uri)}' folder", appCtx)
+                Log.w(
+                    tag,
+                    "Failed to a create file, opened file on SMB server must first be closed.",
+                    e
+                )
+                makeStatusNotification(
+                    "Please close all files from '${
+                        FileUtils.getDirName(
+                            appCtx,
+                            uri
+                        )
+                    }' folder", appCtx
+                )
                 return ListenableWorker.Result.retry()
             }
-            makeStatusNotification("Unable to backup '${FileUtils.getDirName(appCtx, uri)}'", appCtx)
+            makeStatusNotification(
+                "Unable to backup '${FileUtils.getDirName(appCtx, uri)}'",
+                appCtx
+            )
             return ListenableWorker.Result.failure()
         }
 
         is SMBRuntimeException -> {
-            Log.w(TAG, "Unable to connect with SMB server", e.cause)
+            Log.w(tag, "Unable to connect with SMB server", e.cause)
             var cause = e.cause
             while (cause != null) {
                 if (TimeoutException::class.java.isInstance(cause)) {
-                    Log.e(TAG, "SMB client timeout", e)
+                    Log.e(tag, "SMB client timeout", e)
                     makeStatusNotification("Error backing up, we'll retry shortly.", appCtx)
                     return ListenableWorker.Result.retry()
                 }
@@ -122,8 +145,11 @@ internal fun handleException(TAG: String, e: Exception, appCtx: Context, uri: Ur
         }
 
         else -> {
-            Log.e(TAG, "Unable to backup given folder", e)
-            makeStatusNotification("Unable to backup '${FileUtils.getDirName(appCtx, uri)}'.", appCtx)
+            Log.e(tag, "Unable to backup given folder", e)
+            makeStatusNotification(
+                "Unable to backup '${FileUtils.getDirName(appCtx, uri)}'.",
+                appCtx
+            )
             return ListenableWorker.Result.failure()
         }
     }

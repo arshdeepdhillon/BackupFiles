@@ -33,7 +33,8 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : 
      * @param deviceDetails The server details to update the UI state with.
      */
     fun handleUiStateChange(deviceDetails: ServerDetails) {
-        uiState = ServerInfoUiState(serverDetails = deviceDetails, isValid = validateInput(deviceDetails))
+        uiState =
+            ServerInfoUiState(serverDetails = deviceDetails, isValid = validateInput(deviceDetails))
     }
 
     private fun validateInput(deviceDetails: ServerDetails = uiState.serverDetails): Boolean {
@@ -62,7 +63,12 @@ data class ServerInfoUiState(
 
 fun ServerInfoUiState.toDto(): SmbServerDto {
     this.serverDetails.let {
-        return SmbServerDto(username = it.username, password = it.password, serverAddress = it.serverAddress, sharedFolder = it.sharedFolderName)
+        return SmbServerDto(
+            username = it.username,
+            password = it.password,
+            serverAddress = it.serverAddress,
+            sharedFolder = it.sharedFolderName
+        )
     }
 }
 

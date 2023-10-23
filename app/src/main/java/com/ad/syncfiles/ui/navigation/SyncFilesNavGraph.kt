@@ -68,7 +68,9 @@ fun SyncFilesNavHost(navController: NavHostController, modifier: Modifier = Modi
         }
         composable(
             route = SharedContentScreenDestination.routeArgs,
-            arguments = listOf(navArgument(SharedContentScreenDestination.argKey) { type = NavType.IntType })
+            arguments = listOf(navArgument(SharedContentScreenDestination.argKey) {
+                type = NavType.IntType
+            })
         ) {
             SharedContentScreen(
                 handleNavUp = { navController.navigateUp() }
