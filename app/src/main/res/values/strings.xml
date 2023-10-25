@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sync Files</string>
+    <string name="app_name">Backup Files</string>
     <string name="server_url_req">Server Name*</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
