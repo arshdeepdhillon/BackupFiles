@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SyncFiles"
+rootProject.name = "BackupFiles"
 include(":app")
