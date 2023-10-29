@@ -27,7 +27,7 @@ data class SmbServerDto(
     val username: String,
     val password: String,
     val serverAddress: String,
-    val sharedFolder: String
+    val sharedFolder: String,
 )
 
 fun SmbServerInfo.toDto(): SmbServerDto = SmbServerDto(

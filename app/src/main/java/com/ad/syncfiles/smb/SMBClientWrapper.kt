@@ -61,7 +61,7 @@ class SMBClientWrapper : SMBClientApi {
         username: String,
         password: String,
         serverAddress: String,
-        sharedFolder: String
+        sharedFolder: String,
     ): DiskShare {
         val ac = AuthenticationContext(username, password.toCharArray(), "WORKGROUP")
         return getInstance().connect(serverAddress).authenticate(ac)
@@ -86,7 +86,7 @@ class SMBClientWrapper : SMBClientApi {
         context: Context,
         docOnDevice: DocumentFile,
         path: String,
-        diskShare: DiskShare
+        diskShare: DiskShare,
     ) {
         context.contentResolver.openInputStream(docOnDevice.uri).use { inStream ->
             if (inStream != null) {
@@ -128,7 +128,7 @@ class SMBClientWrapper : SMBClientApi {
     override suspend fun saveFolder(
         context: Context,
         smbServerDto: SmbServerDto,
-        folderToSave: Uri
+        folderToSave: Uri,
     ) {
         val (username, password, serverAddress, sharedFolder) = smbServerDto
         val dirName = FileUtils.getDirName(context, folderToSave) ?: return

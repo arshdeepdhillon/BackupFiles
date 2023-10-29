@@ -2,6 +2,7 @@ package com.ad.syncfiles.ui.smbServer
 
 import android.content.Context
 import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -44,6 +45,7 @@ class SharedContentScreenViewModel(
 
     private val smbServerId: Int = checkNotNull(stateHandle[SharedContentScreenDestination.argKey])
     private val workManager = WorkManager.getInstance(appContext)
+    private var selectedItems = mutableSetOf<Int>()
 
     /**
      * Holds current UI state
@@ -119,6 +121,20 @@ class SharedContentScreenViewModel(
             ExistingWorkPolicy.APPEND_OR_REPLACE,
             backupWorker
         ).enqueue()
+    }
+
+
+    fun deleteSelected() {
+        //TODO delete the selected directories using the workmanager worker
+    }
+
+    //TODO: temp changes. Use dir id instead of DocumentFile!
+    fun onItemClick(item: Pair<DocumentFile, Boolean>) {
+        if (item.second) {
+            selectedItems.add(item.first.hashCode())
+        } else {
+            selectedItems.remove(item.first.hashCode())
+        }
     }
 }
 

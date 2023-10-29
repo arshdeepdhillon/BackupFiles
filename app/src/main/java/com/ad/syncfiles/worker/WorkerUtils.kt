@@ -74,7 +74,7 @@ internal fun handleException(
     tag: String,
     e: Exception,
     appCtx: Context,
-    uri: Uri
+    uri: Uri,
 ): ListenableWorker.Result {
     when (e) {
         is TimeoutException -> {

@@ -34,9 +34,9 @@ fun SyncFilesTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     onNavUp: () -> Unit = {},
 ) {
-    CenterAlignedTopAppBar(title = {
-        Text(title)
-    }, modifier = modifier,
+    CenterAlignedTopAppBar(
+        title = { Text(title) },
+        modifier = modifier,
         scrollBehavior = scrollBehavior,
         navigationIcon = {
             if (canNavBack) {

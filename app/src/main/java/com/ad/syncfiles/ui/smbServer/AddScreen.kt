@@ -101,8 +101,8 @@ fun AddScreenBody(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(dimensionResource(id = R.dimen.medium_padding)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding))
+        modifier = modifier.padding(dimensionResource(id = R.dimen.m_pad)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.m_pad))
     ) {
         InputForm(
             modifier = Modifier.fillMaxWidth(),

@@ -123,8 +123,8 @@ fun EditScreenBody(
     checkConnection: () -> Unit,
 ) {
     Column(
-        modifier = modifier.padding(dimensionResource(id = R.dimen.medium_padding)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.medium_padding))
+        modifier = modifier.padding(dimensionResource(id = R.dimen.content_layout_pad)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.m_pad))
     ) {
         InputForm(
             modifier = Modifier.fillMaxWidth(),
@@ -150,7 +150,7 @@ fun EditScreenBody(
 fun EditScreenFooter(
     uiState: ServerInfoUiState,
     onSaveClick: () -> Unit,
-    checkConnection: () -> Unit
+    checkConnection: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),

@@ -94,7 +94,7 @@ fun HomeScreen(
             FloatingActionButton(
                 onClick = handleFABClick,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad))
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -133,11 +133,11 @@ fun HomeScreen(
 fun HomeBody(
     modifier: Modifier = Modifier,
     servers: List<SmbServerInfo>,
-    onItemClick: (Int) -> Unit
+    onItemClick: (Int) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.content_layout_pad))
     ) {
         if (servers.isEmpty()) {
             Text(
@@ -149,7 +149,7 @@ fun HomeBody(
             ServerList(
                 servers = servers,
                 handleClick = { onItemClick(it.smbServerId) },
-                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.small_padding))
+                modifier = Modifier
             )
         }
     }
@@ -166,14 +166,14 @@ fun HomeBody(
 fun ServerList(
     servers: List<SmbServerInfo>,
     handleClick: (SmbServerInfo) -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     LazyColumn(modifier = modifier) {
         itemsIndexed(items = servers) { index, server ->
             ServerItem(
                 server = server,
                 modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.small_padding))
+                    .padding(vertical = dimensionResource(id = R.dimen.s_pad))
                     .clickable { handleClick(server) }
             )
         }

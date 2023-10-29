@@ -20,7 +20,7 @@ object Util {
     fun makeToast(
         context: Context,
         @StringRes resourceId: Int,
-        duration: Int = Toast.LENGTH_SHORT
+        duration: Int = Toast.LENGTH_SHORT,
     ) {
         toast(context, context.getText(resourceId).toString(), duration)
     }

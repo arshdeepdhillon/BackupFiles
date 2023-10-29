@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class DetailScreenViewModel(
     stateHandle: SavedStateHandle,
-    private val serverInfoRepo: SmbServerInfoRepository
+    private val serverInfoRepo: SmbServerInfoRepository,
 ) : ViewModel() {
 
     companion object {

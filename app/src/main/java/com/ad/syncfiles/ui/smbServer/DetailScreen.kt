@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,6 +41,7 @@ import com.ad.syncfiles.data.entity.SmbServerInfo
 import com.ad.syncfiles.ui.AppViewModelProvider
 import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
+import com.ad.syncfiles.ui.utils.DeleteAlert
 import kotlinx.coroutines.launch
 
 /*
@@ -88,7 +87,7 @@ fun DetailScreen(
             FloatingActionButton(
                 onClick = { handleItemClicked(uiState.value.deviceDetails.id) },
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad))
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
@@ -119,11 +118,11 @@ fun DetailBody(
     uiState: DetailUIState,
     handleDelete: () -> Unit,
     modifier: Modifier = Modifier,
-    handleConnect: () -> Unit
+    handleConnect: () -> Unit,
 ) {
     Column(
-        modifier = modifier.padding(dimensionResource(id = R.dimen.small_padding)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.medium_padding)),
+        modifier = modifier.padding(dimensionResource(id = R.dimen.content_layout_pad)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.m_pad)),
     ) {
         var isDeleteDialogActive by rememberSaveable { mutableStateOf(false) }
         ServerDetails(
@@ -156,7 +155,7 @@ fun DetailBody(
                     handleDelete()
                 },
                 handleCancel = { isDeleteDialogActive = false },
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.medium_padding))
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad))
             )
         }
     }
@@ -177,27 +176,27 @@ fun ServerDetails(item: SmbServerInfo, modifier: Modifier) {
         )
     ) {
         Column(
-            modifier = modifier.padding(dimensionResource(id = R.dimen.small_padding)),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.small_padding))
+            modifier = modifier.padding(dimensionResource(id = R.dimen.s_pad)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s_pad))
         ) {
             DetailRow(
                 labelResID = R.string.server_url,
                 itemDetail = item.serverAddress,
                 modifier = Modifier.padding(
-                    horizontal = dimensionResource(id = R.dimen.small_padding)
+                    horizontal = dimensionResource(id = R.dimen.s_pad)
                 )
             )
             DetailRow(
                 labelResID = R.string.username,
                 itemDetail = item.username,
                 modifier = Modifier.padding(
-                    horizontal = dimensionResource(id = R.dimen.small_padding)
+                    horizontal = dimensionResource(id = R.dimen.s_pad)
                 )
             )
             DetailRow(
                 labelResID = R.string.shared_folder_name,
                 itemDetail = item.sharedFolderName,
-                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.small_padding))
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.s_pad))
             )
 
         }
@@ -227,31 +226,6 @@ private fun DetailRow(
     }
 }
 
-/**
- * Composable function to display a delete confirmation alert dialog.
- *
- * @param handleAccept Callback function to handle the user's acceptance of the delete action.
- * @param handleCancel Callback function to handle the user's cancellation of the delete action.
- * @param modifier Modifier for customizing the layout.
- */
-@Composable
-fun DeleteAlert(handleAccept: () -> Unit, handleCancel: () -> Unit, modifier: Modifier) {
-    AlertDialog(onDismissRequest = { /* Do nothing */ },
-        title = { Text(stringResource(R.string.attention)) },
-        text = { Text(stringResource(R.string.delete_question)) },
-        modifier = modifier,
-        dismissButton = {
-            TextButton(onClick = handleCancel) {
-                Text(text = stringResource(R.string.no))
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = handleAccept) {
-                Text(text = stringResource(R.string.yes))
-            }
-        }
-    )
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -265,13 +239,5 @@ fun DetailScreenPreview() {
                 sharedFolderName = "Editing really long shared directory name"
             )
         ), handleDelete = { }, handleConnect = {})
-    }
-}
-
-@Preview
-@Composable
-fun DeleteConfirmationDialogPreview() {
-    SyncFilesTheme {
-        DeleteAlert(handleAccept = { }, handleCancel = { }, modifier = Modifier)
     }
 }

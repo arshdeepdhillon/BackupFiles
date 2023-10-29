@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="small_padding">8dp</dimen>
-    <dimen name="medium_padding">16dp</dimen>
+
+    <dimen name="content_layout_pad">4dp</dimen><!--Use this for consistent layout padding-->
+    <dimen name="xs_pad">4dp</dimen>
+    <dimen name="s_pad">8dp</dimen>
+    <dimen name="m_pad">16dp</dimen>
     <dimen name="divider_thickness">10dp</dimen>
 </resources>
