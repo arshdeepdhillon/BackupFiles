@@ -18,10 +18,11 @@
     <string name="back_button">Back</string>
     <string name="required_fields">* Required</string>
     <string name="delete">Delete</string>
-    <string name="attention">Confirm</string>
-    <string name="delete_question">Are you sure you want to delete?</string>
-    <string name="no">No</string>
-    <string name="yes">Yes</string>
+    <string name="confirm_title_alert">Confirm</string>
+    <string name="delete_body_alert">This will not delete the backed up folders on SMB server.\nAre you sure you want to delete?</string>
+    <string name="no_alert">No</string>
+    <string name="yes_alert">Yes</string>
+    <string name="sync_body_alert">Save new files since the last backup?</string>
     <string name="notification_title">"Monitoring Folders "</string>
     <string name="connection_issue_with_smb">Connection Failed</string>
     <string name="connection_success_with_smb">Connection Succeeded</string>

@@ -32,13 +32,20 @@ const val NOTIFICATION_ID = 1
 val NOTIFICATION_TITLE: CharSequence = "Backing Up Data"
 
 
-// The name of the backup work
-const val BACK_UP_FILES_WORK_NAME = "backup_files_work"
-const val BACK_UP_FILES_TAG = "backup_files_tag"
+// The name of the backup folder work
+const val BACK_UP_FOLDERS_WORK_NAME = "backup_folders_work"
+const val BACK_UP_FOLDERS_TAG = "backup_folders_tag"
+
+// The name of the delete folder work
+const val SYNC_FOLDERS_WORK_NAME = "sync_folders_work"
+const val SYNC_FILES_TAG = "sync_folders_tag"
 
 // Keys for the backup work
 const val DIR_URI_KEY = "DIR_URI"
 const val SMB_SERVER_KEY = "SMB_SERVER_ID"
+const val SYNC_DIR_KEY = "IS_SYNC"
+
+const val MAX_RETRY_ATTEMPT = 3;
 
 fun makeStatusNotification(message: String, ctx: Context) {
     // Check notification is enabled before creating it.

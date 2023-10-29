@@ -41,7 +41,7 @@ import com.ad.syncfiles.data.entity.SmbServerInfo
 import com.ad.syncfiles.ui.AppViewModelProvider
 import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
-import com.ad.syncfiles.ui.utils.DeleteAlert
+import com.ad.syncfiles.ui.utils.GeneralAlert
 import kotlinx.coroutines.launch
 
 /*
@@ -149,11 +149,13 @@ fun DetailBody(
             }
         }
         if (isDeleteDialogActive) {
-            DeleteAlert(
+            GeneralAlert(
                 handleAccept = {
                     isDeleteDialogActive = false
                     handleDelete()
                 },
+                titleId = R.string.confirm_title_alert,
+                bodyId = R.string.delete_body_alert,
                 handleCancel = { isDeleteDialogActive = false },
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad))
             )

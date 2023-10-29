@@ -1,6 +1,5 @@
 package com.ad.syncfiles.ui.smbServer
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -19,7 +18,7 @@ import androidx.compose.animation.with
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -39,16 +38,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.syncfiles.R
 import com.ad.syncfiles.SyncFilesTopAppBar
 import com.ad.syncfiles.Util
+import com.ad.syncfiles.data.entity.DirectoryDto
 import com.ad.syncfiles.data.entity.SmbServerInfo
 import com.ad.syncfiles.ui.AppViewModelProvider
 import com.ad.syncfiles.ui.navigation.NavigationDestination
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
-import com.ad.syncfiles.ui.utils.DeleteAlert
+import com.ad.syncfiles.ui.utils.GeneralAlert
 import com.ad.syncfiles.ui.utils.ItemListBody
 import kotlinx.coroutines.launch
 
@@ -86,7 +85,7 @@ fun SharedContentScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     var inSelectionMode by rememberSaveable { mutableStateOf(false) }
-    var isDeleteDialogActive by rememberSaveable { mutableStateOf(false) }
+    var isSyncDialogActive by rememberSaveable { mutableStateOf(false) }
     val dirPickerLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { dirUri: Uri? ->
             coroutineScope.launch {
@@ -117,7 +116,7 @@ fun SharedContentScreen(
             }, label = "additional settings") { targetInSelectionMode ->
                 if (targetInSelectionMode) {
                     AdditionalSettings {
-                        isDeleteDialogActive = true
+                        isSyncDialogActive = true
                     }
                 } else {
                     SyncFilesTopAppBar(
@@ -158,22 +157,24 @@ fun SharedContentScreen(
     ) { innerPadding ->
         ItemListBody(
             modifier = Modifier.padding(innerPadding),
-            fileList = getDocument(context, uiState.content),
-            onItemClick = { item: Pair<DocumentFile, Boolean> ->
+            fileList = uiState.content,
+            onItemSelect = { item: Pair<Boolean, DirectoryDto> ->
                 Log.d(TAG, "Item clicked!: ${item.first}")
-                viewModel.onItemClick(item)
-            },
-            onSelectionModeChange = {
-                inSelectionMode = it
+                viewModel.handleSelected(item)
             }
-        )
-        if (isDeleteDialogActive) {
-            DeleteAlert(
+        ) {
+            inSelectionMode = it
+        }
+        if (isSyncDialogActive) {
+            GeneralAlert(
                 handleAccept = {
-                    isDeleteDialogActive = false
-                    viewModel.deleteSelected()
+                    isSyncDialogActive = false
+                    viewModel.syncSelectedFolder()
+                    //TODO clear the inSelectionMode state so the selected items are cleared
                 },
-                handleCancel = { isDeleteDialogActive = false },
+                titleId = R.string.confirm_title_alert,
+                bodyId = R.string.sync_body_alert,
+                handleCancel = { isSyncDialogActive = false },
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad))
             )
         }
@@ -181,29 +182,16 @@ fun SharedContentScreen(
 }
 
 
-/**
- * Converts list of [Uri] into list of [DocumentFile]
- * TODO: is this needed?
- */
-fun getDocument(context: Context, uriPaths: List<String>): List<DocumentFile> {
-    return uriPaths
-        .mapNotNull { uriPath ->
-            DocumentFile.fromTreeUri(context, Uri.parse(uriPath))
-        }.toList()
-        .ifEmpty { emptyList() }
-}
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AdditionalSettings(onDelete: () -> Unit) {
+private fun AdditionalSettings(onSyncClick: () -> Unit) {
     CenterAlignedTopAppBar(
         title = { },
         actions = {
-            IconButton(onClick = onDelete) {
+            IconButton(onClick = onSyncClick) {
                 Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Delete selected items"
+                    imageVector = Icons.Outlined.Refresh,
+                    contentDescription = "Save newly added content in selected folder on SMB server"
                 )
             }
         }

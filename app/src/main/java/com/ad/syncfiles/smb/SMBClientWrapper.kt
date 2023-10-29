@@ -7,10 +7,12 @@ import androidx.documentfile.provider.DocumentFile
 import com.ad.syncfiles.data.entity.SmbServerDto
 import com.ad.syncfiles.smb.api.SMBClientApi
 import com.hierynomus.msdtyp.AccessMask
+import com.hierynomus.mserref.NtStatus
 import com.hierynomus.msfscc.FileAttributes
 import com.hierynomus.mssmb2.SMB2CreateDisposition
 import com.hierynomus.mssmb2.SMB2CreateOptions
 import com.hierynomus.mssmb2.SMB2ShareAccess
+import com.hierynomus.mssmb2.SMBApiException
 import com.hierynomus.smbj.SMBClient
 import com.hierynomus.smbj.auth.AuthenticationContext
 import com.hierynomus.smbj.common.SMBRuntimeException
@@ -87,38 +89,49 @@ class SMBClientWrapper : SMBClientApi {
         docOnDevice: DocumentFile,
         path: String,
         diskShare: DiskShare,
+        isSync: Boolean,
     ) {
         context.contentResolver.openInputStream(docOnDevice.uri).use { inStream ->
             if (inStream != null) {
-                // Create file on SMB server
-                val fileOnSmbServer = diskShare.openFile(
-                    path,
-                    setOf<AccessMask>(AccessMask.FILE_WRITE_DATA),
-                    setOf<FileAttributes>(FileAttributes.FILE_ATTRIBUTE_NORMAL),
-                    setOf<SMB2ShareAccess>(SMB2ShareAccess.FILE_SHARE_WRITE),
-                    SMB2CreateDisposition.FILE_OVERWRITE_IF, //TODO change it to SMB2CreateDisposition.FILE_CREATE
-                    setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY)
-                )
-                var prog: Int
-                var totalBytesRead = 0
-                val size: Long = docOnDevice.length()
-                val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-                var bytesRead = inStream.read(buffer)
+                val fileOnSmbServer: File
 
-                fileOnSmbServer.use { file: File ->
-                    file.outputStream.use { outputStream ->
-                        Log.d(TAG, "Saving file...")
-                        while (bytesRead >= 0) {
-                            outputStream.write(buffer, 0, bytesRead)
-                            totalBytesRead += bytesRead
-                            prog = ((totalBytesRead.toFloat() / size) * 100).toInt()
-                            if (prog % 10 == 0) {
-                                Log.d(TAG, "Progress $prog")
+                try {
+                    // Create file on SMB server
+                    fileOnSmbServer = diskShare.openFile(
+                        path,
+                        setOf<AccessMask>(AccessMask.FILE_WRITE_DATA),
+                        setOf<FileAttributes>(FileAttributes.FILE_ATTRIBUTE_NORMAL),
+                        setOf<SMB2ShareAccess>(SMB2ShareAccess.FILE_SHARE_WRITE),
+                        if (isSync) SMB2CreateDisposition.FILE_CREATE else SMB2CreateDisposition.FILE_OVERWRITE_IF,
+                        setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY)
+                    )
+                    var prog: Int
+                    var totalBytesRead = 0
+                    val size: Long = docOnDevice.length()
+                    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                    var bytesRead = inStream.read(buffer)
+
+                    fileOnSmbServer.use { file: File ->
+                        file.outputStream.use { outputStream ->
+                            Log.d(TAG, "Saving file...")
+                            while (bytesRead >= 0) {
+                                outputStream.write(buffer, 0, bytesRead)
+                                totalBytesRead += bytesRead
+                                prog = ((totalBytesRead.toFloat() / size) * 100).toInt()
+                                if (prog % 10 == 0) {
+                                    Log.d(TAG, "Progress $prog")
+                                }
+                                bytesRead = inStream.read(buffer)
                             }
-                            bytesRead = inStream.read(buffer)
+                            outputStream.flush()
+                            Log.d(TAG, "Saving file...Done")
                         }
-                        outputStream.flush()
-                        Log.d(TAG, "Saving file...Done")
+                    }
+
+                } catch (e: SMBApiException) {
+                    // If content already exists and we're in sync mode, then continue otherwise raise it
+                    if (!(isSync && e.statusCode == NtStatus.STATUS_OBJECT_NAME_COLLISION.value)) {
+                        throw (e)
                     }
                 }
             }
@@ -129,6 +142,7 @@ class SMBClientWrapper : SMBClientApi {
         context: Context,
         smbServerDto: SmbServerDto,
         folderToSave: Uri,
+        isSync: Boolean,
     ) {
         val (username, password, serverAddress, sharedFolder) = smbServerDto
         val dirName = FileUtils.getDirName(context, folderToSave) ?: return
@@ -137,7 +151,6 @@ class SMBClientWrapper : SMBClientApi {
         if (dirContentList.isEmpty()) {
             return
         }
-        AuthenticationContext(username, password.toCharArray(), "WORKGROUP")
         getDiskShare(username, password, serverAddress, sharedFolder).use { diskShare ->
             Log.d(TAG, "Folder exists on SMB server?: " + diskShare.folderExists(dirName))
             //Create the directory
@@ -155,7 +168,7 @@ class SMBClientWrapper : SMBClientApi {
                 val docOnDevice = dirContentList.poll()
                 // We should have read permission (on Uri) at this point, if not (then 'name' will be null) then complain loudly
                 path = "$dirName\\${docOnDevice!!.name}"
-                saveSingleFile(context, docOnDevice, path, diskShare)
+                saveSingleFile(context, docOnDevice, path, diskShare, isSync)
             }
         }
 
@@ -172,4 +185,5 @@ class SMBClientWrapper : SMBClientApi {
         }
         return false
     }
+
 }

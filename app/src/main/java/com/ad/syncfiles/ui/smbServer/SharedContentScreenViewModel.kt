@@ -12,13 +12,18 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest.Companion.MIN_BACKOFF_MILLIS
 import androidx.work.workDataOf
+import com.ad.syncfiles.data.entity.DirectoryDto
 import com.ad.syncfiles.data.entity.DirectoryInfo
+import com.ad.syncfiles.data.entity.toDto
 import com.ad.syncfiles.data.repository.SaveDirectoryRepository
-import com.ad.syncfiles.worker.BACK_UP_FILES_TAG
-import com.ad.syncfiles.worker.BACK_UP_FILES_WORK_NAME
-import com.ad.syncfiles.worker.BackupFilesWorker
+import com.ad.syncfiles.worker.BACK_UP_FOLDERS_TAG
+import com.ad.syncfiles.worker.BACK_UP_FOLDERS_WORK_NAME
+import com.ad.syncfiles.worker.BackupFolderWorker
 import com.ad.syncfiles.worker.DIR_URI_KEY
 import com.ad.syncfiles.worker.SMB_SERVER_KEY
+import com.ad.syncfiles.worker.SYNC_DIR_KEY
+import com.ad.syncfiles.worker.SYNC_FILES_TAG
+import com.ad.syncfiles.worker.SYNC_FOLDERS_WORK_NAME
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -45,25 +50,31 @@ class SharedContentScreenViewModel(
 
     private val smbServerId: Int = checkNotNull(stateHandle[SharedContentScreenDestination.argKey])
     private val workManager = WorkManager.getInstance(appContext)
-    private var selectedItems = mutableSetOf<Int>()
+    private var selectedFolders = mutableSetOf<Uri>()
 
     /**
      * Holds current UI state
      */
     var uiState: StateFlow<SMBContentUiState> =
-        saveDirRepo.getAllSavedDirectoriesStream(smbServerId).filterNotNull()
-            .map { smbServerWithSavedDir ->
-
-                SMBContentUiState(
-                    smbServerWithSavedDir.savedDirs.map { dir ->
-                        dir.dirPath
-                    }.toList()
-                )
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = SMBContentUiState()
-            )
+        saveDirRepo.getAllSavedDirectoriesStream(smbServerId).filterNotNull().map { smbServerWithSavedDir ->
+            val content = smbServerWithSavedDir.savedDirs.mapNotNull { dir ->
+                val doc = DocumentFile.fromTreeUri(appContext, Uri.parse(dir.dirPath))
+                doc?.name?.let {
+                    dir.toDto(
+                        dirUri = doc.uri,
+                        dirName = it,
+                        lastModified = doc.lastModified(),
+                        itemCount = doc.listFiles().size,
+                        isDirectory = doc.isDirectory
+                    )
+                }
+            }.toList()
+            SMBContentUiState(content = content)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = SMBContentUiState()
+        )
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
@@ -85,7 +96,6 @@ class SharedContentScreenViewModel(
      */
     internal suspend fun saveDirectory(contentUri: Uri): Boolean {
         return withContext(Dispatchers.IO) {
-            //TODO add a force sync button to update files on SMB server..maybe?
             runBackupWorker(contentUri)
             if (!saveDirRepo.isDirectorySaved(smbServerId, contentUri.toString())) {
                 addBackupDirInfo(contentUri)
@@ -106,41 +116,66 @@ class SharedContentScreenViewModel(
     }
 
     private fun runBackupWorker(contentUri: Uri) {
-        val backupWorker = OneTimeWorkRequestBuilder<BackupFilesWorker>()
+        val backupWorker = OneTimeWorkRequestBuilder<BackupFolderWorker>()
             .setInputData(
                 workDataOf(
                     DIR_URI_KEY to contentUri.toString(),
                     SMB_SERVER_KEY to smbServerId.toString()
                 )
             )
-            .addTag(BACK_UP_FILES_TAG)
+            .addTag(BACK_UP_FOLDERS_TAG)
             .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
             .build()
         workManager.beginUniqueWork(
-            BACK_UP_FILES_WORK_NAME,
+            BACK_UP_FOLDERS_WORK_NAME,
             ExistingWorkPolicy.APPEND_OR_REPLACE,
             backupWorker
         ).enqueue()
     }
 
 
-    fun deleteSelected() {
-        //TODO delete the selected directories using the workmanager worker
+    /**
+     *
+     */
+    fun syncSelectedFolder() {
+        if (selectedFolders.isNotEmpty()) {
+            val backupWorker = OneTimeWorkRequestBuilder<BackupFolderWorker>()
+                .setInputData(
+                    workDataOf(
+                        SMB_SERVER_KEY to smbServerId.toString(),
+                        DIR_URI_KEY to selectedFolders.first().toString(),
+                        SYNC_DIR_KEY to true
+                    )
+                )
+                .addTag(SYNC_FILES_TAG)
+                .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                .build()
+            workManager.beginUniqueWork(
+                SYNC_FOLDERS_WORK_NAME,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                backupWorker
+            ).enqueue()
+        }
     }
 
-    //TODO: temp changes. Use dir id instead of DocumentFile!
-    fun onItemClick(item: Pair<DocumentFile, Boolean>) {
-        if (item.second) {
-            selectedItems.add(item.first.hashCode())
+
+    /**
+     * Handles selected/unselected backed up folder.
+     *
+     * @param item A Pair representing selection status of the folder
+     * @property Pair.first  folder is selected if true, otherwise it's unselected
+     * @property Pair.second [DirectoryDto] contains details about the folder.
+     */
+    fun handleSelected(item: Pair<Boolean, DirectoryDto>) {
+        if (item.first) {
+            selectedFolders.add(item.second.dirUri)
         } else {
-            selectedItems.remove(item.first.hashCode())
+            selectedFolders.remove(item.second.dirUri)
         }
     }
 }
 
+
 data class SMBContentUiState(
-    /**
-     * List of
-     */
-    val content: List<String> = emptyList(),
+    val content: List<DirectoryDto> = emptyList(),
 )

@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.documentfile.provider.DocumentFile
 import com.ad.syncfiles.R
+import com.ad.syncfiles.data.entity.DirectoryDto
 import com.ad.syncfiles.ui.theme.SyncFilesTheme
 import java.io.File
 import java.text.DateFormat
@@ -66,25 +67,20 @@ import java.util.Locale
  * @created : 23-Oct-23
  */
 
-/*
-* TODO move away from DocumentFile and use Ids. This causes the app to crash when rememberSaveable restores from configuration changes
-*   *ie: when an item is selected and app is put in background.
-*/
-
 /**
  * Displays the given list of data in a single column
  *
  * @param modifier The modifier to apply to the composable.
- * @param fileList The list of DocumentFile items to display.
- * @param onItemClick Invoked when an item is clicked in selection mode.
+ * @param fileList The list of saved folders to display.
+ * @param onItemSelect Invoked when an item is clicked in selection mode.
  * @param onSelectionModeChange Invoked when the selection mode changes.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ItemListBody(
     modifier: Modifier = Modifier,
-    fileList: List<DocumentFile>,
-    onItemClick: (Pair<DocumentFile, Boolean>) -> Unit = {},
+    fileList: List<DirectoryDto>,
+    onItemSelect: (Pair<Boolean, DirectoryDto>) -> Unit = {},
     onSelectionModeChange: (Boolean) -> Unit = {},
 ) {
     // rememberSavable to save the state across configuration changes
@@ -116,24 +112,28 @@ fun ItemListBody(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(items = fileList) { item ->
-            val selected by remember { derivedStateOf { item.uri in selectedUris } }
+            val selected by remember { derivedStateOf { item.dirUri in selectedUris } }
             ItemDetails(
                 modifier = if (isSelectionMode) {
                     Modifier.clickable {
                         if (selected) {
-                            selectedUris -= item.uri
-                            onItemClick(Pair(item, false))
+                            selectedUris -= item.dirUri
+                            onItemSelect(Pair(false, item))
                         } else {
-                            selectedUris += item.uri
-                            onItemClick(Pair(item, true))
+                            selectedUris += item.dirUri
+                            onItemSelect(Pair(true, item))
                         }
                     }
                 } else {
-                    Modifier.combinedClickable(onClick = { }, onLongClick = { selectedUris += item.uri })
+                    Modifier.combinedClickable(onClick = { }, onLongClick = {
+                        selectedUris += item.dirUri
+                        // Selection mode has started, make sure we also add the initial item to our list
+                        onItemSelect(Pair(true, item))
+                    })
                 },
-                itemName = item.name.toString(),
-                modifiedTime = item.lastModified(),
-                numOfFiles = item.listFiles().size,
+                itemName = item.dirName,
+                modifiedTime = item.lastModified,
+                numOfFiles = item.itemCount,
                 isDir = item.isDirectory,
                 selected = selected,
                 isSelectedMode = isSelectionMode
@@ -259,7 +259,18 @@ fun formatDate(timestampMillis: Long): String {
 @Composable
 fun ItemListBodyPreview() {
     ItemListBody(
-        fileList = (0..10).toList().map { DocumentFile.fromFile(File("temp${it}")) }
+        fileList = (0..10).toList().map {
+            DocumentFile.fromFile(File("temp${it}")).let { tempDir ->
+                DirectoryDto(
+                    dirId = it,
+                    dirUri = tempDir.uri,
+                    isDirectory = tempDir.isDirectory,
+                    itemCount = tempDir.listFiles().size,
+                    dirName = if (tempDir.name == null) "unknowfoldername" else tempDir.name!!,
+                    lastModified = tempDir.lastModified()
+                )
+            }
+        }
     )
 }
 
