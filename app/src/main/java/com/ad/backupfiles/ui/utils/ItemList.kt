@@ -81,15 +81,19 @@ fun ItemListBody(
     modifier: Modifier = Modifier,
     fileList: List<DirectoryDto>,
     onItemSelect: (Pair<Boolean, DirectoryDto>) -> Unit = {},
+    resetSelectionState: Boolean = false,
     onSelectionModeChange: (Boolean) -> Unit = {},
 ) {
     // rememberSavable to save the state across configuration changes
     var selectedUris by rememberSaveable { mutableStateOf(emptySet<Uri>()) }
     val isSelectionMode by remember { derivedStateOf { selectedUris.isNotEmpty() } }
 
-    DisposableEffect(key1 = isSelectionMode) {
-        // Update the parents
-        onSelectionModeChange(isSelectionMode)
+    DisposableEffect(key1 = isSelectionMode, key2 = resetSelectionState) {
+        if (resetSelectionState) {
+            selectedUris = emptySet()
+        } else {// Update the parents
+            onSelectionModeChange(isSelectionMode)
+        }
         // Clean up resources (if any) when the effect leaves the Composition
         onDispose {
             if (!isSelectionMode && selectedUris.isNotEmpty()) {

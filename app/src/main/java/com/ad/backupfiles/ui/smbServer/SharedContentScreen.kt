@@ -2,7 +2,6 @@ package com.ad.backupfiles.ui.smbServer
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -27,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +41,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.backupfiles.BackupFilesTopAppBar
 import com.ad.backupfiles.R
-import com.ad.backupfiles.UiUtil
 import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.ui.AppViewModelProvider
@@ -86,22 +85,28 @@ fun SharedContentScreen(
     val uiState by viewModel.uiState.collectAsState()
     var inSelectionMode by rememberSaveable { mutableStateOf(false) }
     var isSyncDialogActive by rememberSaveable { mutableStateOf(false) }
-    val dirPickerLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { dirUri: Uri? ->
-            coroutineScope.launch {
-                if (dirUri == null) {
-                    UiUtil.makeToast(context, R.string.null_uri)
-                } else {
-                    // Persist the permission of this Uri inorder to access it after a app/phone restart
-                    context.contentResolver.takePersistableUriPermission(
-                        dirUri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    )
-                    viewModel.saveDirectory(dirUri)
-                }
+    var clearSelectionState by rememberSaveable { mutableStateOf(false) }
+
+    val dirPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { dirUri: Uri? ->
+        coroutineScope.launch {
+            // dirUri can be null when no folder is selected
+            if (dirUri != null) {
+                // Persist the permission of this Uri inorder to access it after a app/phone restart
+                context.contentResolver.takePersistableUriPermission(
+                    dirUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+                viewModel.saveDirectory(dirUri)
             }
         }
+    }
 
+    // Reset the state
+    DisposableEffect(key1 = clearSelectionState) {
+        onDispose {
+            clearSelectionState = false
+        }
+    }
     Scaffold(
         topBar = {
             AnimatedContent(targetState = inSelectionMode, transitionSpec = {
@@ -158,19 +163,17 @@ fun SharedContentScreen(
         ItemListBody(
             modifier = Modifier.padding(innerPadding),
             fileList = uiState.content,
-            onItemSelect = { item: Pair<Boolean, DirectoryDto> ->
-                Log.d(TAG, "Item clicked!: ${item.first}")
-                viewModel.handleSelected(item)
-            }
+            onItemSelect = { item: Pair<Boolean, DirectoryDto> -> viewModel.handleSelected(item) },
+            resetSelectionState = clearSelectionState
         ) {
             inSelectionMode = it
         }
         if (isSyncDialogActive) {
             GeneralAlert(
                 handleAccept = {
-                    isSyncDialogActive = false
+                    isSyncDialogActive = false // Hide the dialog
+                    clearSelectionState = true // Clear the selected items
                     viewModel.syncSelectedFolder()
-                    //TODO clear the inSelectionMode state so the selected items are cleared
                 },
                 titleId = R.string.confirm_title_alert,
                 bodyId = R.string.sync_body_alert,
