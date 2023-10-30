@@ -25,13 +25,13 @@ class AppDataContainer(private val context: Context) : AppContainer {
      * Implementation for [SmbServerInfoRepository]
      */
     override val smbServerRepository: SmbServerInfoRepository by lazy {
-        OfflineSmbServerRepository(SmbServerDatabase.getDatabase(context).smbServerDao())
+        OfflineSmbServerRepository(BackupFilesDatabase.getDatabase(context).smbServerDao())
     }
 
     /**
      * Implementation for [SaveDirectoryRepository]
      */
     override val saveDirectoryRepository: SaveDirectoryRepository by lazy {
-        OfflineSaveDirectoryRepository(SmbServerDatabase.getDatabase(context).savedDirDao())
+        OfflineSaveDirectoryRepository(BackupFilesDatabase.getDatabase(context).savedDirDao())
     }
 }

@@ -19,15 +19,15 @@ import com.ad.backupfiles.data.entity.SmbServerInfo
     version = 1,
     exportSchema = false
 )
-abstract class SmbServerDatabase : RoomDatabase() {
+abstract class BackupFilesDatabase : RoomDatabase() {
     abstract fun smbServerDao(): SmbServerDao
     abstract fun savedDirDao(): SavedDirectoryDao
 
     companion object {
-        private var Instance: SmbServerDatabase? = null
-        fun getDatabase(context: Context): SmbServerDatabase {
+        private var Instance: BackupFilesDatabase? = null
+        fun getDatabase(context: Context): BackupFilesDatabase {
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, SmbServerDatabase::class.java, "smb_server_info")
+                Room.databaseBuilder(context, BackupFilesDatabase::class.java, "backup_file")
                     /**
                      * TODO: setup migration..
                      * Setting this option in app's database builder means that Room
