@@ -148,12 +148,9 @@ class SMBClientWrapper : SMBClientApi {
         val dirName = FileUtils.getDirName(context, folderToSave) ?: return
         val dirContentList: Deque<DocumentFile> = FileUtils.getFilesInDir(context, folderToSave)
 
-        if (dirContentList.isEmpty()) {
-            return
-        }
         getDiskShare(username, password, serverAddress, sharedFolder).use { diskShare ->
             Log.d(TAG, "Folder exists on SMB server?: " + diskShare.folderExists(dirName))
-            //Create the directory
+            // Create the directory even if its empty
             diskShare.openDirectory(
                 dirName,
                 setOf<AccessMask>(AccessMask.FILE_WRITE_DATA),
