@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.ad.backupfiles.data.repository.SmbServerInfoRepository
 import com.ad.backupfiles.smb.SMBClientWrapper
-import com.ad.backupfiles.ui.shared.EditScreenUiState
+import com.ad.backupfiles.ui.shared.SMBServerUiState
 import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
 import com.ad.backupfiles.ui.shared.sanitizeAndValidateInputFields
 import com.ad.backupfiles.ui.shared.toSmbServerEntity
@@ -28,8 +28,8 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : 
     /**
      * Holds current UI state
      */
-    private val _uiState = MutableStateFlow(EditScreenUiState())
-    val uiState: StateFlow<EditScreenUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(SMBServerUiState())
+    val uiState: StateFlow<SMBServerUiState> = _uiState.asStateFlow()
 
     var userInputState by mutableStateOf(SmbServerInfoUiData())
         private set

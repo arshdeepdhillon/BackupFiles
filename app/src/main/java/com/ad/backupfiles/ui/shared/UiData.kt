@@ -14,12 +14,12 @@ const val DELAY_UPSTREAM_TIMEOUT_MILLIS = 5_000L
 /**
  * Represents Ui State of [SmbServerInfoUiData].
  */
-data class EditScreenUiState(
+data class SMBServerUiState(
     val currentUiData: SmbServerInfoUiData = SmbServerInfoUiData(),
     val isUiDataValid: Boolean = false,
 )
 
-fun EditScreenUiState.toDto(): SmbServerDto {
+fun SMBServerUiState.toDto(): SmbServerDto {
     this.currentUiData.let {
         return SmbServerDto(
             username = it.username,
@@ -39,7 +39,7 @@ data class SmbServerInfoUiData(
 )
 
 /**
- * Extension function to convert [EditScreenUiState] to [SmbServerInfo].
+ * Extension function to convert [SMBServerUiState] to [SmbServerInfo].
  */
 fun SmbServerInfoUiData.toSmbServerEntity(): SmbServerInfo = SmbServerInfo(
     smbServerId = id,
@@ -65,7 +65,7 @@ fun SmbServerInfo.toUiData(): SmbServerInfoUiData = SmbServerInfoUiData(
  *
  * @return `true` if the input fields are valid; `false` otherwise.
  */
-fun EditScreenUiState.sanitizeAndValidateInputFields(): Boolean {
+fun SMBServerUiState.sanitizeAndValidateInputFields(): Boolean {
     this.currentUiData.also {
         //TODO this doesn't work!!
         it.username.trim()

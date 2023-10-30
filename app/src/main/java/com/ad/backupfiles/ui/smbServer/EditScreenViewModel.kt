@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.entity.toUiState
 import com.ad.backupfiles.data.repository.SmbServerInfoRepository
 import com.ad.backupfiles.smb.SMBClientWrapper
-import com.ad.backupfiles.ui.shared.EditScreenUiState
+import com.ad.backupfiles.ui.shared.SMBServerUiState
 import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
 import com.ad.backupfiles.ui.shared.sanitizeAndValidateInputFields
 import com.ad.backupfiles.ui.shared.toDto
@@ -45,8 +45,8 @@ class EditScreenViewModel(
     /**
      * Holds current UI state
      */
-    private val _uiState = MutableStateFlow(EditScreenUiState())
-    val uiState: StateFlow<EditScreenUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(SMBServerUiState())
+    val uiState: StateFlow<SMBServerUiState> = _uiState.asStateFlow()
 
     var userInputState by mutableStateOf(SmbServerInfoUiData())
         private set

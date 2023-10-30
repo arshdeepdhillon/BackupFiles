@@ -3,7 +3,7 @@ package com.ad.backupfiles.data.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ad.backupfiles.ui.shared.EditScreenUiState
+import com.ad.backupfiles.ui.shared.SMBServerUiState
 import com.ad.backupfiles.ui.shared.toUiData
 
 /*
@@ -37,7 +37,7 @@ fun SmbServerInfo.toDto(): SmbServerDto = SmbServerDto(
     sharedFolder = this.sharedFolderName
 )
 
-fun SmbServerInfo.toUiState(isEntryValid: Boolean): EditScreenUiState = EditScreenUiState(
+fun SmbServerInfo.toUiState(isEntryValid: Boolean): SMBServerUiState = SMBServerUiState(
     currentUiData = this.toUiData(),
     isUiDataValid = isEntryValid
 )
