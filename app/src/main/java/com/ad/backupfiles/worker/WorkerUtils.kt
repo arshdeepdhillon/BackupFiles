@@ -51,7 +51,7 @@ fun makeStatusNotification(message: String, ctx: Context) {
     // Check notification is enabled before creating it.
     if (NotificationManagerCompat.from(ctx).areNotificationsEnabled()) {
         val builder = NotificationCompat.Builder(ctx, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.notification_icon)
             .setContentTitle(NOTIFICATION_TITLE)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
