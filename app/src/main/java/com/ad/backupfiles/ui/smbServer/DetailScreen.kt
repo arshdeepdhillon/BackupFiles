@@ -40,6 +40,8 @@ import com.ad.backupfiles.R
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.ui.AppViewModelProvider
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
+import com.ad.backupfiles.ui.shared.toSmbServerEntity
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.GeneralAlert
 import kotlinx.coroutines.launch
@@ -126,7 +128,7 @@ fun DetailBody(
     ) {
         var isDeleteDialogActive by rememberSaveable { mutableStateOf(false) }
         ServerDetails(
-            item = uiState.deviceDetails.toSmbServerInfo(),
+            item = uiState.deviceDetails.toSmbServerEntity(),
             modifier = Modifier.fillMaxWidth()
         )
         Row(
@@ -234,7 +236,7 @@ private fun DetailRow(
 fun DetailScreenPreview() {
     BackupFilesTheme {
         DetailBody(uiState = DetailUIState(
-            deviceDetails = ServerDetails(
+            deviceDetails = SmbServerInfoUiData(
                 serverAddress = "192.123.123.123",
                 username = "Editing name",
                 password = "Editing pass",

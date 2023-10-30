@@ -14,7 +14,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.ad.backupfiles.R
-import com.ad.backupfiles.ui.smbServer.ServerDetails
+import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 
 /*
@@ -26,15 +26,15 @@ import com.ad.backupfiles.ui.theme.BackupFilesTheme
  * Composable function to display an input form for server details.
  *
  * @param modifier Modifier for customizing the layout and appearance of the form.
- * @param sharedDirDetail The server details to be displayed and edited in the form.
+ * @param smbServerData The server details to be displayed and edited in the form.
  * @param onFieldChange Callback function to handle changes in server detail fields.
  * @param enabled Flag to indicate whether the form fields should be enabled for user input.
  */
 @Composable
 fun InputForm(
     modifier: Modifier,
-    sharedDirDetail: ServerDetails,
-    onFieldChange: (ServerDetails) -> Unit = {},
+    smbServerData: SmbServerInfoUiData,
+    onFieldChange: (SmbServerInfoUiData) -> Unit = {},
     enabled: Boolean = true,
 ) {
     Column(
@@ -43,9 +43,9 @@ fun InputForm(
     ) {
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = sharedDirDetail.serverAddress,
+            value = smbServerData.serverAddress,
             placeholder = { Text(stringResource(R.string.server_address_placeholder)) },
-            onValueChange = { onFieldChange(sharedDirDetail.copy(serverAddress = it)) },
+            onValueChange = { onFieldChange(smbServerData.copy(serverAddress = it)) },
             label = { Text(stringResource(R.string.server_url_req)) },
             singleLine = true,
             enabled = enabled,
@@ -57,8 +57,8 @@ fun InputForm(
         )
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = sharedDirDetail.username,
-            onValueChange = { onFieldChange(sharedDirDetail.copy(username = it)) },
+            value = smbServerData.username,
+            onValueChange = { onFieldChange(smbServerData.copy(username = it)) },
             label = { Text(stringResource(R.string.username)) },
             singleLine = true,
             enabled = enabled,
@@ -70,8 +70,8 @@ fun InputForm(
         )
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = sharedDirDetail.password,
-            onValueChange = { onFieldChange(sharedDirDetail.copy(password = it)) },
+            value = smbServerData.password,
+            onValueChange = { onFieldChange(smbServerData.copy(password = it)) },
             label = { Text(stringResource(R.string.password)) },
             singleLine = true,
             enabled = enabled,
@@ -83,9 +83,9 @@ fun InputForm(
         )
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = sharedDirDetail.sharedFolderName,
+            value = smbServerData.sharedFolderName,
             placeholder = { Text(stringResource(R.string.shared_folder_placeholder)) },
-            onValueChange = { onFieldChange(sharedDirDetail.copy(sharedFolderName = it)) },
+            onValueChange = { onFieldChange(smbServerData.copy(sharedFolderName = it)) },
             label = { Text(stringResource(R.string.shared_folder_name_req)) },
             singleLine = true,
             enabled = enabled,
@@ -111,7 +111,7 @@ fun InputForm(
 fun InputFormPreview() {
     BackupFilesTheme {
         InputForm(
-            sharedDirDetail = ServerDetails(),
+            smbServerData = SmbServerInfoUiData(),
             onFieldChange = { },
             modifier = Modifier.fillMaxWidth()
         )

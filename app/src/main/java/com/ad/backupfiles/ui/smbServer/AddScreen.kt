@@ -12,6 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -22,6 +24,7 @@ import com.ad.backupfiles.BackupFilesTopAppBar
 import com.ad.backupfiles.R
 import com.ad.backupfiles.ui.AppViewModelProvider
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.InputForm
 import kotlinx.coroutines.launch
@@ -56,6 +59,7 @@ fun AddScreen(
     canNavBack: Boolean = true,
     viewModel: AddScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
@@ -67,8 +71,9 @@ fun AddScreen(
         }
     ) { innerPadding ->
         AddScreenBody(
-            uiState = viewModel.uiState,
-            onFieldChange = viewModel::handleUiStateChange,
+            uiState = viewModel.userInputState,
+            isUiValid = uiState.isUiDataValid,
+            onFieldChange = viewModel::updateUiState,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.save()
@@ -89,14 +94,16 @@ fun AddScreen(
  * Composable function to display the body of an "Add Screen".
  *
  * @param uiState The UI state representing the latest server information.
+ * @param isUiValid The UI validation state based on latest Ui state.
  * @param onFieldChange Callback function to handle changes in the UI fields.
  * @param onSaveClick Callback function to handle the "Save" button click.
  * @param modifier Modifier for customizing the layout of the AddScreenBody.
  */
 @Composable
 fun AddScreenBody(
-    uiState: ServerInfoUiState,
-    onFieldChange: (ServerDetails) -> Unit,
+    uiState: SmbServerInfoUiData,
+    isUiValid: Boolean,
+    onFieldChange: (SmbServerInfoUiData) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -106,12 +113,12 @@ fun AddScreenBody(
     ) {
         InputForm(
             modifier = Modifier.fillMaxWidth(),
-            sharedDirDetail = uiState.serverDetails,
+            smbServerData = uiState,
             onFieldChange = onFieldChange
         )
         Button(
             onClick = onSaveClick,
-            enabled = uiState.isValid,
+            enabled = isUiValid,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -125,14 +132,8 @@ fun AddScreenBody(
 fun AddScreenPreview() {
     BackupFilesTheme {
         AddScreenBody(
-            uiState = ServerInfoUiState(
-                ServerDetails(
-                    serverAddress = "192.123.123.123",
-                    username = "Adding username",
-                    password = "Adding password",
-                    sharedFolderName = "SomeSharedFolderName"
-                )
-            ),
+            uiState = SmbServerInfoUiData(),
+            isUiValid = false,
             onFieldChange = {},
             onSaveClick = {}
         )

@@ -4,6 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.repository.SmbServerInfoRepository
+import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
+import com.ad.backupfiles.ui.shared.toSmbServerEntity
+import com.ad.backupfiles.ui.shared.toUiData
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -31,7 +34,7 @@ class DetailScreenViewModel(
      */
     var uiState: StateFlow<DetailUIState> =
         serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().map {
-            DetailUIState(deviceDetails = it.toDetails())
+            DetailUIState(deviceDetails = it.toUiData())
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
@@ -40,13 +43,13 @@ class DetailScreenViewModel(
 
 
     suspend fun deleteSmbServer() {
-        serverInfoRepo.deleteSmbServer(uiState.value.deviceDetails.toSmbServerInfo())
+        serverInfoRepo.deleteSmbServer(uiState.value.deviceDetails.toSmbServerEntity())
     }
 
 
 }
 
 /**
- * Represents Ui State of [ServerDetails].
+ * Represents Ui State of [SmbServerInfoUiData].
  */
-data class DetailUIState(val deviceDetails: ServerDetails = ServerDetails())
+data class DetailUIState(val deviceDetails: SmbServerInfoUiData = SmbServerInfoUiData())

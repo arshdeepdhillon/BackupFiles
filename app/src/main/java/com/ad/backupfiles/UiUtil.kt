@@ -9,7 +9,7 @@ import androidx.annotation.StringRes
  * @created : 23-Oct-23
  */
 
-object Util {
+object UiUtil {
 
     /**
      * Displays a toast message with the specified string resource.

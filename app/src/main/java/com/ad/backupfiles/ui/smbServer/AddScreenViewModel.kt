@@ -4,10 +4,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.ad.backupfiles.data.entity.SmbServerDto
-import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.data.repository.SmbServerInfoRepository
 import com.ad.backupfiles.smb.SMBClientWrapper
+import com.ad.backupfiles.ui.shared.EditScreenUiState
+import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
+import com.ad.backupfiles.ui.shared.sanitizeAndValidateInputFields
+import com.ad.backupfiles.ui.shared.toSmbServerEntity
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 /*
  * @author : Arshdeep Dhillon
@@ -22,7 +28,10 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : 
     /**
      * Holds current UI state
      */
-    var uiState by mutableStateOf(ServerInfoUiState())
+    private val _uiState = MutableStateFlow(EditScreenUiState())
+    val uiState: StateFlow<EditScreenUiState> = _uiState.asStateFlow()
+
+    var userInputState by mutableStateOf(SmbServerInfoUiData())
         private set
 
 
@@ -32,72 +41,30 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : 
      *
      * @param deviceDetails The server details to update the UI state with.
      */
-    fun handleUiStateChange(deviceDetails: ServerDetails) {
-        uiState =
-            ServerInfoUiState(serverDetails = deviceDetails, isValid = validateInput(deviceDetails))
-    }
-
-    private fun validateInput(deviceDetails: ServerDetails = uiState.serverDetails): Boolean {
-        return with(deviceDetails) {
-            serverAddress.isNotBlank()
-        }
+    fun updateUiState(deviceDetails: SmbServerInfoUiData) {
+        userInputState = deviceDetails
+        updateState(deviceDetails)
     }
 
     /**
      * Asynchronously saves the SMB server information after validating the input.
      */
     suspend fun save() {
-        if (validateInput()) {
-            serverInfoRepo.upsertSmbServer(uiState.serverDetails.toSmbServerInfo())
+        if (_uiState.value.sanitizeAndValidateInputFields()) {
+            serverInfoRepo.upsertSmbServer(_uiState.value.currentUiData.toSmbServerEntity())
+        }
+    }
+
+    /**
+     * Updates the [uiState] with the value provided in the argument. This method also triggers
+     * a validation for input values.
+     */
+    private fun updateState(smbServerInfoUiData: SmbServerInfoUiData) {
+        _uiState.update { currState ->
+            currState.copy(
+                currentUiData = smbServerInfoUiData,
+                isUiDataValid = currState.sanitizeAndValidateInputFields()
+            )
         }
     }
 }
-
-/**
- * Represents Ui State of [ServerDetails].
- */
-data class ServerInfoUiState(
-    val serverDetails: ServerDetails = ServerDetails(),
-    val isValid: Boolean = false,
-)
-
-fun ServerInfoUiState.toDto(): SmbServerDto {
-    this.serverDetails.let {
-        return SmbServerDto(
-            username = it.username,
-            password = it.password,
-            serverAddress = it.serverAddress,
-            sharedFolder = it.sharedFolderName
-        )
-    }
-}
-
-data class ServerDetails(
-    val id: Int = 0,
-    val serverAddress: String = "",
-    val username: String = "",
-    val password: String = "",
-    val sharedFolderName: String = "",
-)
-
-/**
- * Extension function to convert [ServerInfoUiState] to [SmbServerInfo].
- */
-fun ServerDetails.toSmbServerInfo(): SmbServerInfo = SmbServerInfo(
-    smbServerId = id,
-    serverAddress = serverAddress,
-    username = username,
-    password = password,
-    sharedFolderName = sharedFolderName
-)
-
-/**
- * Extension function to convert [ServerInfoUiState] to [SmbServerInfo].
- */
-fun SmbServerInfo.toDetails(): ServerDetails = ServerDetails(
-    id = smbServerId,
-    serverAddress = serverAddress,
-    username = username,
-    password = password,
-    sharedFolderName = sharedFolderName
-)

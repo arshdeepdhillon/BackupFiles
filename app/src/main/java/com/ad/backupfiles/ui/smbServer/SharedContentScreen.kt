@@ -41,7 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.backupfiles.BackupFilesTopAppBar
 import com.ad.backupfiles.R
-import com.ad.backupfiles.Util
+import com.ad.backupfiles.UiUtil
 import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.ui.AppViewModelProvider
@@ -90,7 +90,7 @@ fun SharedContentScreen(
         rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { dirUri: Uri? ->
             coroutineScope.launch {
                 if (dirUri == null) {
-                    Util.makeToast(context, R.string.null_uri)
+                    UiUtil.makeToast(context, R.string.null_uri)
                 } else {
                     // Persist the permission of this Uri inorder to access it after a app/phone restart
                     context.contentResolver.takePersistableUriPermission(

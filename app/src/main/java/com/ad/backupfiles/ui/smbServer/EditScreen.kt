@@ -13,6 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,10 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.backupfiles.BackupFilesTopAppBar
 import com.ad.backupfiles.R
-import com.ad.backupfiles.Util
+import com.ad.backupfiles.UiUtil
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.ui.AppViewModelProvider
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.InputForm
 import kotlinx.coroutines.launch
@@ -67,6 +70,7 @@ fun EditScreen(
     modifier: Modifier = Modifier,
     viewModel: EditScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     Scaffold(
@@ -84,7 +88,8 @@ fun EditScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
                 .fillMaxWidth(),
-            uiState = viewModel.uiState,
+            uiData = viewModel.userInputState,
+            isUiValid = uiState.isUiDataValid,
             onFieldChange = viewModel::updateUiState,
             handleSave = {
                 coroutineScope.launch {
@@ -94,10 +99,10 @@ fun EditScreen(
             },
             checkConnection = {
                 coroutineScope.launch {
-                    if (viewModel.testConnection()) {
-                        Util.makeToast(context, R.string.connection_success_with_smb)
+                    if (viewModel.canConnectToServer()) {
+                        UiUtil.makeToast(context, R.string.connection_success_with_smb)
                     } else {
-                        Util.makeToast(context, R.string.connection_issue_with_smb)
+                        UiUtil.makeToast(context, R.string.connection_issue_with_smb)
                     }
                 }
             }
@@ -109,7 +114,8 @@ fun EditScreen(
  * Composable function for displaying the body of an edit screen.
  *
  * @param modifier Modifier for customizing the layout of the EditScreenBody.
- * @param uiState The UI state representing server information.
+ * @param uiData The UI state representing server information.
+ * @param isUiValid The UI validation state based on latest Ui state.
  * @param onFieldChange Callback function to handle changes in server details fields.
  * @param handleSave Callback function to handle the save button click.
  * @param checkConnection Callback function to handle the check connection button click.
@@ -117,8 +123,9 @@ fun EditScreen(
 @Composable
 fun EditScreenBody(
     modifier: Modifier = Modifier,
-    uiState: ServerInfoUiState,
-    onFieldChange: (ServerDetails) -> Unit,
+    uiData: SmbServerInfoUiData,
+    isUiValid: Boolean,
+    onFieldChange: (SmbServerInfoUiData) -> Unit,
     handleSave: () -> Unit,
     checkConnection: () -> Unit,
 ) {
@@ -128,11 +135,11 @@ fun EditScreenBody(
     ) {
         InputForm(
             modifier = Modifier.fillMaxWidth(),
-            sharedDirDetail = uiState.serverDetails,
+            smbServerData = uiData,
             onFieldChange = onFieldChange
         )
         EditScreenFooter(
-            uiState = uiState,
+            isDataValid = isUiValid,
             onSaveClick = handleSave,
             checkConnection = checkConnection
         )
@@ -142,13 +149,13 @@ fun EditScreenBody(
 /**
  * Composable function for rendering the footer section of an edit screen.
  *
- * @param uiState The UI state representing server information.
+ * @param isDataValid The current UI validation state.
  * @param onSaveClick Callback function invoked when the save button is pressed.
  * @param checkConnection Callback function invoked when the test connection button is pressed.
  */
 @Composable
 fun EditScreenFooter(
-    uiState: ServerInfoUiState,
+    isDataValid: Boolean,
     onSaveClick: () -> Unit,
     checkConnection: () -> Unit,
 ) {
@@ -159,14 +166,14 @@ fun EditScreenFooter(
     ) {
         Button(
             onClick = checkConnection,
-            enabled = uiState.isValid,
+            enabled = isDataValid,
             shape = MaterialTheme.shapes.small
         ) {
             Text(stringResource(R.string.Test))
         }
         Button(
             onClick = onSaveClick,
-            enabled = uiState.isValid,
+            enabled = isDataValid,
             shape = MaterialTheme.shapes.small
         ) {
             Text(text = stringResource(id = R.string.save_connection))
