@@ -3,7 +3,6 @@ package com.ad.backupfiles.worker
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -41,8 +40,8 @@ const val SYNC_FOLDERS_WORK_NAME = "sync_folders_work"
 const val SYNC_FILES_TAG = "sync_folders_tag"
 
 // Keys for the backup work
-const val DIR_URI_KEY = "DIR_URI"
-const val SMB_SERVER_KEY = "SMB_SERVER_ID"
+const val DIR_ID_LONG_KEY = "DIR_ID"
+const val SMB_ID_INT_KEY = "SMB_ID"
 const val SYNC_DIR_KEY = "IS_SYNC"
 
 const val MAX_RETRY_ATTEMPT = 3;
@@ -74,14 +73,14 @@ fun makeStatusNotification(message: String, ctx: Context) {
  * @param tag For logging purposes.
  * @param e The exception that was caught and needs to be handled.
  * @param appCtx The Android application context.
- * @param uri The URI associated with the operation.
+ * @param dirPath The path of this directory.
  * @return A ListenableWorker.Result value indicating whether the operation should be retried or marked as a failure.
  */
 internal fun handleException(
     tag: String,
     e: Exception,
     appCtx: Context,
-    uri: Uri,
+    dirPath: String?,
 ): ListenableWorker.Result {
     when (e) {
         is TimeoutException -> {
@@ -94,7 +93,7 @@ internal fun handleException(
             Log.w(tag, "SMB server is offline", e)
             if (e.localizedMessage?.contains("EHOSTUNREACH") == true) {
                 Log.e(tag, "Incorrect IP address of backup server", e)
-                makeStatusNotification("Backup server does not exist", appCtx)
+                makeStatusNotification("Backup server not found or it is offline", appCtx)
                 return ListenableWorker.Result.failure()
             }
             makeStatusNotification("Backup server offline, we'll retry shortly.", appCtx)
@@ -108,7 +107,7 @@ internal fun handleException(
         }
 
         is UnknownHostException -> {
-            makeStatusNotification("Backup server does not exist", appCtx)
+            makeStatusNotification("Backup server not found", appCtx)
             return ListenableWorker.Result.failure()
         }
 
@@ -123,14 +122,14 @@ internal fun handleException(
                     "Please close all files from '${
                         FileUtils.getDirName(
                             appCtx,
-                            uri
+                            dirPath!!
                         )
                     }' folder", appCtx
                 )
                 return ListenableWorker.Result.retry()
             }
             makeStatusNotification(
-                "Unable to backup '${FileUtils.getDirName(appCtx, uri)}'",
+                "Unable to backup '${FileUtils.getDirName(appCtx, dirPath!!)}'",
                 appCtx
             )
             return ListenableWorker.Result.failure()
@@ -154,7 +153,7 @@ internal fun handleException(
         else -> {
             Log.e(tag, "Unable to backup given folder", e)
             makeStatusNotification(
-                "Unable to backup '${FileUtils.getDirName(appCtx, uri)}'.",
+                "Unable to backup '${FileUtils.getDirName(appCtx, dirPath!!)}'.",
                 appCtx
             )
             return ListenableWorker.Result.failure()

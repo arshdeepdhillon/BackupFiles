@@ -9,32 +9,32 @@ import kotlinx.coroutines.flow.Flow
  * @created : 23-Oct-23
  */
 
-class OfflineSmbServerRepository(private val smbServerDao: SmbServerDao) : SmbServerInfoRepository {
+class OfflineSmbServerRepo(private val smbServerDao: SmbServerDao) : SmbServerInfoRepo {
 
     /**
-     * @see SmbServerInfoRepository.getAllSmbServersAscStream
+     * @see SmbServerInfoRepo.getAllSmbServersAscStream
      */
     override fun getAllSmbServersAscStream(): Flow<List<SmbServerInfo>> =
         smbServerDao.getByAddedDate()
 
     /**
-     * @see SmbServerInfoRepository.getSmbServerStream
+     * @see SmbServerInfoRepo.getSmbServerStream
      */
     override fun getSmbServerStream(id: Int): Flow<SmbServerInfo?> = smbServerDao.getByIdStream(id)
 
     /**
-     * @see SmbServerInfoRepository.getSmbServer
+     * @see SmbServerInfoRepo.getSmbServer
      */
     override suspend fun getSmbServer(id: Int): SmbServerInfo = smbServerDao.getById(id)
 
     /**
-     * @see SmbServerInfoRepository.upsertSmbServer
+     * @see SmbServerInfoRepo.upsertSmbServer
      */
     override suspend fun upsertSmbServer(smbServerInfo: SmbServerInfo) =
         smbServerDao.upsert(smbServerInfo)
 
     /**
-     * @see SmbServerInfoRepository.deleteSmbServer
+     * @see SmbServerInfoRepo.deleteSmbServer
      */
     override suspend fun deleteSmbServer(smbServerInfo: SmbServerInfo) =
         smbServerDao.delete(smbServerInfo)

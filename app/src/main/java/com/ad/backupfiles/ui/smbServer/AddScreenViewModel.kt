@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.ad.backupfiles.data.repository.SmbServerInfoRepository
+import com.ad.backupfiles.data.repository.SmbServerInfoRepo
 import com.ad.backupfiles.smb.SMBClientWrapper
 import com.ad.backupfiles.ui.shared.SMBServerUiState
 import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
  * @created : 23-Oct-23
  */
 
-class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepository) : ViewModel() {
+class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepo) : ViewModel() {
     private val TAG = AddScreenViewModel::class.java.simpleName
 
     private val smb = SMBClientWrapper()

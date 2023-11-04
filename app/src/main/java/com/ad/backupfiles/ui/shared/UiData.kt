@@ -19,7 +19,7 @@ data class SMBServerUiState(
     val isUiDataValid: Boolean = false,
 )
 
-fun SMBServerUiState.toDto(): SmbServerDto {
+fun SMBServerUiState.toUiData(): SmbServerDto {
     this.currentUiData.let {
         return SmbServerDto(
             username = it.username,

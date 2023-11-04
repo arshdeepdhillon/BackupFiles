@@ -141,7 +141,7 @@ class SMBClientWrapper : SMBClientApi {
     override suspend fun saveFolder(
         context: Context,
         smbServerDto: SmbServerDto,
-        folderToSave: Uri,
+        folderToSave: String,
         isSync: Boolean,
     ) {
         val (username, password, serverAddress, sharedFolder) = smbServerDto

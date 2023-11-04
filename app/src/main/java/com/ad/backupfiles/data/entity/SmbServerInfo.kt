@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.ad.backupfiles.ui.shared.SMBServerUiState
 import com.ad.backupfiles.ui.shared.toUiData
+import java.time.Instant
 
 /*
  * @author : Arshdeep Dhillon
@@ -20,7 +21,7 @@ data class SmbServerInfo(
     val password: String,
     val sharedFolderName: String,
     @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
-    val createdDate: Long = System.currentTimeMillis(),
+    val createdDate: Long = Instant.now().epochSecond,
 )
 
 data class SmbServerDto(

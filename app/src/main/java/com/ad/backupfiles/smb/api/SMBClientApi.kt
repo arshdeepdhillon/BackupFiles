@@ -1,7 +1,6 @@
 package com.ad.backupfiles.smb.api
 
 import android.content.Context
-import android.net.Uri
 import com.ad.backupfiles.data.entity.SmbServerDto
 
 /*
@@ -30,5 +29,5 @@ interface SMBClientApi {
      * @param uri The Uri of the folder to be saved.
      * @param isSync backup the missing content of [smbServerDto] on the server if true, otherwise do normal backup
      */
-    suspend fun saveFolder(context: Context, smbServerDto: SmbServerDto, folderToSave: Uri, isSync: Boolean)
+    suspend fun saveFolder(context: Context, smbServerDto: SmbServerDto, folderToSave: String, isSync: Boolean = false)
 }

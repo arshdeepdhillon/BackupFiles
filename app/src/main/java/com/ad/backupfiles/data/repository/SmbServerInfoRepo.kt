@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Repository that provides data access to [SmbServerInfo].
  */
-interface SmbServerInfoRepository {
+interface SmbServerInfoRepo {
 
     /**
      * Retrieves a flow of lists containing SMB server information in ascending order.
@@ -48,5 +48,5 @@ interface SmbServerInfoRepository {
      * @param id The unique identifier of the SMB server to retrieve.
      * @return A [SmbServerInfo] object.
      */
-    suspend fun getSmbServer(toInt: Int): SmbServerInfo
+    suspend fun getSmbServer(id: Int): SmbServerInfo
 }

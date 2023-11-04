@@ -39,7 +39,8 @@ object FileUtils {
         return null
     }
 
-    fun getFilesInDir(context: Context, uri: Uri): Deque<DocumentFile> {
+    fun getFilesInDir(context: Context, dirPath: String): Deque<DocumentFile> {
+        val uri = Uri.parse(dirPath)
         val rootDocument = DocumentFile.fromTreeUri(context, uri)
         val dequeList: Deque<DocumentFile> = LinkedList()
         if (rootDocument != null) {

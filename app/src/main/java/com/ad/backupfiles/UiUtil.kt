@@ -11,6 +11,9 @@ import androidx.annotation.StringRes
 
 object UiUtil {
 
+    private const val MAX_ARG_LEN = 20
+    private const val MAX_TRUNK_LEN = 15
+
     /**
      * Displays a toast message with the specified string resource.
      * @param context the Android context in which to display the toast.
@@ -20,9 +23,24 @@ object UiUtil {
     fun makeToast(
         context: Context,
         @StringRes resourceId: Int,
+        args: List<String?> = emptyList(),
         duration: Int = Toast.LENGTH_SHORT,
     ) {
-        toast(context, context.getText(resourceId).toString(), duration)
+        toast(
+            context, context.getString(resourceId, *padArgs(args)), duration
+        )
+    }
+
+    /**
+     * Truncate and ellipsis long strings if they exceed [MAX_ARG_LEN].
+     *
+     * @param args The list of nullable strings to process.
+     * @return An array of processed strings.
+     */
+    private fun padArgs(args: List<String?>): Array<String> {
+        return args.filterNotNull().map { str ->
+            if (str.length > MAX_ARG_LEN) str.take(MAX_TRUNK_LEN).trim() + ".." else str
+        }.toTypedArray()
     }
 
     /**

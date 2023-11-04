@@ -1,10 +1,10 @@
 package com.ad.backupfiles.data
 
 import android.content.Context
-import com.ad.backupfiles.data.repository.OfflineSaveDirectoryRepository
-import com.ad.backupfiles.data.repository.OfflineSmbServerRepository
-import com.ad.backupfiles.data.repository.SaveDirectoryRepository
-import com.ad.backupfiles.data.repository.SmbServerInfoRepository
+import com.ad.backupfiles.data.repository.OfflineSavedDirectoryRepo
+import com.ad.backupfiles.data.repository.OfflineSmbServerRepo
+import com.ad.backupfiles.data.repository.SavedDirectoryRepo
+import com.ad.backupfiles.data.repository.SmbServerInfoRepo
 
 /*
  * @author : Arshdeep Dhillon
@@ -15,23 +15,23 @@ import com.ad.backupfiles.data.repository.SmbServerInfoRepository
  * Application container for Dependency Injection
  */
 interface AppContainer {
-    val smbServerRepository: SmbServerInfoRepository
-    val saveDirectoryRepository: SaveDirectoryRepository
+    val smbServerRepo: SmbServerInfoRepo
+    val directoryRepo: SavedDirectoryRepo
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
 
     /**
-     * Implementation for [SmbServerInfoRepository]
+     * Implementation for [SmbServerInfoRepo]
      */
-    override val smbServerRepository: SmbServerInfoRepository by lazy {
-        OfflineSmbServerRepository(BackupFilesDatabase.getDatabase(context).smbServerDao())
+    override val smbServerRepo: SmbServerInfoRepo by lazy {
+        OfflineSmbServerRepo(BackupFilesDatabase.getDatabase(context).smbServerDao())
     }
 
     /**
-     * Implementation for [SaveDirectoryRepository]
+     * Implementation for [SavedDirectoryRepo]
      */
-    override val saveDirectoryRepository: SaveDirectoryRepository by lazy {
-        OfflineSaveDirectoryRepository(BackupFilesDatabase.getDatabase(context).savedDirDao())
+    override val directoryRepo: SavedDirectoryRepo by lazy {
+        OfflineSavedDirectoryRepo(BackupFilesDatabase.getDatabase(context).savedDirDao())
     }
 }

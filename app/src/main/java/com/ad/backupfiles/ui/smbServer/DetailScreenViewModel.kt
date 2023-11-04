@@ -3,7 +3,7 @@ package com.ad.backupfiles.ui.smbServer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ad.backupfiles.data.repository.SmbServerInfoRepository
+import com.ad.backupfiles.data.repository.SmbServerInfoRepo
 import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
 import com.ad.backupfiles.ui.shared.toSmbServerEntity
 import com.ad.backupfiles.ui.shared.toUiData
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class DetailScreenViewModel(
     stateHandle: SavedStateHandle,
-    private val serverInfoRepo: SmbServerInfoRepository,
+    private val serverInfoRepo: SmbServerInfoRepo,
 ) : ViewModel() {
 
     companion object {

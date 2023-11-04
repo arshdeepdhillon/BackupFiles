@@ -8,13 +8,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.entity.toUiState
-import com.ad.backupfiles.data.repository.SmbServerInfoRepository
+import com.ad.backupfiles.data.repository.SmbServerInfoRepo
 import com.ad.backupfiles.smb.SMBClientWrapper
 import com.ad.backupfiles.ui.shared.SMBServerUiState
 import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
 import com.ad.backupfiles.ui.shared.sanitizeAndValidateInputFields
-import com.ad.backupfiles.ui.shared.toDto
 import com.ad.backupfiles.ui.shared.toSmbServerEntity
+import com.ad.backupfiles.ui.shared.toUiData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,11 +31,11 @@ import kotlinx.coroutines.withContext
  */
 
 /**
- * Updates the fields of an item from [SmbServerInfoRepository]'s data source
+ * Updates the fields of an item from [SmbServerInfoRepo]'s data source
  */
 class EditScreenViewModel(
     stateHandle: SavedStateHandle,
-    private val serverInfoRepo: SmbServerInfoRepository,
+    private val serverInfoRepo: SmbServerInfoRepo,
 ) : ViewModel() {
     private val smbServerId: Int = checkNotNull(stateHandle[EditScreenDestination.argKey])
 
@@ -74,11 +74,11 @@ class EditScreenViewModel(
 
     suspend fun canConnectToServer(): Boolean {
         return withContext(Dispatchers.IO) {
-            return@withContext if (smb.canConnect(_uiState.value.toDto())) {
+            return@withContext if (smb.canConnect(_uiState.value.toUiData())) {
                 Log.d(TAG, "Successfully connected with new changes")
                 true
             } else {
-                Log.e(TAG, "Unable to connect with SMB Server ${_uiState.value.toDto()}")
+                Log.e(TAG, "Unable to connect with SMB Server ${_uiState.value.toUiData()}")
                 false
             }
         }

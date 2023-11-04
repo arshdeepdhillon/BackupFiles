@@ -1,6 +1,5 @@
 package com.ad.backupfiles.ui.utils
 
-import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -54,12 +53,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.documentfile.provider.DocumentFile
 import com.ad.backupfiles.R
 import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
-import java.io.File
 import java.text.DateFormat
+import java.time.Instant
 import java.util.Locale
 
 /*
@@ -71,7 +69,7 @@ import java.util.Locale
  * Displays the given list of data in a single column
  *
  * @param modifier The modifier to apply to the composable.
- * @param fileList The list of saved folders to display.
+ * @param savedDirs The list of saved folders to display.
  * @param onItemSelect Invoked when an item is clicked in selection mode.
  * @param onSelectionModeChange Invoked when the selection mode changes.
  */
@@ -79,25 +77,25 @@ import java.util.Locale
 @Composable
 fun ItemListBody(
     modifier: Modifier = Modifier,
-    fileList: List<DirectoryDto>,
+    savedDirs: List<DirectoryDto>,
     onItemSelect: (Pair<Boolean, DirectoryDto>) -> Unit = {},
     resetSelectionState: Boolean = false,
     onSelectionModeChange: (Boolean) -> Unit = {},
 ) {
     // rememberSavable to save the state across configuration changes
-    var selectedUris by rememberSaveable { mutableStateOf(emptySet<Uri>()) }
-    val isSelectionMode by remember { derivedStateOf { selectedUris.isNotEmpty() } }
+    var selectedDirIds by rememberSaveable { mutableStateOf(emptySet<Long>()) }
+    val isSelectionMode by remember { derivedStateOf { selectedDirIds.isNotEmpty() } }
 
     DisposableEffect(key1 = isSelectionMode, key2 = resetSelectionState) {
         if (resetSelectionState) {
-            selectedUris = emptySet()
+            selectedDirIds = emptySet()
         } else {// Update the parents
             onSelectionModeChange(isSelectionMode)
         }
         // Clean up resources (if any) when the effect leaves the Composition
         onDispose {
-            if (!isSelectionMode && selectedUris.isNotEmpty()) {
-                selectedUris = emptySet()
+            if (!isSelectionMode && selectedDirIds.isNotEmpty()) {
+                selectedDirIds = emptySet()
             }
         }
     }
@@ -105,7 +103,7 @@ fun ItemListBody(
     // Handle back press when in selection mode
     BackHandler(enabled = isSelectionMode) {
         // Clear selected items when back button is pressed
-        selectedUris = emptySet()
+        selectedDirIds = emptySet()
     }
 
     LazyVerticalGrid(
@@ -115,30 +113,28 @@ fun ItemListBody(
         columns = GridCells.Fixed(1),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(items = fileList) { item ->
-            val selected by remember { derivedStateOf { item.dirUri in selectedUris } }
+        items(items = savedDirs) { item ->
+            val selected by remember { derivedStateOf { item.dirId in selectedDirIds } }
             ItemDetails(
                 modifier = if (isSelectionMode) {
                     Modifier.clickable {
                         if (selected) {
-                            selectedUris -= item.dirUri
+                            selectedDirIds -= item.dirId
                             onItemSelect(Pair(false, item))
                         } else {
-                            selectedUris += item.dirUri
+                            selectedDirIds += item.dirId
                             onItemSelect(Pair(true, item))
                         }
                     }
                 } else {
                     Modifier.combinedClickable(onClick = { }, onLongClick = {
-                        selectedUris += item.dirUri
+                        selectedDirIds += item.dirId
                         // Selection mode has started, make sure we also add the initial item to our list
                         onItemSelect(Pair(true, item))
                     })
                 },
-                itemName = item.dirName,
-                modifiedTime = item.lastModified,
-                numOfFiles = item.itemCount,
-                isDir = item.isDirectory,
+                dirName = item.dirName,
+                lastSynced = item.lastSynced,
                 selected = selected,
                 isSelectedMode = isSelectionMode
             )
@@ -151,12 +147,10 @@ fun ItemListBody(
 @Composable
 fun ItemDetails(
     modifier: Modifier = Modifier,
-    itemName: String,
-    modifiedTime: Long,
-    isDir: Boolean,
+    dirName: String?,
+    lastSynced: Long?,
     selected: Boolean,
     isSelectedMode: Boolean,
-    numOfFiles: Int?,
 ) {
     Row(
         modifier = modifier
@@ -193,34 +187,32 @@ fun ItemDetails(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Icon(
-                        painter = if (isDir) painterResource(id = R.drawable.folder_24) else painterResource(
-                            id = R.drawable.text_snippet_24
-                        ),
+                        painter = painterResource(id = R.drawable.folder_24),
                         contentDescription = "Content Type",
                         modifier = Modifier.padding(dimensionResource(id = R.dimen.s_pad))
                     )
                     Column {
-                        Text(text = itemName)
+                        Text(text = dirName ?: "")
                         Row(
                             modifier = Modifier.fillMaxSize(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = formatDate(modifiedTime),
+                                text = "Synced: " + (formatDate(lastSynced) ?: "Not Yet"),
                                 style = MaterialTheme.typography.labelSmall
                             )
-                            if (isDir) {
-                                Text(
-                                    text = "${
-                                        when {
-                                            numOfFiles == null -> 0
-                                            numOfFiles <= 99 -> numOfFiles
-                                            numOfFiles > 99 -> "99+"
-                                            else -> 0
-                                        }
-                                    } items", style = MaterialTheme.typography.labelSmall
-                                )
-                            }
+//                            if (isDir) {
+//                                Text(
+//                                    text = "${
+//                                        when {
+//                                            numOfFiles == null -> 0
+//                                            numOfFiles <= 99 -> numOfFiles
+//                                            numOfFiles > 99 -> "99+"
+//                                            else -> 0
+//                                        }
+//                                    } items", style = MaterialTheme.typography.labelSmall
+//                                )
+//                            }
                         }
                     }
                 }
@@ -252,28 +244,29 @@ fun CircleCheckBox(modifier: Modifier = Modifier, selected: Boolean) {
 }
 
 
-fun formatDate(timestampMillis: Long): String {
+fun formatDate(timestampSec: Long?): String? {
+    if (timestampSec == null) {
+        return null
+    }
     val locale = Locale.getDefault()
     return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, locale)
-        .format(timestampMillis)
+        .format(timestampSec * 1000)
 }
 
 
 @Preview(showBackground = true)
 @Composable
 fun ItemListBodyPreview() {
+    val oneDayInSec = 86_400
     ItemListBody(
-        fileList = (0..10).toList().map {
-            DocumentFile.fromFile(File("temp${it}")).let { tempDir ->
-                DirectoryDto(
-                    dirId = it,
-                    dirUri = tempDir.uri,
-                    isDirectory = tempDir.isDirectory,
-                    itemCount = tempDir.listFiles().size,
-                    dirName = if (tempDir.name == null) "unknowfoldername" else tempDir.name!!,
-                    lastModified = tempDir.lastModified()
-                )
-            }
+        savedDirs = (0L..5L).toList().map {
+            DirectoryDto(
+                dirId = it,
+                smbServerId = 0,
+                dirPath = "/some/dir/path/$it",
+                lastSynced = if ((it % 2).toInt() == 0) null else Instant.now().epochSecond - oneDayInSec * it,
+                dirName = "Directory name $it"
+            )
         }
     )
 }

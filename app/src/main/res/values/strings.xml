@@ -32,4 +32,6 @@
     <string name="server_address_placeholder">192.168.1.95</string>
     <string name="Test">Test Connection</string>
     <string name="icon_check">Item selection</string>
+    <string name="error_folder_already_saved">%1$s already saved</string>
+    <string name="generic_error_failed_to_save_folder">Could not save %1$s</string>
 </resources>

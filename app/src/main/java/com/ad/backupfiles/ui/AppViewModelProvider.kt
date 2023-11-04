@@ -23,34 +23,34 @@ object AppViewModelProvider {
 
         // Initializer for HomeViewModel
         initializer {
-            HomeViewModel(backupFilesApplication().container.smbServerRepository)
+            HomeViewModel(backupFilesApplication().container.smbServerRepo)
         }
 
         // Initializer for AddScreenViewModel
         initializer {
             AddScreenViewModel(
-                backupFilesApplication().container.smbServerRepository
+                backupFilesApplication().container.smbServerRepo
             )
         }
         // Initializer for DetailScreenViewModel
         initializer {
             DetailScreenViewModel(
                 this.createSavedStateHandle(),
-                backupFilesApplication().container.smbServerRepository
+                backupFilesApplication().container.smbServerRepo
             )
         }
         // Initializer for EditScreenViewModel
         initializer {
             EditScreenViewModel(
                 this.createSavedStateHandle(),
-                backupFilesApplication().container.smbServerRepository
+                backupFilesApplication().container.smbServerRepo
             )
         }
         // Initializer for SharedContentScreenViewModel
         initializer {
             SharedContentScreenViewModel(
                 this.createSavedStateHandle(),
-                backupFilesApplication().container.saveDirectoryRepository,
+                backupFilesApplication().container.directoryRepo,
                 backupFilesApplication().applicationContext
             )
         }

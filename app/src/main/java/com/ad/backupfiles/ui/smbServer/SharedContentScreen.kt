@@ -27,10 +27,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -41,14 +41,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.backupfiles.BackupFilesTopAppBar
 import com.ad.backupfiles.R
+import com.ad.backupfiles.UiUtil
 import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.ui.AppViewModelProvider
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.smbServer.SharedContentScreenViewModel.ErrorUiState
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.GeneralAlert
 import com.ad.backupfiles.ui.utils.ItemListBody
-import kotlinx.coroutines.launch
 
 /*
  * @author : Arshdeep Dhillon
@@ -80,24 +81,20 @@ fun SharedContentScreen(
     modifier: Modifier = Modifier,
     viewModel: SharedContentScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     var inSelectionMode by rememberSaveable { mutableStateOf(false) }
     var isSyncDialogActive by rememberSaveable { mutableStateOf(false) }
     var clearSelectionState by rememberSaveable { mutableStateOf(false) }
-
     val dirPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { dirUri: Uri? ->
-        coroutineScope.launch {
-            // dirUri can be null when no folder is selected
-            if (dirUri != null) {
-                // Persist the permission of this Uri inorder to access it after a app/phone restart
-                context.contentResolver.takePersistableUriPermission(
-                    dirUri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                )
-                viewModel.saveDirectory(dirUri)
-            }
+        // dirUri can be null when no folder is selected
+        if (dirUri != null) {
+            // Persist the permission of this Uri inorder to access it after a app/phone restart
+            context.contentResolver.takePersistableUriPermission(
+                dirUri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+            viewModel.saveDirectory(dirUri)
         }
     }
 
@@ -106,6 +103,21 @@ fun SharedContentScreen(
         onDispose {
             clearSelectionState = false
         }
+    }
+
+    /* By passing a Unit, it allows us to recompose once when composition starts and doesn't recompose on each collect */
+    LaunchedEffect(Unit) {
+        viewModel.errorState
+            .collect { message ->
+                when (message) {
+                    is ErrorUiState.Error -> {
+                        UiUtil.makeToast(context, message.resId, message.args)
+                    }
+
+                    is ErrorUiState.Empty -> {}
+                }
+            }
+
     }
     Scaffold(
         topBar = {
@@ -162,7 +174,7 @@ fun SharedContentScreen(
     ) { innerPadding ->
         ItemListBody(
             modifier = Modifier.padding(innerPadding),
-            fileList = uiState.content,
+            savedDirs = uiState.dirs,
             onItemSelect = { item: Pair<Boolean, DirectoryDto> -> viewModel.handleSelected(item) },
             resetSelectionState = clearSelectionState
         ) {

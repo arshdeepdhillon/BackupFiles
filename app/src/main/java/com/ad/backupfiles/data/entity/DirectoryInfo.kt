@@ -1,6 +1,5 @@
 package com.ad.backupfiles.data.entity
 
-import android.net.Uri
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -12,6 +11,14 @@ import androidx.room.Relation
  * @created : 23-Oct-23
  */
 
+/**
+ * Represents information about a directory stored in this device.
+ *
+ * @param dirId The unique identifier for the directory. It's auto-generated.
+ * @param smbServerId The identifier of the SMB server associated with the directory.
+ * @param dirPath The URI referencing the directory.
+ * @param lastSynced The timestamp when the directory was last synchronized, or null if not yet synchronized.
+ */
 @Entity(
     tableName = "directory_info",
     foreignKeys = [ForeignKey(
@@ -23,36 +30,34 @@ import androidx.room.Relation
 )
 data class DirectoryInfo(
     @PrimaryKey(autoGenerate = true)
-    val dirId: Int = 0,
+    val dirId: Long = 0,
     val smbServerId: Int,
     val dirPath: String,
+    val dirName: String?,
+    val lastSynced: Long? = null,
 )
 
 data class SMBServerWithSavedDirs(
     @Embedded
     val smbServer: SmbServerInfo,
-    @Relation(
-        parentColumn = "smbServerId",
-        entityColumn = "smbServerId"
-    )
+    @Relation(parentColumn = "smbServerId", entityColumn = "smbServerId")
     val savedDirs: List<DirectoryInfo>,
 )
 
 /**
- * Represents a saved directory item.
+ * Data transfer object representing a saved directory.
  *
- * @param dirId The unique identifier for the directory.
- * @param dirUri The URI of the directory.
- * @param dirName The name of the directory.
- * @param lastModified The timestamp of the last modification.
- * @param itemCount The number of items in the directory.
- * @param isDirectory Indicates whether the item is a directory.
+ * @property dirPath The path of the directory.
+ * @property dirName The name of the directory or null.
+ * @property smbServerId The identifier of the associated SMB server.
+ * @property lastSynced The [java.time.Instant.now] seconds since the directory was last synchronized (can be null if it has not yet been synced).
  */
-data class DirectoryDto(val dirId: Int, val dirUri: Uri, val dirName: String, val lastModified: Long, val itemCount: Int, val isDirectory: Boolean)
+data class DirectoryDto(val dirId: Long, val dirPath: String, val dirName: String?, val smbServerId: Int, val lastSynced: Long?)
+
 
 /**
- * Converts a DirectoryInfo to a DirectoryDto object.
+ * Converts from DirectoryInfo to DirectoryDto object.
  */
-fun DirectoryInfo.toDto(dirUri: Uri, dirName: String, lastModified: Long, itemCount: Int, isDirectory: Boolean): DirectoryDto = DirectoryDto(
-    dirId = this.dirId, dirUri = dirUri, dirName = dirName, lastModified = lastModified, itemCount = itemCount, isDirectory = isDirectory
+fun DirectoryInfo.toDto(): DirectoryDto = DirectoryDto(
+    dirId = this.dirId, dirPath = this.dirPath, dirName = this.dirName, lastSynced = this.lastSynced, smbServerId = this.smbServerId
 )
