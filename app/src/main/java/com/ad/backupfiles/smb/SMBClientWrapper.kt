@@ -28,7 +28,7 @@ import java.util.Deque
  */
 
 /**
- * This wrapper class serves as an interface to interact with SMB servers and provides
+ * This wrapper class serves as an interface to interact with SMB server and provides
  * methods for various SMB-related operations.
  *
  * @see SMBClientApi

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.data.repository.SmbServerInfoRepo
-import com.ad.backupfiles.ui.shared.DELAY_UPSTREAM_TIMEOUT_MILLIS
+import com.ad.backupfiles.ui.utils.DELAY_UPSTREAM_TIMEOUT_MILLIS
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map

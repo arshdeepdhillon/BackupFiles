@@ -3,6 +3,7 @@ package com.ad.backupfiles.data.entity
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
@@ -16,7 +17,7 @@ import androidx.room.Relation
  *
  * @param dirId The unique identifier for the directory. It's auto-generated.
  * @param smbServerId The identifier of the SMB server associated with the directory.
- * @param dirPath The URI referencing the directory.
+ * @param dirPath The URI referencing the directory on user's device.
  * @param lastSynced The timestamp when the directory was last synchronized, or null if not yet synchronized.
  */
 @Entity(
@@ -26,13 +27,15 @@ import androidx.room.Relation
         parentColumns = arrayOf("smbServerId"),
         childColumns = arrayOf("smbServerId"),
         onDelete = ForeignKey.CASCADE
+    )], indices = [Index(
+        value = ["smbServerId", "dirPath"], unique = true
     )]
 )
 data class DirectoryInfo(
     @PrimaryKey(autoGenerate = true)
     val dirId: Long = 0,
-    val smbServerId: Int,
-    val dirPath: String,
+    val smbServerId: Long,
+    val dirPath: String, // URI path to the folder
     val dirName: String?,
     val lastSynced: Long? = null,
 )
@@ -52,7 +55,7 @@ data class SMBServerWithSavedDirs(
  * @property smbServerId The identifier of the associated SMB server.
  * @property lastSynced The [java.time.Instant.now] seconds since the directory was last synchronized (can be null if it has not yet been synced).
  */
-data class DirectoryDto(val dirId: Long, val dirPath: String, val dirName: String?, val smbServerId: Int, val lastSynced: Long?)
+data class DirectoryDto(val dirId: Long, val dirPath: String, val dirName: String?, val smbServerId: Long, val lastSynced: Long?)
 
 
 /**

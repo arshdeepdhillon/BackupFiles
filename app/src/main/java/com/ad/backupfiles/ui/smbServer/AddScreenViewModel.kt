@@ -6,10 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.ad.backupfiles.data.repository.SmbServerInfoRepo
 import com.ad.backupfiles.smb.SMBClientWrapper
-import com.ad.backupfiles.ui.shared.SMBServerUiState
-import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
-import com.ad.backupfiles.ui.shared.sanitizeAndValidateInputFields
-import com.ad.backupfiles.ui.shared.toSmbServerEntity
+import com.ad.backupfiles.ui.utils.SMBServerUiState
+import com.ad.backupfiles.ui.utils.SmbServerInfoUiData
+import com.ad.backupfiles.ui.utils.sanitizeAndValidateInputFields
+import com.ad.backupfiles.ui.utils.toSmbServerEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

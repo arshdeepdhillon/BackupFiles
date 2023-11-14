@@ -69,7 +69,7 @@ fun BackupFilesNavHost(navController: NavHostController, modifier: Modifier = Mo
         composable(
             route = SharedContentScreenDestination.routeArgs,
             arguments = listOf(navArgument(SharedContentScreenDestination.argKey) {
-                type = NavType.IntType
+                type = NavType.LongType
             })
         ) {
             SharedContentScreen(

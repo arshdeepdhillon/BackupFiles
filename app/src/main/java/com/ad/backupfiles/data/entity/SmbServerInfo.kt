@@ -3,8 +3,8 @@ package com.ad.backupfiles.data.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ad.backupfiles.ui.shared.SMBServerUiState
-import com.ad.backupfiles.ui.shared.toUiData
+import com.ad.backupfiles.ui.utils.SMBServerUiState
+import com.ad.backupfiles.ui.utils.toUiData
 import java.time.Instant
 
 /*
@@ -15,7 +15,7 @@ import java.time.Instant
 @Entity(tableName = "smb_server_info")
 data class SmbServerInfo(
     @PrimaryKey(autoGenerate = true)
-    val smbServerId: Int = 0,
+    val smbServerId: Long = 0,
     val serverAddress: String,
     val username: String,
     val password: String,

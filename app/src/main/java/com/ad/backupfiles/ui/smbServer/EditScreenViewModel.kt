@@ -10,11 +10,11 @@ import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.entity.toUiState
 import com.ad.backupfiles.data.repository.SmbServerInfoRepo
 import com.ad.backupfiles.smb.SMBClientWrapper
-import com.ad.backupfiles.ui.shared.SMBServerUiState
-import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
-import com.ad.backupfiles.ui.shared.sanitizeAndValidateInputFields
-import com.ad.backupfiles.ui.shared.toSmbServerEntity
-import com.ad.backupfiles.ui.shared.toUiData
+import com.ad.backupfiles.ui.utils.SMBServerUiState
+import com.ad.backupfiles.ui.utils.SmbServerInfoUiData
+import com.ad.backupfiles.ui.utils.sanitizeAndValidateInputFields
+import com.ad.backupfiles.ui.utils.toSmbServerEntity
+import com.ad.backupfiles.ui.utils.toUiData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +37,7 @@ class EditScreenViewModel(
     stateHandle: SavedStateHandle,
     private val serverInfoRepo: SmbServerInfoRepo,
 ) : ViewModel() {
-    private val smbServerId: Int = checkNotNull(stateHandle[EditScreenDestination.argKey])
+    private val smbServerId: Long = checkNotNull(stateHandle[EditScreenDestination.argKey])
 
     private val TAG = EditScreenViewModel::class.java.simpleName
     private val smb = SMBClientWrapper()

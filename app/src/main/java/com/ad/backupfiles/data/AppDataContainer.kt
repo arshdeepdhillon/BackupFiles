@@ -1,9 +1,9 @@
 package com.ad.backupfiles.data
 
 import android.content.Context
-import com.ad.backupfiles.data.repository.OfflineSavedDirectoryRepo
+import com.ad.backupfiles.data.repository.DirectoryRepo
+import com.ad.backupfiles.data.repository.OfflineDirectoryRepo
 import com.ad.backupfiles.data.repository.OfflineSmbServerRepo
-import com.ad.backupfiles.data.repository.SavedDirectoryRepo
 import com.ad.backupfiles.data.repository.SmbServerInfoRepo
 
 /*
@@ -16,7 +16,7 @@ import com.ad.backupfiles.data.repository.SmbServerInfoRepo
  */
 interface AppContainer {
     val smbServerRepo: SmbServerInfoRepo
-    val directoryRepo: SavedDirectoryRepo
+    val directoryRepo: DirectoryRepo
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
@@ -29,9 +29,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     /**
-     * Implementation for [SavedDirectoryRepo]
+     * Implementation for [DirectoryRepo]
      */
-    override val directoryRepo: SavedDirectoryRepo by lazy {
-        OfflineSavedDirectoryRepo(BackupFilesDatabase.getDatabase(context).savedDirDao())
+    override val directoryRepo: DirectoryRepo by lazy {
+        OfflineDirectoryRepo(BackupFilesDatabase.getDatabase(context).directoryDao())
     }
 }

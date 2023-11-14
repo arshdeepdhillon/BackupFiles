@@ -1,6 +1,5 @@
 package com.ad.backupfiles.ui.utils
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -71,6 +70,7 @@ import java.util.Locale
  * @param modifier The modifier to apply to the composable.
  * @param savedDirs The list of saved folders to display.
  * @param onItemSelect Invoked when an item is clicked in selection mode.
+ * @param resetSelectionState Whether to reset the selection state. Defaults to `false`.
  * @param onSelectionModeChange Invoked when the selection mode changes.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -98,12 +98,6 @@ fun ItemListBody(
                 selectedDirIds = emptySet()
             }
         }
-    }
-
-    // Handle back press when in selection mode
-    BackHandler(enabled = isSelectionMode) {
-        // Clear selected items when back button is pressed
-        selectedDirIds = emptySet()
     }
 
     LazyVerticalGrid(

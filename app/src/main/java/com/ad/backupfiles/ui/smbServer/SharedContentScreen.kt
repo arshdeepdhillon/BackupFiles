@@ -2,6 +2,7 @@ package com.ad.backupfiles.ui.smbServer
 
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -98,11 +99,19 @@ fun SharedContentScreen(
         }
     }
 
-    // Reset the state
+    // Reset the state back to false after it has changed from false (default) -> true
     DisposableEffect(key1 = clearSelectionState) {
         onDispose {
             clearSelectionState = false
         }
+    }
+
+    // When in selection mode and back button is pressed, clear selected items
+    BackHandler(enabled = inSelectionMode) {
+        viewModel.onClearSelectionState()
+
+        // The parent compo ItemListBody know
+        clearSelectionState = true
     }
 
     /* By passing a Unit, it allows us to recompose once when composition starts and doesn't recompose on each collect */
@@ -174,8 +183,8 @@ fun SharedContentScreen(
     ) { innerPadding ->
         ItemListBody(
             modifier = Modifier.padding(innerPadding),
-            savedDirs = uiState.dirs,
-            onItemSelect = { item: Pair<Boolean, DirectoryDto> -> viewModel.handleSelected(item) },
+            savedDirs = uiState.savedDirectories,
+            onItemSelect = { item: Pair<Boolean, DirectoryDto> -> viewModel.onDirectorySelected(item) },
             resetSelectionState = clearSelectionState
         ) {
             inSelectionMode = it

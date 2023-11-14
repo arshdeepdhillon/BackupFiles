@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.repository.SmbServerInfoRepo
-import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
-import com.ad.backupfiles.ui.shared.toSmbServerEntity
-import com.ad.backupfiles.ui.shared.toUiData
+import com.ad.backupfiles.ui.utils.SmbServerInfoUiData
+import com.ad.backupfiles.ui.utils.toSmbServerEntity
+import com.ad.backupfiles.ui.utils.toUiData
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -27,7 +27,7 @@ class DetailScreenViewModel(
         private const val TIMEOUT_MILLIS = 5_000L
     }
 
-    private val smbServerId: Int = checkNotNull(stateHandle[DetailScreenDestination.argKey])
+    private val smbServerId: Long = checkNotNull(stateHandle[DetailScreenDestination.argKey])
 
     /**
      * Holds current UI state

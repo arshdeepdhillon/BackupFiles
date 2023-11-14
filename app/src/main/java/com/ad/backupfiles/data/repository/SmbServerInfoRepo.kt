@@ -20,13 +20,13 @@ interface SmbServerInfoRepo {
     fun getAllSmbServersAscStream(): Flow<List<SmbServerInfo>>
 
     /**
-     * Retrieves a flow of an [SmbServerInfo] object with the specified [id].
-     * If the specified [id] does not match any server, it emits `null`.
+     * Retrieves a flow of an [SmbServerInfo] object with the specified [smbServerId].
+     * If the specified [smbServerId] does not match any server, it emits `null`.
      *
-     * @param id The unique identifier of the SMB server to retrieve.
+     * @param smbServerId The unique identifier of the SMB server to retrieve.
      * @return A [Flow] emitting [SmbServerInfo] objects or `null` if not found.
      */
-    fun getSmbServerStream(id: Int): Flow<SmbServerInfo?>
+    fun getSmbServerStream(smbServerId: Long): Flow<SmbServerInfo?>
 
     /**
      * Inserts or updates an [SmbServerInfo] object in the data source.
@@ -48,5 +48,5 @@ interface SmbServerInfoRepo {
      * @param id The unique identifier of the SMB server to retrieve.
      * @return A [SmbServerInfo] object.
      */
-    suspend fun getSmbServer(id: Int): SmbServerInfo
+    suspend fun getSmbServer(id: Long): SmbServerInfo
 }

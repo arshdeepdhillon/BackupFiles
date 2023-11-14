@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.shared
+package com.ad.backupfiles.ui.utils
 
 import com.ad.backupfiles.data.entity.SmbServerDto
 import com.ad.backupfiles.data.entity.SmbServerInfo
@@ -31,7 +31,7 @@ fun SMBServerUiState.toUiData(): SmbServerDto {
 }
 
 data class SmbServerInfoUiData(
-    val id: Int = 0,
+    val id: Long = 0,
     val serverAddress: String = "",
     val username: String = "",
     val password: String = "",

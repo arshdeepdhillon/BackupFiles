@@ -29,9 +29,9 @@ import com.ad.backupfiles.UiUtil
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.ui.AppViewModelProvider
 import com.ad.backupfiles.ui.navigation.NavigationDestination
-import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.InputForm
+import com.ad.backupfiles.ui.utils.SmbServerInfoUiData
 import kotlinx.coroutines.launch
 
 /*

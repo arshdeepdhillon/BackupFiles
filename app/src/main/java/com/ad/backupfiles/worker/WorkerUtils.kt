@@ -23,37 +23,64 @@ import java.util.concurrent.TimeoutException
  * @created : 23-Oct-23
  */
 
-const val CHANNEL_ID = "BACKUP_NOTIFICATION"
-const val CHANNEL_NAME = "Backup Information"
-const val CHANNEL_DESC = "Displays Live Backup Information"
+const val MAIN_CHANNEL_ID = "MAIN_BACKUP_NOTIFICATION"
+const val MAIN_CHANNEL_NAME = "Main Backup Information"
+const val MAIN_CHANNEL_DESC = "Main Backup Information"
+const val DETAILED_CHANNEL_ID = "DETAIL_BACKUP_NOTIFICATION"
+const val DETAILED_CHANNEL_NAME = "Detailed Backup Information"
+const val DETAILED_CHANNEL_DESC = "Displays Detailed Live Backup Information"
 
 const val NOTIFICATION_ID = 1
-val NOTIFICATION_TITLE: CharSequence = "Backing Up Data"
+val BACKUP_NOTIFICATION_TITLE: CharSequence = "Backing Up Data"
+val SYNC_NOTIFICATION_TITLE: CharSequence = "Syncing Data"
 
 
-// The name of the backup folder work
-const val BACK_UP_FOLDERS_WORK_NAME = "backup_folders_work"
-const val BACK_UP_FOLDERS_TAG = "backup_folders_tag"
+// Backup worker info
+const val BACKUP_FOLDER_WORK_NAME = "backup_folder_work"
+const val BACKUP_FOLDER_TAG = "backup_folder_tag"
 
-// The name of the delete folder work
-const val SYNC_FOLDERS_WORK_NAME = "sync_folders_work"
-const val SYNC_FILES_TAG = "sync_folders_tag"
+// Sync worker info
+const val SYNC_FOLDER_WORK_NAME = "sync_folder_work"
+const val SYNC_FILE_TAG = "sync_folder_tag"
 
-// Keys for the backup work
-const val DIR_ID_LONG_KEY = "DIR_ID"
+// Keys for the backup and sync work
 const val SMB_ID_INT_KEY = "SMB_ID"
-const val SYNC_DIR_KEY = "IS_SYNC"
+const val IS_SYNC_DIR_KEY = "IS_SYNC"
 
-const val MAX_RETRY_ATTEMPT = 3;
+const val MAX_RETRY_ATTEMPT = 3
 
-fun makeStatusNotification(message: String, ctx: Context) {
+fun makeStatusNotification(message: String, ctx: Context, title: CharSequence = BACKUP_NOTIFICATION_TITLE) {
     // Check notification is enabled before creating it.
     if (NotificationManagerCompat.from(ctx).areNotificationsEnabled()) {
-        val builder = NotificationCompat.Builder(ctx, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(ctx, MAIN_CHANNEL_ID)
             .setSmallIcon(R.drawable.notification_icon)
-            .setContentTitle(NOTIFICATION_TITLE)
+            .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVibrate(LongArray(0))
+
+        // Show the notification
+        if (ActivityCompat.checkSelfPermission(
+                ctx,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            NotificationManagerCompat.from(ctx).notify(NOTIFICATION_ID, builder.build())
+        }
+    }
+}
+
+/**
+ * Silently updates the main Notification channel
+ */
+fun updateNotificationMessage(message: String, ctx: Context, title: CharSequence = BACKUP_NOTIFICATION_TITLE) {
+    // Check notification is enabled before creating it.
+    if (NotificationManagerCompat.from(ctx).areNotificationsEnabled()) {
+        val builder = NotificationCompat.Builder(ctx, DETAILED_CHANNEL_ID)
+            .setSmallIcon(R.drawable.notification_icon)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setVibrate(LongArray(0))
 
         // Show the notification
@@ -81,11 +108,12 @@ internal fun handleException(
     e: Exception,
     appCtx: Context,
     dirPath: String?,
+    title: CharSequence,
 ): ListenableWorker.Result {
     when (e) {
         is TimeoutException -> {
             Log.w(tag, "Connection timeout!", e)
-            makeStatusNotification("Backup failed, we'll retry shortly.", appCtx)
+            updateNotificationMessage("Backup failed, we'll retry shortly.", appCtx, title)
             return ListenableWorker.Result.retry()
         }
 
@@ -93,21 +121,21 @@ internal fun handleException(
             Log.w(tag, "SMB server is offline", e)
             if (e.localizedMessage?.contains("EHOSTUNREACH") == true) {
                 Log.e(tag, "Incorrect IP address of backup server", e)
-                makeStatusNotification("Backup server not found or it is offline", appCtx)
+                updateNotificationMessage("Backup server not found or it is offline", appCtx, title)
                 return ListenableWorker.Result.failure()
             }
-            makeStatusNotification("Backup server offline, we'll retry shortly.", appCtx)
+            updateNotificationMessage("Backup server offline, we'll retry shortly.", appCtx, title)
             return ListenableWorker.Result.retry()
         }
 
         is SocketTimeoutException -> {
             Log.w(tag, "SMB server connection timeout", e)
-            makeStatusNotification("Backup server offline, we'll retry shortly.", appCtx)
+            updateNotificationMessage("Backup server offline, we'll retry shortly.", appCtx, title)
             return ListenableWorker.Result.retry()
         }
 
         is UnknownHostException -> {
-            makeStatusNotification("Backup server not found", appCtx)
+            updateNotificationMessage("Backup server not found", appCtx, title)
             return ListenableWorker.Result.failure()
         }
 
@@ -118,7 +146,7 @@ internal fun handleException(
                     "Failed to a create file, opened file on SMB server must first be closed.",
                     e
                 )
-                makeStatusNotification(
+                updateNotificationMessage(
                     "Please close all files from '${
                         FileUtils.getDirName(
                             appCtx,
@@ -128,7 +156,7 @@ internal fun handleException(
                 )
                 return ListenableWorker.Result.retry()
             }
-            makeStatusNotification(
+            updateNotificationMessage(
                 "Unable to backup '${FileUtils.getDirName(appCtx, dirPath!!)}'",
                 appCtx
             )
@@ -141,18 +169,18 @@ internal fun handleException(
             while (cause != null) {
                 if (TimeoutException::class.java.isInstance(cause)) {
                     Log.e(tag, "SMB client timeout", e)
-                    makeStatusNotification("Error backing up, we'll retry shortly.", appCtx)
+                    updateNotificationMessage("Error backing up, we'll retry shortly.", appCtx, title)
                     return ListenableWorker.Result.retry()
                 }
                 cause = cause.cause
             }
-            makeStatusNotification("Error backing up, we'll retry shortly.", appCtx)
+            updateNotificationMessage("Error backing up, we'll retry shortly.", appCtx, title)
             return ListenableWorker.Result.retry()
         }
 
         else -> {
             Log.e(tag, "Unable to backup given folder", e)
-            makeStatusNotification(
+            updateNotificationMessage(
                 "Unable to backup '${FileUtils.getDirName(appCtx, dirPath!!)}'.",
                 appCtx
             )

@@ -20,12 +20,12 @@ class OfflineSmbServerRepo(private val smbServerDao: SmbServerDao) : SmbServerIn
     /**
      * @see SmbServerInfoRepo.getSmbServerStream
      */
-    override fun getSmbServerStream(id: Int): Flow<SmbServerInfo?> = smbServerDao.getByIdStream(id)
+    override fun getSmbServerStream(smbServerId: Long): Flow<SmbServerInfo?> = smbServerDao.getByIdStream(smbServerId)
 
     /**
      * @see SmbServerInfoRepo.getSmbServer
      */
-    override suspend fun getSmbServer(id: Int): SmbServerInfo = smbServerDao.getById(id)
+    override suspend fun getSmbServer(id: Long): SmbServerInfo = smbServerDao.getById(id)
 
     /**
      * @see SmbServerInfoRepo.upsertSmbServer

@@ -73,7 +73,7 @@ object HomeDestination : NavigationDestination {
 fun HomeScreen(
     modifier: Modifier = Modifier,
     handleFABClick: () -> Unit,
-    handleItemClick: (Int) -> Unit,
+    handleItemClick: (Long) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
@@ -133,7 +133,7 @@ fun HomeScreen(
 fun HomeBody(
     modifier: Modifier = Modifier,
     servers: List<SmbServerInfo>,
-    onItemClick: (Int) -> Unit,
+    onItemClick: (Long) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

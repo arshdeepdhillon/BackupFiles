@@ -40,10 +40,10 @@ import com.ad.backupfiles.R
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.ui.AppViewModelProvider
 import com.ad.backupfiles.ui.navigation.NavigationDestination
-import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
-import com.ad.backupfiles.ui.shared.toSmbServerEntity
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.GeneralAlert
+import com.ad.backupfiles.ui.utils.SmbServerInfoUiData
+import com.ad.backupfiles.ui.utils.toSmbServerEntity
 import kotlinx.coroutines.launch
 
 /*
@@ -70,8 +70,8 @@ object DetailScreenDestination : NavigationDestination {
 @Composable
 fun DetailScreen(
     handleNavBack: () -> Unit,
-    handleItemClicked: (Int) -> Unit,
-    handleConnect: (Int) -> Unit,
+    handleItemClicked: (Long) -> Unit,
+    handleConnect: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DetailScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {

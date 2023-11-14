@@ -28,8 +28,8 @@ interface SmbServerDao {
     fun getByAddedDate(): Flow<List<SmbServerInfo>>
 
     @Query("SELECT * FROM smb_server_info WHERE smbServerId = :id LIMIT 1")
-    fun getByIdStream(id: Int): Flow<SmbServerInfo>
+    fun getByIdStream(id: Long): Flow<SmbServerInfo>
 
     @Query("SELECT * FROM smb_server_info WHERE smbServerId = :id LIMIT 1")
-    fun getById(id: Int): SmbServerInfo
+    fun getById(id: Long): SmbServerInfo
 }

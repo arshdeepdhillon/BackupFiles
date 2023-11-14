@@ -14,7 +14,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.ad.backupfiles.R
-import com.ad.backupfiles.ui.shared.SmbServerInfoUiData
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 
 /*
