@@ -3,20 +3,10 @@ package com.ad.backupfiles.worker
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.work.ListenableWorker
 import com.ad.backupfiles.R
-import com.ad.backupfiles.smb.FileUtils
-import com.hierynomus.mserref.NtStatus
-import com.hierynomus.mssmb2.SMBApiException
-import com.hierynomus.smbj.common.SMBRuntimeException
-import java.net.ConnectException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import java.util.concurrent.TimeoutException
 
 /*
  * @author : Arshdeep Dhillon
@@ -93,100 +83,3 @@ fun updateNotificationMessage(message: String, ctx: Context, title: CharSequence
         }
     }
 }
-
-
-/**
- * Handles exceptions that may occur during a specific operation.
- * @param tag For logging purposes.
- * @param e The exception that was caught and needs to be handled.
- * @param appCtx The Android application context.
- * @param dirPath The path of this directory.
- * @return A ListenableWorker.Result value indicating whether the operation should be retried or marked as a failure.
- */
-internal fun handleException(
-    tag: String,
-    e: Exception,
-    appCtx: Context,
-    dirPath: String?,
-    title: CharSequence,
-): ListenableWorker.Result {
-    when (e) {
-        is TimeoutException -> {
-            Log.w(tag, "Connection timeout!", e)
-            updateNotificationMessage("Backup failed, we'll retry shortly.", appCtx, title)
-            return ListenableWorker.Result.retry()
-        }
-
-        is ConnectException -> {
-            Log.w(tag, "SMB server is offline", e)
-            if (e.localizedMessage?.contains("EHOSTUNREACH") == true) {
-                Log.e(tag, "Incorrect IP address of backup server", e)
-                updateNotificationMessage("Backup server not found or it is offline", appCtx, title)
-                return ListenableWorker.Result.failure()
-            }
-            updateNotificationMessage("Backup server offline, we'll retry shortly.", appCtx, title)
-            return ListenableWorker.Result.retry()
-        }
-
-        is SocketTimeoutException -> {
-            Log.w(tag, "SMB server connection timeout", e)
-            updateNotificationMessage("Backup server offline, we'll retry shortly.", appCtx, title)
-            return ListenableWorker.Result.retry()
-        }
-
-        is UnknownHostException -> {
-            updateNotificationMessage("Backup server not found", appCtx, title)
-            return ListenableWorker.Result.failure()
-        }
-
-        is SMBApiException -> {
-            if (e.statusCode == NtStatus.STATUS_SHARING_VIOLATION.value) {
-                Log.w(
-                    tag,
-                    "Failed to a create file, opened file on SMB server must first be closed.",
-                    e
-                )
-                updateNotificationMessage(
-                    "Please close all files from '${
-                        FileUtils.getDirName(
-                            appCtx,
-                            dirPath!!
-                        )
-                    }' folder", appCtx
-                )
-                return ListenableWorker.Result.retry()
-            }
-            updateNotificationMessage(
-                "Unable to backup '${FileUtils.getDirName(appCtx, dirPath!!)}'",
-                appCtx
-            )
-            return ListenableWorker.Result.failure()
-        }
-
-        is SMBRuntimeException -> {
-            Log.w(tag, "Unable to connect with SMB server", e.cause)
-            var cause = e.cause
-            while (cause != null) {
-                if (TimeoutException::class.java.isInstance(cause)) {
-                    Log.e(tag, "SMB client timeout", e)
-                    updateNotificationMessage("Error backing up, we'll retry shortly.", appCtx, title)
-                    return ListenableWorker.Result.retry()
-                }
-                cause = cause.cause
-            }
-            updateNotificationMessage("Error backing up, we'll retry shortly.", appCtx, title)
-            return ListenableWorker.Result.retry()
-        }
-
-        else -> {
-            Log.e(tag, "Unable to backup given folder", e)
-            updateNotificationMessage(
-                "Unable to backup '${FileUtils.getDirName(appCtx, dirPath!!)}'.",
-                appCtx
-            )
-            return ListenableWorker.Result.failure()
-        }
-    }
-}
-
-

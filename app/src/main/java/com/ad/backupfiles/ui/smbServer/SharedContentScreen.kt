@@ -73,7 +73,7 @@ object SharedContentScreenDestination : NavigationDestination {
 }
 
 
-const val TAG: String = "SharedContentScreen"
+private const val TAG: String = "SharedContentScreen"
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
