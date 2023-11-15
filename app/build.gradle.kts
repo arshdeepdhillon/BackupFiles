@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ad.syncfiles"
+    namespace = "com.ad.backupfiles"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.ad.syncfiles"
+        applicationId = "com.ad.backupfiles"
         minSdk = 26
         targetSdk = 33
         versionCode = 1
