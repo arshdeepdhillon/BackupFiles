@@ -8,8 +8,7 @@ import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.DirectoryInfo
 import com.ad.backupfiles.data.entity.DirectorySyncInfo
 import com.ad.backupfiles.data.entity.toDto
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -17,7 +16,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import java.time.Instant
 
 /*
@@ -27,7 +26,7 @@ import java.time.Instant
 
 class OfflineDirectoryRepo(
     private val directoryDao: DirectoryDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val externalScope: CoroutineScope,
 ) : DirectoryRepo {
     private val TAG: String = OfflineDirectoryRepo::class.java.simpleName
 
@@ -57,9 +56,7 @@ class OfflineDirectoryRepo(
      * @see DirectoryRepo.deleteDirectory
      */
     override suspend fun deleteDirectory(dir: DirectoryInfo) {
-        withContext(ioDispatcher) {
-            directoryDao.delete(dir)
-        }
+        directoryDao.delete(dir)
     }
 
     /**
@@ -82,7 +79,7 @@ class OfflineDirectoryRepo(
      * @see DirectoryRepo.insertDirectoriesToSync
      */
     override suspend fun insertDirectoriesToSync(smbServerId: Long, directoryIds: MutableList<Long>) {
-        withContext(ioDispatcher) {
+        externalScope.launch {
             directoryIds.asFlow().mapNotNull { dirId ->
                 directoryDao.getDirectoryById(dirId, smbServerId)
             }.map { dirInfo ->
@@ -101,9 +98,19 @@ class OfflineDirectoryRepo(
      */
     @Transaction
     override suspend fun processSyncedDirectory(syncedDirectory: DirectorySyncInfo) {
-        withContext(ioDispatcher) {
+        externalScope.launch {
             directoryDao.updateSyncTime(syncedDirectory.dirId, syncedDirectory.smbServerId, Instant.now().epochSecond)
-            directoryDao.removeFromSync(syncedDirectory)
+            directoryDao.deleteFromSync(syncedDirectory)
+        }
+    }
+
+    /**
+     * @see DirectoryRepo.deleteAllPendingSyncDirectories
+     */
+    @Transaction
+    override suspend fun deleteAllPendingSyncDirectories(smbServerId: Long) {
+        externalScope.launch {
+            directoryDao.deleteAllFromSync(smbServerId)
         }
     }
 }

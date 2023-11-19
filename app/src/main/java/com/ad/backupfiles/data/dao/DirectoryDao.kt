@@ -52,14 +52,15 @@ interface DirectoryDao {
     @Query("SELECT * FROM directory_info WHERE smbServerId = :smbServerId AND dirId = :dirId")
     suspend fun getDirectoryById(dirId: Long, smbServerId: Long): DirectoryInfo?
 
-
-    //    @Transaction
     @Query("SELECT * FROM directory_sync_pending WHERE smbServerId = :smbServerId")
     fun getPendingSyncDirectories(smbServerId: Long): List<DirectorySyncInfo>
 
     @Delete
-    suspend fun removeFromSync(synDir: DirectorySyncInfo)
+    suspend fun deleteFromSync(synDir: DirectorySyncInfo)
 
     @Query("SELECT * FROM directory_sync_pending WHERE itemId = :syncId LIMIT 1")
     suspend fun getPendingSyncDirectoryById(syncId: Long): DirectorySyncInfo?
+
+    @Query("DELETE FROM directory_sync_pending WHERE smbServerId = :smbServerId")
+    suspend fun deleteAllFromSync(smbServerId: Long)
 }

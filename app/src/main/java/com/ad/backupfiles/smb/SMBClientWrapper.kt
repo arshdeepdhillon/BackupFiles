@@ -14,13 +14,18 @@ import com.hierynomus.mssmb2.SMB2CreateOptions
 import com.hierynomus.mssmb2.SMB2ShareAccess
 import com.hierynomus.mssmb2.SMBApiException
 import com.hierynomus.smbj.SMBClient
+import com.hierynomus.smbj.SmbConfig
 import com.hierynomus.smbj.auth.AuthenticationContext
 import com.hierynomus.smbj.common.SMBRuntimeException
 import com.hierynomus.smbj.share.DiskShare
 import com.hierynomus.smbj.share.File
+import kotlinx.coroutines.isActive
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.Deque
+import java.util.concurrent.TimeUnit
+import kotlin.coroutines.coroutineContext
+
 
 /*
  * @author : Arshdeep Dhillon
@@ -36,13 +41,19 @@ import java.util.Deque
 class SMBClientWrapper : SMBClientApi {
     private val TAG = SMBClientWrapper::class.java.simpleName
 
+
     companion object {
         @Volatile
         private var mClient: SMBClient? = null
+
+        private val config = SmbConfig.builder()
+            .withSoTimeout(10, TimeUnit.SECONDS) // Socket Timeout
+            .build()
+
         private fun getInstance(): SMBClient {
             if (mClient == null) {
                 synchronized(this) {
-                    mClient = SMBClient()
+                    mClient = SMBClient(config)
                 }
             }
             return mClient!!
@@ -84,7 +95,7 @@ class SMBClientWrapper : SMBClientApi {
      * @throws FileNotFoundException if there is no data associated with the [Uri] of [docOnDevice].
      */
     @Throws(SMBRuntimeException::class, IOException::class, FileNotFoundException::class)
-    private fun saveSingleFile(
+    private suspend fun saveSingleFile(
         context: Context,
         docOnDevice: DocumentFile,
         path: String,
@@ -114,13 +125,13 @@ class SMBClientWrapper : SMBClientApi {
                     fileOnSmbServer.use { file: File ->
                         file.outputStream.use { outputStream ->
                             Log.d(TAG, "Saving file...")
-                            while (bytesRead >= 0) {
+                            while (bytesRead >= 0 && coroutineContext.isActive) {
                                 outputStream.write(buffer, 0, bytesRead)
-                                totalBytesRead += bytesRead
-                                prog = ((totalBytesRead.toFloat() / size) * 100).toInt()
-                                if (prog % 10 == 0) {
-                                    Log.d(TAG, "Progress $prog")
-                                }
+//                                totalBytesRead += bytesRead
+//                                prog = ((totalBytesRead.toFloat() / size) * 100).toInt()
+//                                if (prog % 10 == 0) {
+//                                    Log.d(TAG, "Progress $prog")
+//                                }
                                 bytesRead = inStream.read(buffer)
                             }
                             outputStream.flush()
@@ -161,6 +172,11 @@ class SMBClientWrapper : SMBClientApi {
             )
             var path: String
             while (dirContentList.isNotEmpty()) {
+                if (!coroutineContext.isActive) {
+                    Log.d(TAG, "Received request to stop the upload.")
+                    break
+                }
+
                 Log.d(TAG, "Files remaining ${dirContentList.size}")
                 val docOnDevice = dirContentList.poll()
                 // We should have read permission (on Uri) at this point, if not (then 'name' will be null) then complain loudly

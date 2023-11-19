@@ -22,11 +22,10 @@ import com.ad.backupfiles.data.entity.toDto
 import com.ad.backupfiles.data.repository.DirectoryRepo
 import com.ad.backupfiles.worker.BACKUP_FOLDER_TAG
 import com.ad.backupfiles.worker.BACKUP_FOLDER_WORK_NAME
-import com.ad.backupfiles.worker.BackupFolderWorker
-import com.ad.backupfiles.worker.IS_SYNC_DIR_KEY
 import com.ad.backupfiles.worker.SMB_ID_INT_KEY
-import com.ad.backupfiles.worker.SYNC_FILE_TAG
-import com.ad.backupfiles.worker.SYNC_FOLDER_WORK_NAME
+import com.ad.backupfiles.worker.SYNC_FOLDER_TAG
+import com.ad.backupfiles.worker.UploadFolderWorker
+import com.ad.backupfiles.worker.WORKER_TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -127,20 +126,21 @@ class SharedContentScreenViewModel(
     private fun runBackupWorker(dirId: Long) {
         viewModelScope.launch {
             saveDirRepo.insertDirectoriesToSync(smbServerId, mutableListOf(dirId))
-            val backupWorker = OneTimeWorkRequestBuilder<BackupFolderWorker>()
-                .addTag(BACKUP_FOLDER_TAG + smbServerId)
+            val backupWork = OneTimeWorkRequestBuilder<UploadFolderWorker>()
+                .addTag(BACKUP_FOLDER_TAG)
                 .setConstraints(wmConstraints)
                 .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
                 .setInputData(
                     workDataOf(
-                        SMB_ID_INT_KEY to smbServerId
+                        SMB_ID_INT_KEY to smbServerId,
+                        WORKER_TAG to BACKUP_FOLDER_TAG
                     )
                 )
                 .build()
             workManager.beginUniqueWork(
-                BACKUP_FOLDER_WORK_NAME + smbServerId,
+                BACKUP_FOLDER_WORK_NAME,
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
-                backupWorker
+                backupWork
             ).enqueue()
         }
     }
@@ -153,21 +153,22 @@ class SharedContentScreenViewModel(
         if (selectedDirectoryIds.isNotEmpty()) {
             viewModelScope.launch {
                 saveDirRepo.insertDirectoriesToSync(smbServerId, selectedDirectoryIds)
-                val syncWorker = OneTimeWorkRequestBuilder<BackupFolderWorker>()
+                val syncWork = OneTimeWorkRequestBuilder<UploadFolderWorker>()
+                    .addTag(SYNC_FOLDER_TAG)
                     .setInputData(
                         workDataOf(
                             SMB_ID_INT_KEY to smbServerId,
-                            IS_SYNC_DIR_KEY to true
+                            WORKER_TAG to SYNC_FOLDER_TAG
                         )
                     )
-                    .addTag(SYNC_FILE_TAG + smbServerId)
+                    .setConstraints(wmConstraints)
                     .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
                     .build()
 
                 workManager.beginUniqueWork(
-                    SYNC_FOLDER_WORK_NAME + smbServerId,
+                    BACKUP_FOLDER_WORK_NAME,
                     ExistingWorkPolicy.APPEND_OR_REPLACE,
-                    syncWorker
+                    syncWork
                 ).enqueue()
             }
         }
