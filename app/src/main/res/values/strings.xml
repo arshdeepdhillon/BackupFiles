@@ -9,7 +9,7 @@
     <string name="add_connection">Add</string>
     <string name="connect">Connect</string>
     <string name="save_connection">Save</string>
-    <string name="cancel_connection">Cancel</string>
+    <string name="cancel">Cancel</string>
     <string name="info_no_smb_connections">Add a SMB server to view shared files</string>
     <string name="smb_server_add_title">Add Device Info</string>
     <string name="smb_server_edit_title">Edit Server Details</string>

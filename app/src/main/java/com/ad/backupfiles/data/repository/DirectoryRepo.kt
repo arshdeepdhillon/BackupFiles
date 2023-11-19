@@ -86,5 +86,12 @@ interface DirectoryRepo {
      */
     suspend fun processSyncedDirectory(syncedDirectory: DirectorySyncInfo)
 
+    /**
+     * Deletes all directories to sync for the specified SMB server ID.
+     *
+     * @param smbServerId The ID of the SMB server.
+     */
+    suspend fun deleteAllPendingSyncDirectories(smbServerId: Long)
+
     // END: Sync related operations
 }

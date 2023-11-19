@@ -5,6 +5,9 @@ import com.ad.backupfiles.data.repository.DirectoryRepo
 import com.ad.backupfiles.data.repository.OfflineDirectoryRepo
 import com.ad.backupfiles.data.repository.OfflineSmbServerRepo
 import com.ad.backupfiles.data.repository.SmbServerInfoRepo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 /*
  * @author : Arshdeep Dhillon
@@ -20,6 +23,7 @@ interface AppContainer {
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     /**
      * Implementation for [SmbServerInfoRepo]
@@ -32,6 +36,6 @@ class AppDataContainer(private val context: Context) : AppContainer {
      * Implementation for [DirectoryRepo]
      */
     override val directoryRepo: DirectoryRepo by lazy {
-        OfflineDirectoryRepo(BackupFilesDatabase.getDatabase(context).directoryDao())
+        OfflineDirectoryRepo(BackupFilesDatabase.getDatabase(context).directoryDao(), applicationScope)
     }
 }
