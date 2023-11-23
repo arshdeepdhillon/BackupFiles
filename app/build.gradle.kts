@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp") version "1.8.21-1.0.11"
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.kotlin)
+    alias(libs.plugins.kotlin.annotation)
 }
 
 android {
@@ -52,24 +52,14 @@ android {
 }
 
 dependencies {
-
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
-    androidTestImplementation(composeBom)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.preview)
     implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    androidTestImplementation(libs.androidx.espresso.core)
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
-
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     // ViewModel utilities for Compose
@@ -93,4 +83,13 @@ dependencies {
     implementation(libs.androidx.documentfile)
     // WorkManger
     implementation(libs.androidx.work.runtime.ktx)
+
+
+    androidTestImplementation(composeBom)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.compose.ui.junit4)
+    androidTestImplementation(libs.androidx.espresso.core)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
