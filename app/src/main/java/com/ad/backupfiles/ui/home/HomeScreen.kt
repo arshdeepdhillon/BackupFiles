@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +47,9 @@ import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.ui.AppViewModelProvider
 import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
+import com.ad.backupfiles.ui.utils.TestTag.Companion.LAZY_COLUMN_TAG
+import com.ad.backupfiles.ui.utils.TestTag.Companion.NO_SAVED_SMBS_MSG_TAG
+import com.ad.backupfiles.ui.utils.TestTag.Companion.SMB_ADD_TAG
 
 /*
  * @author : Arshdeep Dhillon
@@ -92,9 +96,11 @@ fun HomeScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = handleFABClick,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad))
+                    onClick = handleFABClick,
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier
+                            .testTag(SMB_ADD_TAG)
+                            .padding(dimensionResource(id = R.dimen.m_pad))
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -113,11 +119,11 @@ fun HomeScreen(
             }
         }
         HomeBody(
-            modifier = modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            servers = homeUiState.sharedServers,
-            onItemClick = handleItemClick
+                modifier = modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                servers = homeUiState.sharedServers,
+                onItemClick = handleItemClick
         )
     }
 }
@@ -141,9 +147,10 @@ fun HomeBody(
     ) {
         if (servers.isEmpty()) {
             Text(
-                text = stringResource(R.string.info_no_smb_connections),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleSmall
+                    text = stringResource(R.string.message_on_empty_smbs),
+                    modifier = Modifier.testTag(NO_SAVED_SMBS_MSG_TAG),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleSmall
             )
         } else {
             ServerList(
@@ -168,13 +175,13 @@ fun ServerList(
     handleClick: (SmbServerInfo) -> Unit,
     modifier: Modifier,
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = modifier.testTag(LAZY_COLUMN_TAG)) {
         itemsIndexed(items = servers) { index, server ->
             ServerItem(
-                server = server,
-                modifier = Modifier
-                    .padding(vertical = dimensionResource(id = R.dimen.s_pad))
-                    .clickable { handleClick(server) }
+                    server = server,
+                    modifier = Modifier
+                            .padding(vertical = dimensionResource(id = R.dimen.s_pad))
+                            .clickable { handleClick(server) }
             )
         }
     }
@@ -194,10 +201,10 @@ fun ServerItem(server: SmbServerInfo, modifier: Modifier = Modifier) {
         shape = RoundedCornerShape(size = 12.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp, horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp, horizontal = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(text = server.serverAddress, style = MaterialTheme.typography.labelLarge)
         }

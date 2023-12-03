@@ -45,11 +45,11 @@ class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWork
         val isSync = workerTag == SYNC_FOLDER_TAG
         notificationTitle = if (isSync) SYNC_NOTIFICATION_TITLE else BACKUP_NOTIFICATION_TITLE
         if (runAttemptCount >= MAX_RETRY_ATTEMPT) {
-            makeStatusNotification(
-                message = if (isSync) "Unable to sync data, retry shortly" else "Unable to backup data, retry shortly",
-                ctx = applicationContext,
-                pendingIntentKeyValue = workerTag,
-                notificationTitle = notificationTitle
+            makeNotification(
+                    message = if (isSync) "Unable to sync data, retry shortly" else "Unable to backup data, retry shortly",
+                    ctx = applicationContext,
+                    pendingIntentKeyValue = workerTag,
+                    notificationTitle = notificationTitle
             )
             return@coroutineScope Result.failure()
         }

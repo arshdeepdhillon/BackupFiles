@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.ad.backupfiles.data.repository.SmbServerInfoRepo
 import com.ad.backupfiles.smb.SMBClientWrapper
 import com.ad.backupfiles.ui.utils.SMBServerUiState
-import com.ad.backupfiles.ui.utils.SmbServerInfoUiData
+import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.sanitizeAndValidateInputFields
 import com.ad.backupfiles.ui.utils.toSmbServerEntity
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +31,7 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepo) : ViewMo
     private val _uiState = MutableStateFlow(SMBServerUiState())
     val uiState: StateFlow<SMBServerUiState> = _uiState.asStateFlow()
 
-    var userInputState by mutableStateOf(SmbServerInfoUiData())
+    var userInputState by mutableStateOf(SmbServerData())
         private set
 
 
@@ -41,7 +41,7 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepo) : ViewMo
      *
      * @param deviceDetails The server details to update the UI state with.
      */
-    fun updateUiState(deviceDetails: SmbServerInfoUiData) {
+    fun updateUiState(deviceDetails: SmbServerData) {
         userInputState = deviceDetails
         updateState(deviceDetails)
     }
@@ -59,11 +59,11 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepo) : ViewMo
      * Updates the [uiState] with the value provided in the argument. This method also triggers
      * a validation for input values.
      */
-    private fun updateState(smbServerInfoUiData: SmbServerInfoUiData) {
+    private fun updateState(smbServerData: SmbServerData) {
         _uiState.update { currState ->
             currState.copy(
-                currentUiData = smbServerInfoUiData,
-                isUiDataValid = currState.sanitizeAndValidateInputFields()
+                    currentUiData = smbServerData,
+                    isUiDataValid = currState.sanitizeAndValidateInputFields()
             )
         }
     }

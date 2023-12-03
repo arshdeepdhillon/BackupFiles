@@ -49,37 +49,57 @@ const val CANCEL_ACTION_KEY = "cancel_worker_tag"
 const val CANCEL_ACTION_NAME = "cancel_upload"
 // END: Broadcast receiver related data
 
+// Use 0 to represent the absence of an icon
 const val NULL_ICON = 0
-fun createCancelIntent(ctx: Context, pendingIntentKeyValue: String): PendingIntent {
+
+/**
+ * Creates a PendingIntent for the cancellation action in a notification.
+ *
+ * This function generates a PendingIntent that can be used to handle cancellation actions
+ * associated with a notification. It is typically used in conjunction with a notification to
+ * allow the user to cancel or dismiss the notification.
+ *
+ * @param ctx The context used for retrieving system services and resources.
+ * @param pendingIntentKeyValue A unique key value associated with the PendingIntent.
+ *                              It helps differentiate multiple pending intents.
+ *
+ * @return A PendingIntent for the cancellation action in a notification.
+ */
+private fun createCancelIntent(ctx: Context, pendingIntentKeyValue: String): PendingIntent {
     val cancelUploadIntent = Intent(ctx, UploadCancelReceiver::class.java).apply {
         action = CANCEL_ACTION_NAME
         putExtra(CANCEL_ACTION_KEY, pendingIntentKeyValue)
     }
 
     // Unique requestCode is required for reflecting the current worker tag.
-    val cancelUploadPendingIntent =
-        PendingIntent.getBroadcast(ctx, if (pendingIntentKeyValue == BACKUP_FOLDER_TAG) 0 else 1, cancelUploadIntent, PendingIntent.FLAG_IMMUTABLE)
-    return cancelUploadPendingIntent
-
+    return PendingIntent.getBroadcast(ctx, if (pendingIntentKeyValue == BACKUP_FOLDER_TAG) 0 else 1, cancelUploadIntent, PendingIntent.FLAG_IMMUTABLE)
 }
 
-fun makeStatusNotification(
-    message: String,
-    ctx: Context,
-    pendingIntentKeyValue: String? = null,
-    notificationTitle: CharSequence = BACKUP_NOTIFICATION_TITLE,
+/**
+ * Creates a notification with the given message and optional parameters.
+ *
+ * @param message The message to display in the notification.
+ * @param ctx The context used to create the notification.
+ * @param pendingIntentKeyValue A key value associated with a pending intent (optional).
+ * @param notificationTitle The title for the notification (default is [BACKUP_NOTIFICATION_TITLE]).
+ */
+fun makeNotification(
+        message: String,
+        ctx: Context,
+        pendingIntentKeyValue: String? = null,
+        notificationTitle: CharSequence = BACKUP_NOTIFICATION_TITLE,
 ) {
     // Check notification is enabled before creating it.
     if (NotificationManagerCompat.from(ctx).areNotificationsEnabled()) {
         val builder = NotificationCompat.Builder(ctx, MAIN_CHANNEL_ID)
-            .setSmallIcon(R.drawable.notification_icon)
-            .setContentTitle(notificationTitle)
+                .setSmallIcon(R.drawable.notification_icon)
+                .setContentTitle(notificationTitle)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVibrate(LongArray(0))
 
         pendingIntentKeyValue?.let { key ->
-            builder.addAction(NULL_ICON, ctx.getString(R.string.cancel), createCancelIntent(ctx, key)) // 0 implies no icon provided
+            builder.addAction(NULL_ICON, ctx.getString(R.string.cancel_notification), createCancelIntent(ctx, key))
         }
 
         // Show the notification
@@ -94,7 +114,12 @@ fun makeStatusNotification(
 }
 
 /**
- * Silently updates the main Notification channel
+ * Silently updates the main Notification channel.
+ *
+ * @param message The new message to be displayed in the notification.
+ * @param ctx The context used for retrieving system services and resources.
+ * @param pendingIntentKeyValue An optional key value for a PendingIntent if needed.
+ * @param notificationTitle The title to be displayed in the notification. Defaults to [BACKUP_NOTIFICATION_TITLE].
  */
 fun updateNotificationMessage(
     message: String,
@@ -112,7 +137,7 @@ fun updateNotificationMessage(
             .setVibrate(LongArray(0))
 
         pendingIntentKeyValue?.let { key ->
-            builder.addAction(NULL_ICON, ctx.getString(R.string.cancel), createCancelIntent(ctx, pendingIntentKeyValue))
+            builder.addAction(NULL_ICON, ctx.getString(R.string.cancel_notification), createCancelIntent(ctx, key))
         }
         // Show the notification
         if (ActivityCompat.checkSelfPermission(

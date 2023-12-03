@@ -15,6 +15,12 @@ workRuntimeKtx = "2.8.1"
 androidGradlePlugin = "8.1.0"
 androidKotlinPlugin = "1.8.21"
 kotlinAnnotationPlugin = "1.8.21-1.0.11"
+uiAutomator = "2.2.0"
+mockitoVersion = "5.7.0"
+mockitoKotlin = "4.0.0"
+mockitoAndroid = "1.13.8"
+mockitoAgent = "1.13.8"
+
 
 [libraries]
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -43,6 +49,11 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 junit = { module = "junit:junit", version.ref = "junit" }
 smbj = { module = "com.hierynomus:smbj", version.ref = "smbj" }
+androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiAutomator" }
+mockito = { module = "org.mockito:mockito-core", version.ref = "mockitoVersion" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockito-android = { module = "io.mockk:mockk-android", version.ref = "mockitoAndroid" }
+mockito-agent = { module = "io.mockk:mockk-agent", version.ref = "mockitoAgent" }
 
 
 [plugins]

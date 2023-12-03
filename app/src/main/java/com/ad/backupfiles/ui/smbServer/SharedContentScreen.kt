@@ -50,7 +50,7 @@ import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.smbServer.SharedContentScreenViewModel.ErrorUiState
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.GeneralAlert
-import com.ad.backupfiles.ui.utils.ItemListBody
+import com.ad.backupfiles.ui.utils.SelectableItemsBody
 
 /*
  * @author : Arshdeep Dhillon
@@ -181,11 +181,11 @@ fun SharedContentScreen(
         },
         modifier = modifier
     ) { innerPadding ->
-        ItemListBody(
-            modifier = Modifier.padding(innerPadding),
-            savedDirs = uiState.savedDirectories,
-            onItemSelect = { item: Pair<Boolean, DirectoryDto> -> viewModel.onDirectorySelected(item) },
-            resetSelectionState = clearSelectionState
+        SelectableItemsBody(
+                modifier = Modifier.padding(innerPadding),
+                savedDirs = uiState.savedDirectories,
+                onItemSelect = { item: Pair<Boolean, DirectoryDto> -> viewModel.onDirectorySelected(item) },
+                resetSelectionState = clearSelectionState
         ) {
             inSelectionMode = it
         }

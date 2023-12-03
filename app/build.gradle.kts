@@ -86,10 +86,16 @@ dependencies {
 
 
     androidTestImplementation(composeBom)
+    implementation(libs.androidx.uiautomator)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.compose.ui.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+//    testImplementation(libs.mockito)
+//    testImplementation(libs.mockito.kotlin)
+//    androidTestImplementation(libs.mockito.android)
+//    androidTestImplementation(libs.mockito.agent)
 }
