@@ -62,7 +62,6 @@ class AddScreenTest {
         composeTestRule.onNodeWithTag(SAVE_INPUT_FORM_BUTTON).assert(isEnabled())
     }
 
-
     @Test
     fun test_ui_state_restoration_on_recreation() {
         val stateRestorationTester = StateRestorationTester(composeTestRule)

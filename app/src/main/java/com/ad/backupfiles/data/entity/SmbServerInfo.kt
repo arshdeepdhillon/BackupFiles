@@ -35,10 +35,10 @@ fun SmbServerInfo.toDto(): SmbServerDto = SmbServerDto(
     serverAddress = this.serverAddress,
     username = this.username,
     password = this.password,
-    sharedFolder = this.sharedFolderName
+    sharedFolder = this.sharedFolderName,
 )
 
 fun SmbServerInfo.toUiState(isEntryValid: Boolean): SMBServerUiState = SMBServerUiState(
     currentUiData = this.toUiData(),
-    isUiDataValid = isEntryValid
+    isUiDataValid = isEntryValid,
 )

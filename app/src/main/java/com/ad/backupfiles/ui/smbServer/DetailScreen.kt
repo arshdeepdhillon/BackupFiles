@@ -58,7 +58,6 @@ import kotlinx.coroutines.launch
  * @created : 23-Oct-23
  */
 
-
 /**
  * A stateless singleton representing navigation details
  */
@@ -89,22 +88,22 @@ fun DetailScreen(
             BackupFilesTopAppBar(
                 title = stringResource(DetailScreenDestination.titleRes),
                 canNavBack = true,
-                onNavUp = handleNavBack
+                onNavUp = handleNavBack,
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { handleItemClicked(uiState.value.deviceDetails.id) },
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad))
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad)),
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = stringResource(id = R.string.smb_server_edit_title)
+                    contentDescription = stringResource(id = R.string.smb_server_edit_title),
                 )
             }
         },
-        modifier = modifier
+        modifier = modifier,
     ) { innerPadding ->
         DetailBody(
             uiState = uiState.value,
@@ -116,18 +115,18 @@ fun DetailScreen(
             },
             handleConnect = { handleConnect(uiState.value.deviceDetails.id) },
             modifier = Modifier
-                    .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()),
         )
     }
 }
 
 @Composable
 fun DetailBody(
-        uiState: DetailScreenUiState,
-        handleDelete: () -> Unit,
-        modifier: Modifier = Modifier,
-        handleConnect: () -> Unit,
+    uiState: DetailScreenUiState,
+    handleDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+    handleConnect: () -> Unit,
 ) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.content_layout_pad)),
@@ -135,42 +134,42 @@ fun DetailBody(
     ) {
         var isDeleteDialogActive by rememberSaveable { mutableStateOf(false) }
         ServerDetailForm(
-                item = uiState.deviceDetails.toSmbServerEntity(),
-                modifier = Modifier.fillMaxWidth()
+            item = uiState.deviceDetails.toSmbServerEntity(),
+            modifier = Modifier.fillMaxWidth(),
         )
         Row(
-                modifier = Modifier
-                        .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Button(
-                    onClick = { isDeleteDialogActive = true },
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.testTag(SMB_DELETE_BUTTON)
+                onClick = { isDeleteDialogActive = true },
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.testTag(SMB_DELETE_BUTTON),
             ) {
                 Text(stringResource(R.string.delete))
             }
             Button(
-                    onClick = handleConnect,
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.testTag(SMB_CONNECT_BUTTON)
+                onClick = handleConnect,
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.testTag(SMB_CONNECT_BUTTON),
             ) {
                 Text(stringResource(id = R.string.connect))
             }
         }
         if (isDeleteDialogActive) {
             GeneralAlert(
-                    handleAccept = {
-                        isDeleteDialogActive = false
-                        handleDelete()
-                    },
-                    titleId = R.string.confirm_title_alert,
-                    bodyId = R.string.delete_body_alert,
-                    handleCancel = { isDeleteDialogActive = false },
-                    modifier = Modifier
-                            .padding(dimensionResource(id = R.dimen.m_pad))
-                            .testTag(SMB_DELETE_ALERT)
+                handleAccept = {
+                    isDeleteDialogActive = false
+                    handleDelete()
+                },
+                titleId = R.string.confirm_title_alert,
+                bodyId = R.string.delete_body_alert,
+                handleCancel = { isDeleteDialogActive = false },
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.m_pad))
+                    .testTag(SMB_DELETE_ALERT),
             )
         }
     }
@@ -185,39 +184,40 @@ fun DetailBody(
 @Composable
 fun ServerDetailForm(item: SmbServerInfo, modifier: Modifier) {
     Card(
-            modifier = modifier, colors = CardDefaults.cardColors(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-    )
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        ),
     ) {
         Column(
-                modifier = modifier.padding(dimensionResource(id = R.dimen.s_pad)),
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s_pad))
+            modifier = modifier.padding(dimensionResource(id = R.dimen.s_pad)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.s_pad)),
         ) {
             DetailRow(
-                    labelResID = R.string.server_url,
-                    itemDetail = item.serverAddress,
-                    modifier = Modifier
-                            .padding(
-                                    horizontal = dimensionResource(id = R.dimen.s_pad)
-                            )
-                            .testTag(SMB_IP_DISPLAY_TEXT)
+                labelResID = R.string.server_url,
+                itemDetail = item.serverAddress,
+                modifier = Modifier
+                    .padding(
+                        horizontal = dimensionResource(id = R.dimen.s_pad),
+                    )
+                    .testTag(SMB_IP_DISPLAY_TEXT),
             )
             DetailRow(
-                    labelResID = R.string.username,
-                    itemDetail = item.username,
-                    modifier = Modifier
-                            .padding(
-                                    horizontal = dimensionResource(id = R.dimen.s_pad)
-                            )
-                            .testTag(USERNAME_DISPLAY_TEXT)
+                labelResID = R.string.username,
+                itemDetail = item.username,
+                modifier = Modifier
+                    .padding(
+                        horizontal = dimensionResource(id = R.dimen.s_pad),
+                    )
+                    .testTag(USERNAME_DISPLAY_TEXT),
             )
             DetailRow(
-                    labelResID = R.string.shared_folder_name,
-                    itemDetail = item.sharedFolderName,
-                    modifier = Modifier
-                            .padding(horizontal = dimensionResource(id = R.dimen.s_pad))
-                            .testTag(SHARED_FOLDER_DISPLAY_TEXT)
+                labelResID = R.string.shared_folder_name,
+                itemDetail = item.sharedFolderName,
+                modifier = Modifier
+                    .padding(horizontal = dimensionResource(id = R.dimen.s_pad))
+                    .testTag(SHARED_FOLDER_DISPLAY_TEXT),
             )
         }
     }
@@ -232,7 +232,9 @@ fun ServerDetailForm(item: SmbServerInfo, modifier: Modifier) {
  */
 @Composable
 private fun DetailRow(
-    @StringRes labelResID: Int, itemDetail: String, modifier: Modifier = Modifier,
+    @StringRes labelResID: Int,
+    itemDetail: String,
+    modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
         Text(text = stringResource(labelResID))
@@ -241,23 +243,26 @@ private fun DetailRow(
             text = itemDetail,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
 fun DetailScreenPreview() {
     BackupFilesTheme {
-        DetailBody(uiState = DetailScreenUiState(
+        DetailBody(
+            uiState = DetailScreenUiState(
                 deviceDetails = SmbServerData(
-                        serverAddress = "192.123.123.123",
-                        username = "Editing name",
-                        password = "Editing pass",
-                        sharedFolderName = "Editing really long shared directory name"
-                )
-        ), handleDelete = { }, handleConnect = {})
+                    serverAddress = "192.123.123.123",
+                    username = "Editing name",
+                    password = "Editing pass",
+                    sharedFolderName = "Editing really long shared directory name",
+                ),
+            ),
+            handleDelete = { },
+            handleConnect = {},
+        )
     }
 }

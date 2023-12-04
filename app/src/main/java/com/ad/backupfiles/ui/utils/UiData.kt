@@ -15,8 +15,8 @@ const val DELAY_UPSTREAM_TIMEOUT_MILLIS = 5_000L
  * Represents Ui State of [SmbServerData].
  */
 data class SMBServerUiState(
-        val currentUiData: SmbServerData = SmbServerData(),
-        val isUiDataValid: Boolean = false,
+    val currentUiData: SmbServerData = SmbServerData(),
+    val isUiDataValid: Boolean = false,
 )
 
 fun SMBServerUiState.toUiData(): SmbServerDto {
@@ -25,39 +25,39 @@ fun SMBServerUiState.toUiData(): SmbServerDto {
             username = it.username,
             password = it.password,
             serverAddress = it.serverAddress,
-            sharedFolder = it.sharedFolderName
+            sharedFolder = it.sharedFolderName,
         )
     }
 }
 
 data class SmbServerData(
-        val id: Long = 0,
-        val serverAddress: String = "",
-        val username: String = "",
-        val password: String = "",
-        val sharedFolderName: String = "",
+    val id: Long = 0,
+    val serverAddress: String = "",
+    val username: String = "",
+    val password: String = "",
+    val sharedFolderName: String = "",
 )
 
 /**
  * Extension function to convert [SMBServerUiState] to [SmbServerInfo].
  */
 fun SmbServerData.toSmbServerEntity(): SmbServerInfo = SmbServerInfo(
-        smbServerId = id,
-        serverAddress = serverAddress,
-        username = username,
-        password = password,
-        sharedFolderName = sharedFolderName
+    smbServerId = id,
+    serverAddress = serverAddress,
+    username = username,
+    password = password,
+    sharedFolderName = sharedFolderName,
 )
 
 /**
  * Extension function to convert [SmbServerInfo] to [SmbServerData].
  */
 fun SmbServerInfo.toUiData(): SmbServerData = SmbServerData(
-        id = smbServerId,
-        serverAddress = serverAddress,
-        username = username,
-        password = password,
-        sharedFolderName = sharedFolderName
+    id = smbServerId,
+    serverAddress = serverAddress,
+    username = username,
+    password = password,
+    sharedFolderName = sharedFolderName,
 )
 
 /**
@@ -67,7 +67,7 @@ fun SmbServerInfo.toUiData(): SmbServerData = SmbServerData(
  */
 fun SMBServerUiState.sanitizeAndValidateInputFields(): Boolean {
     this.currentUiData.also {
-        //TODO this doesn't work!!
+        // TODO this doesn't work!!
         it.username.trim()
         it.serverAddress.trim()
         it.sharedFolderName.trim()

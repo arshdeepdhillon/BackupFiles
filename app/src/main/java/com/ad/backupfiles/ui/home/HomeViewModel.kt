@@ -26,7 +26,7 @@ class HomeViewModel(serverInfoRepo: SmbServerInfoRepo) : ViewModel() {
     val homeUiState: StateFlow<HomeUiState> = serverInfoRepo.getAllSmbServersAscStream().map { HomeUiState(it) }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(DELAY_UPSTREAM_TIMEOUT_MILLIS),
-        initialValue = HomeUiState()
+        initialValue = HomeUiState(),
     )
 }
 

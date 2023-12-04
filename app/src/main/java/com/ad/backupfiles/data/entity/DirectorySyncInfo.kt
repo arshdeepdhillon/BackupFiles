@@ -20,19 +20,25 @@ import androidx.room.PrimaryKey
  */
 @Entity(
     tableName = "directory_sync_pending",
-    foreignKeys = [ForeignKey(
-        entity = SmbServerInfo::class,
-        parentColumns = arrayOf("smbServerId"),
-        childColumns = arrayOf("smbServerId"),
-        onDelete = ForeignKey.CASCADE
-    ), ForeignKey(
-        entity = DirectoryInfo::class,
-        parentColumns = arrayOf("dirId"),
-        childColumns = arrayOf("dirId"),
-        onDelete = ForeignKey.CASCADE
-    )], indices = [Index(
-        value = ["dirId", "smbServerId", "dirPath"], unique = true
-    )]
+    foreignKeys = [
+        ForeignKey(
+            entity = SmbServerInfo::class,
+            parentColumns = arrayOf("smbServerId"),
+            childColumns = arrayOf("smbServerId"),
+            onDelete = ForeignKey.CASCADE,
+        ), ForeignKey(
+            entity = DirectoryInfo::class,
+            parentColumns = arrayOf("dirId"),
+            childColumns = arrayOf("dirId"),
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
+    indices = [
+        Index(
+            value = ["dirId", "smbServerId", "dirPath"],
+            unique = true,
+        ),
+    ],
 )
 data class DirectorySyncInfo(
     @PrimaryKey(autoGenerate = true)

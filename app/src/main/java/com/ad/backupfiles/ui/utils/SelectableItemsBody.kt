@@ -79,11 +79,11 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SelectableItemsBody(
-        modifier: Modifier = Modifier,
-        savedDirs: List<DirectoryDto>,
-        onItemSelect: (Pair<Boolean, DirectoryDto>) -> Unit = {},
-        resetSelectionState: Boolean = false,
-        onSelectionModeChange: (Boolean) -> Unit = {},
+    modifier: Modifier = Modifier,
+    savedDirs: List<DirectoryDto>,
+    onItemSelect: (Pair<Boolean, DirectoryDto>) -> Unit = {},
+    resetSelectionState: Boolean = false,
+    onSelectionModeChange: (Boolean) -> Unit = {},
 ) {
     // rememberSavable to save the state across configuration changes
     var selectedDirIds by rememberSaveable { mutableStateOf(emptySet<Long>()) }
@@ -92,7 +92,7 @@ fun SelectableItemsBody(
     DisposableEffect(key1 = isSelectionMode, key2 = resetSelectionState) {
         if (resetSelectionState) {
             selectedDirIds = emptySet()
-        } else {// Update the parents
+        } else { // Update the parents
             onSelectionModeChange(isSelectionMode)
         }
         // Clean up resources (if any) when the effect leaves the Composition
@@ -104,12 +104,12 @@ fun SelectableItemsBody(
     }
 
     LazyVerticalGrid(
-            modifier = modifier
-                    .fillMaxSize()
-                    .padding(dimensionResource(id = R.dimen.content_layout_pad))
-                    .testTag(LAZY_COLUMN_TAG),
-            columns = GridCells.Fixed(1),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(dimensionResource(id = R.dimen.content_layout_pad))
+            .testTag(LAZY_COLUMN_TAG),
+        columns = GridCells.Fixed(1),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(items = savedDirs) { item ->
             val selected by remember { derivedStateOf { item.dirId in selectedDirIds } }
@@ -131,16 +131,14 @@ fun SelectableItemsBody(
                         onItemSelect(Pair(true, item))
                     })
                 },
-                    directoryName = item.dirName,
-                    lastSynced = item.lastSynced,
-                    selected = selected,
-                    isSelectedMode = isSelectionMode
+                directoryName = item.dirName,
+                lastSynced = item.lastSynced,
+                selected = selected,
+                isSelectedMode = isSelectionMode,
             )
-
         }
     }
 }
-
 
 /**
  * Displays details of a given directory
@@ -153,64 +151,64 @@ fun SelectableItemsBody(
  */
 @Composable
 fun ItemDetails(
-        modifier: Modifier = Modifier,
-        directoryName: String?,
-        lastSynced: Long?,
-        selected: Boolean,
-        isSelectedMode: Boolean,
+    modifier: Modifier = Modifier,
+    directoryName: String?,
+    lastSynced: Long?,
+    selected: Boolean,
+    isSelectedMode: Boolean,
 ) {
     Row(
-            modifier = modifier
-                    .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-
         AnimatedVisibility(
-                visible = isSelectedMode,
-                enter = slideInHorizontally(initialOffsetX = { fullWidth ->
-                    //Slide in from left
-                    -fullWidth
-                }) + fadeIn(),
-                exit = slideOutHorizontally(targetOffsetX = { fullWidth ->
-                    //Slide out to left
-                    -fullWidth
-                }) + shrinkHorizontally() + fadeOut(),
+            visible = isSelectedMode,
+            enter = slideInHorizontally(initialOffsetX = { fullWidth ->
+                // Slide in from left
+                -fullWidth
+            }) + fadeIn(),
+            exit = slideOutHorizontally(targetOffsetX = { fullWidth ->
+                // Slide out to left
+                -fullWidth
+            }) + shrinkHorizontally() + fadeOut(),
         ) {
             CircleCheckBox(
-                    modifier
-                            .padding(horizontal = dimensionResource(id = R.dimen.m_pad))
-                            .testTag(CHECK_BOX), selected
+                modifier
+                    .padding(horizontal = dimensionResource(id = R.dimen.m_pad))
+                    .testTag(CHECK_BOX),
+                selected,
             )
         }
         Card(
-                modifier = modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                shape = RoundedCornerShape(size = 6.dp)
+            modifier = modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(size = 6.dp),
         ) {
             Row(
-                    modifier = Modifier
-                            .fillMaxSize()
-                            .padding(dimensionResource(id = R.dimen.s_pad)),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(dimensionResource(id = R.dimen.s_pad)),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxSize()
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     Icon(
-                            painter = painterResource(id = R.drawable.folder_24),
-                            contentDescription = "Content Type",
-                            modifier = Modifier.padding(dimensionResource(id = R.dimen.s_pad))
+                        painter = painterResource(id = R.drawable.folder_24),
+                        contentDescription = "Content Type",
+                        modifier = Modifier.padding(dimensionResource(id = R.dimen.s_pad)),
                     )
                     Column {
                         Text(text = directoryName ?: "")
                         Row(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Text(
-                                    text = "Synced: " + (formatDate(lastSynced) ?: "Not Yet"),
-                                    style = MaterialTheme.typography.labelSmall
+                                text = "Synced: " + (formatDate(lastSynced) ?: "Not Yet"),
+                                style = MaterialTheme.typography.labelSmall,
                             )
                         }
                     }
@@ -232,22 +230,20 @@ fun CircleCheckBox(modifier: Modifier = Modifier, selected: Boolean) {
     AnimatedContent(targetState = selected, label = "Item selection icon", transitionSpec = {
         if (targetState) {
             scaleIn(animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium)) with
-                    scaleOut(animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium))
+                scaleOut(animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium))
         } else {
             scaleIn(animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)) with
-                    scaleOut(animationSpec = spring(dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessMedium))
+                scaleOut(animationSpec = spring(dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessMedium))
         }
     }) { targetInSelectionMode ->
         Box(contentAlignment = Alignment.Center, modifier = modifier.clip(CircleShape)) {
             Icon(
-                    imageVector = if (targetInSelectionMode) Icons.Default.CheckCircle else Icons.Outlined.CheckCircle,
-                    contentDescription = stringResource(if (targetInSelectionMode) R.string.icon_checked else R.string.icon_unchecked)
+                imageVector = if (targetInSelectionMode) Icons.Default.CheckCircle else Icons.Outlined.CheckCircle,
+                contentDescription = stringResource(if (targetInSelectionMode) R.string.icon_checked else R.string.icon_unchecked),
             )
         }
-
     }
 }
-
 
 fun formatDate(timestampSec: Long?): String? {
     if (timestampSec == null) {
@@ -258,21 +254,20 @@ fun formatDate(timestampSec: Long?): String? {
         .format(timestampSec * 1000)
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun SelectableItemsBodyPreview() {
     val oneDayInSec = 86_400
     SelectableItemsBody(
-            savedDirs = (0L..5L).toList().map {
-                DirectoryDto(
-                        dirId = it,
-                        smbServerId = 0,
-                        dirPath = "/some/dir/path/$it",
-                        lastSynced = if ((it % 2).toInt() == 0) null else Instant.now().epochSecond - oneDayInSec * it,
-                        dirName = "Directory name $it"
-                )
-            }
+        savedDirs = (0L..5L).toList().map {
+            DirectoryDto(
+                dirId = it,
+                smbServerId = 0,
+                dirPath = "/some/dir/path/$it",
+                lastSynced = if ((it % 2).toInt() == 0) null else Instant.now().epochSecond - oneDayInSec * it,
+                dirName = "Directory name $it",
+            )
+        },
     )
 }
 

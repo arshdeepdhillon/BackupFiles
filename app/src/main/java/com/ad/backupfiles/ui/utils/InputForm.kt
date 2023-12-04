@@ -35,79 +35,77 @@ import com.ad.backupfiles.ui.utils.TestTag.Companion.USERNAME_INPUT_TEXT
  */
 @Composable
 fun InputForm(
-        modifier: Modifier,
-        smbServerData: SmbServerData,
-        onFieldChange: (SmbServerData) -> Unit = {},
+    modifier: Modifier,
+    smbServerData: SmbServerData,
+    onFieldChange: (SmbServerData) -> Unit = {},
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.m_pad))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.m_pad)),
     ) {
         TextField(
-                modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag(SMB_IP_INPUT_TEXT),
-                value = smbServerData.serverAddress,
-                placeholder = { Text(stringResource(R.string.server_address_placeholder)) },
-                onValueChange = { onFieldChange(smbServerData.copy(serverAddress = it)) },
-                label = { Text(stringResource(R.string.server_url_req)) },
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                )
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(SMB_IP_INPUT_TEXT),
+            value = smbServerData.serverAddress,
+            placeholder = { Text(stringResource(R.string.server_address_placeholder)) },
+            onValueChange = { onFieldChange(smbServerData.copy(serverAddress = it)) },
+            label = { Text(stringResource(R.string.server_url_req)) },
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
         )
         TextField(
-                modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag(USERNAME_INPUT_TEXT),
-                value = smbServerData.username,
-                onValueChange = { onFieldChange(smbServerData.copy(username = it)) },
-                label = { Text(stringResource(R.string.username)) },
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                )
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(USERNAME_INPUT_TEXT),
+            value = smbServerData.username,
+            onValueChange = { onFieldChange(smbServerData.copy(username = it)) },
+            label = { Text(stringResource(R.string.username)) },
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
         )
         TextField(
-                modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag(PASSWORD_INPUT_TEXT),
-                value = smbServerData.password,
-                onValueChange = { onFieldChange(smbServerData.copy(password = it)) },
-                label = { Text(stringResource(R.string.password)) },
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                )
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(PASSWORD_INPUT_TEXT),
+            value = smbServerData.password,
+            onValueChange = { onFieldChange(smbServerData.copy(password = it)) },
+            label = { Text(stringResource(R.string.password)) },
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
         )
         TextField(
-                modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag(SHARED_FOLDER_INPUT_TEXT),
-                value = smbServerData.sharedFolderName,
-                placeholder = { Text(stringResource(R.string.shared_folder_placeholder)) },
-                onValueChange = { onFieldChange(smbServerData.copy(sharedFolderName = it)) },
-                label = { Text(stringResource(R.string.shared_folder_name_req)) },
-                singleLine = true,
-                colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                )
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(SHARED_FOLDER_INPUT_TEXT),
+            value = smbServerData.sharedFolderName,
+            placeholder = { Text(stringResource(R.string.shared_folder_placeholder)) },
+            onValueChange = { onFieldChange(smbServerData.copy(sharedFolderName = it)) },
+            label = { Text(stringResource(R.string.shared_folder_name_req)) },
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
         )
         Text(
-                text = stringResource(R.string.required_fields),
-                modifier = Modifier.padding(start = dimensionResource(id = R.dimen.m_pad))
+            text = stringResource(R.string.required_fields),
+            modifier = Modifier.padding(start = dimensionResource(id = R.dimen.m_pad)),
         )
-
     }
-
 }
 
 @Preview(showBackground = true)
@@ -115,9 +113,9 @@ fun InputForm(
 fun InputFormPreview() {
     BackupFilesTheme {
         InputForm(
-                smbServerData = SmbServerData(),
-                onFieldChange = { },
-                modifier = Modifier.fillMaxWidth()
+            smbServerData = SmbServerData(),
+            onFieldChange = { },
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

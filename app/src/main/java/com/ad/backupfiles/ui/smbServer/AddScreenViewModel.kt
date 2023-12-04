@@ -34,7 +34,6 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepo) : ViewMo
     var userInputState by mutableStateOf(SmbServerData())
         private set
 
-
     /**
      * Syncs the UI state with the given [deviceDetails] and determines whether the input is valid.
      * Typically used to update the internal state in response to changes in [AddScreen].
@@ -62,8 +61,8 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepo) : ViewMo
     private fun updateState(smbServerData: SmbServerData) {
         _uiState.update { currState ->
             currState.copy(
-                    currentUiData = smbServerData,
-                    isUiDataValid = currState.sanitizeAndValidateInputFields()
+                currentUiData = smbServerData,
+                isUiDataValid = currState.sanitizeAndValidateInputFields(),
             )
         }
     }

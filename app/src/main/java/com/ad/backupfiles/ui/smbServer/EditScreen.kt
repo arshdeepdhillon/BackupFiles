@@ -41,7 +41,6 @@ import kotlinx.coroutines.launch
  * @created : 23-Oct-23
  */
 
-
 /**
  * A stateless singleton representing navigation details
  */
@@ -80,34 +79,34 @@ fun EditScreen(
             BackupFilesTopAppBar(
                 title = stringResource(EditScreenDestination.titleRes),
                 canNavBack = true,
-                onNavUp = handleNavUp
+                onNavUp = handleNavUp,
             )
         },
-        modifier = modifier
+        modifier = modifier,
     ) { innerPadding ->
         EditScreenBody(
-                modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxWidth(),
-                uiState = viewModel.userInputState,
-                isUiValid = uiState.isUiDataValid,
-                onFieldChange = viewModel::updateUiState,
-                handleSave = {
-                    coroutineScope.launch {
-                        viewModel.updateItem()
-                        handleNavBack()
-                    }
-                },
-                checkConnection = {
-                    coroutineScope.launch {
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth(),
+            uiState = viewModel.userInputState,
+            isUiValid = uiState.isUiDataValid,
+            onFieldChange = viewModel::updateUiState,
+            handleSave = {
+                coroutineScope.launch {
+                    viewModel.updateItem()
+                    handleNavBack()
+                }
+            },
+            checkConnection = {
+                coroutineScope.launch {
                     if (viewModel.canConnectToServer()) {
                         UiUtil.makeToast(context, R.string.connection_success_with_smb)
                     } else {
                         UiUtil.makeToast(context, R.string.connection_issue_with_smb)
                     }
                 }
-            }
+            },
         )
     }
 }
@@ -124,26 +123,26 @@ fun EditScreen(
  */
 @Composable
 fun EditScreenBody(
-        modifier: Modifier = Modifier,
-        uiState: SmbServerData,
-        isUiValid: Boolean,
-        onFieldChange: (SmbServerData) -> Unit,
-        handleSave: () -> Unit,
-        checkConnection: () -> Unit,
+    modifier: Modifier = Modifier,
+    uiState: SmbServerData,
+    isUiValid: Boolean,
+    onFieldChange: (SmbServerData) -> Unit,
+    handleSave: () -> Unit,
+    checkConnection: () -> Unit,
 ) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.content_layout_pad)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.m_pad))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.m_pad)),
     ) {
         InputForm(
-                modifier = Modifier.fillMaxWidth(),
-                smbServerData = uiState,
-                onFieldChange = onFieldChange
+            modifier = Modifier.fillMaxWidth(),
+            smbServerData = uiState,
+            onFieldChange = onFieldChange,
         )
         EditScreenFooter(
             isDataValid = isUiValid,
             onSaveClick = handleSave,
-            checkConnection = checkConnection
+            checkConnection = checkConnection,
         )
     }
 }
@@ -164,23 +163,23 @@ fun EditScreenFooter(
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Button(
-                modifier = Modifier
-                        .testTag(EDIT_SCREEN_FOOTER)
-                        .testTag(""),
-                onClick = checkConnection,
-                enabled = isDataValid,
-                shape = MaterialTheme.shapes.small
+            modifier = Modifier
+                .testTag(EDIT_SCREEN_FOOTER)
+                .testTag(""),
+            onClick = checkConnection,
+            enabled = isDataValid,
+            shape = MaterialTheme.shapes.small,
         ) {
             Text(stringResource(R.string.test_connection))
         }
         Button(
-                modifier = Modifier.testTag(EDIT_SCREEN_FOOTER),
-                onClick = onSaveClick,
-                enabled = isDataValid,
-                shape = MaterialTheme.shapes.small
+            modifier = Modifier.testTag(EDIT_SCREEN_FOOTER),
+            onClick = onSaveClick,
+            enabled = isDataValid,
+            shape = MaterialTheme.shapes.small,
         ) {
             Text(text = stringResource(id = R.string.add_smb))
         }
@@ -191,11 +190,12 @@ fun EditScreenFooter(
 @Composable
 fun EditScreenPreviewUiInValid() {
     BackupFilesTheme {
-        EditScreenBody(uiState = SmbServerData(),
-                isUiValid = false,
-                onFieldChange = {},
-                handleSave = {},
-                checkConnection = {}
+        EditScreenBody(
+            uiState = SmbServerData(),
+            isUiValid = false,
+            onFieldChange = {},
+            handleSave = {},
+            checkConnection = {},
         )
     }
 }
@@ -204,11 +204,12 @@ fun EditScreenPreviewUiInValid() {
 @Composable
 fun EditScreenPreviewUiValid() {
     BackupFilesTheme {
-        EditScreenBody(uiState = SmbServerData(),
-                isUiValid = true,
-                onFieldChange = {},
-                handleSave = {},
-                checkConnection = {}
+        EditScreenBody(
+            uiState = SmbServerData(),
+            isUiValid = true,
+            onFieldChange = {},
+            handleSave = {},
+            checkConnection = {},
         )
     }
 }

@@ -26,7 +26,6 @@ import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 
-
 /*
  * @author : Arshdeep Dhillon
  * @created : 27-Nov-23
@@ -55,11 +54,12 @@ class EditScreenTest {
     fun test_footer_content_enabled_on_valid_data() {
         composeTestRule.setContent {
             BackupFilesTheme {
-                EditScreenBody(uiState = uiState,
-                        isUiValid = true,
-                        onFieldChange = {},
-                        handleSave = {},
-                        checkConnection = {}
+                EditScreenBody(
+                    uiState = uiState,
+                    isUiValid = true,
+                    onFieldChange = {},
+                    handleSave = {},
+                    checkConnection = {},
                 )
             }
         }
@@ -73,11 +73,12 @@ class EditScreenTest {
     fun test_footer_content_disabled_on_invalid_data() {
         composeTestRule.setContent {
             BackupFilesTheme {
-                EditScreenBody(uiState = uiState,
-                        isUiValid = false,
-                        onFieldChange = {},
-                        handleSave = {},
-                        checkConnection = {}
+                EditScreenBody(
+                    uiState = uiState,
+                    isUiValid = false,
+                    onFieldChange = {},
+                    handleSave = {},
+                    checkConnection = {},
                 )
             }
         }
@@ -98,11 +99,12 @@ class EditScreenTest {
         val stateRestorationTester = StateRestorationTester(composeTestRule)
         stateRestorationTester.setContent {
             BackupFilesTheme {
-                EditScreenBody(uiState = uiState,
-                        isUiValid = true,
-                        onFieldChange = {},
-                        handleSave = { savePressed = true },
-                        checkConnection = { testConnectionPressed = true }
+                EditScreenBody(
+                    uiState = uiState,
+                    isUiValid = true,
+                    onFieldChange = {},
+                    handleSave = { savePressed = true },
+                    checkConnection = { testConnectionPressed = true },
                 )
             }
         }
@@ -120,12 +122,12 @@ class EditScreenTest {
         composeTestRule.onNodeWithTag(PASSWORD_INPUT_TEXT).assert(hasText(password))
         composeTestRule.onNodeWithTag(SHARED_FOLDER_INPUT_TEXT).assert(hasText(sharedFolderName))
         device.findObject(
-                By.text(InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.test_connection))
+            By.text(InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.test_connection)),
         ).click()
         assert(testConnectionPressed, { "Expected the 'Test' connection button to produce and event" })
 
         device.findObject(
-                By.text(InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.add_smb))
+            By.text(InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.add_smb)),
         ).click()
         assert(savePressed, { "Expected the 'Save' button to produce and event" })
     }

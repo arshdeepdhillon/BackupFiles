@@ -18,7 +18,7 @@ import com.ad.backupfiles.data.entity.SmbServerInfo
 @Database(
     entities = [SmbServerInfo::class, DirectoryInfo::class, DirectorySyncInfo::class],
     version = 1,
-    exportSchema = false
+    exportSchema = false,
 )
 abstract class BackupFilesDatabase : RoomDatabase() {
     abstract fun smbServerDao(): SmbServerDao

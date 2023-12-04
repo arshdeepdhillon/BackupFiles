@@ -1,6 +1,5 @@
 package com.ad.backupfiles.ui.home
 
-
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.pm.PackageManager
 import android.os.Build
@@ -91,27 +90,27 @@ fun HomeScreen(
             BackupFilesTopAppBar(
                 title = stringResource(id = HomeDestination.titleRes),
                 canNavBack = false,
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                    onClick = handleFABClick,
-                    shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier
-                            .testTag(SMB_ADD_TAG)
-                            .padding(dimensionResource(id = R.dimen.m_pad))
+                onClick = handleFABClick,
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier
+                    .testTag(SMB_ADD_TAG)
+                    .padding(dimensionResource(id = R.dimen.m_pad)),
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(id = R.string.add_connection)
+                    contentDescription = stringResource(id = R.string.add_connection),
                 )
             }
-        }
+        },
     ) { innerPadding ->
         if (ContextCompat.checkSelfPermission(
                 context,
-                POST_NOTIFICATIONS
+                POST_NOTIFICATIONS,
             ) == PackageManager.PERMISSION_DENIED
         ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -119,11 +118,11 @@ fun HomeScreen(
             }
         }
         HomeBody(
-                modifier = modifier
-                        .padding(innerPadding)
-                        .fillMaxSize(),
-                servers = homeUiState.sharedServers,
-                onItemClick = handleItemClick
+            modifier = modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            servers = homeUiState.sharedServers,
+            onItemClick = handleItemClick,
         )
     }
 }
@@ -143,20 +142,20 @@ fun HomeBody(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.content_layout_pad))
+        modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.content_layout_pad)),
     ) {
         if (servers.isEmpty()) {
             Text(
-                    text = stringResource(R.string.message_on_empty_smbs),
-                    modifier = Modifier.testTag(NO_SAVED_SMBS_MSG_TAG),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleSmall
+                text = stringResource(R.string.message_on_empty_smbs),
+                modifier = Modifier.testTag(NO_SAVED_SMBS_MSG_TAG),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleSmall,
             )
         } else {
             ServerList(
                 servers = servers,
                 handleClick = { onItemClick(it.smbServerId) },
-                modifier = Modifier
+                modifier = Modifier,
             )
         }
     }
@@ -178,10 +177,10 @@ fun ServerList(
     LazyColumn(modifier = modifier.testTag(LAZY_COLUMN_TAG)) {
         itemsIndexed(items = servers) { index, server ->
             ServerItem(
-                    server = server,
-                    modifier = Modifier
-                            .padding(vertical = dimensionResource(id = R.dimen.s_pad))
-                            .clickable { handleClick(server) }
+                server = server,
+                modifier = Modifier
+                    .padding(vertical = dimensionResource(id = R.dimen.s_pad))
+                    .clickable { handleClick(server) },
             )
         }
     }
@@ -198,13 +197,13 @@ fun ServerItem(server: SmbServerInfo, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(size = 12.dp)
+        shape = RoundedCornerShape(size = 12.dp),
     ) {
         Row(
-                modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp, horizontal = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp, horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(text = server.serverAddress, style = MaterialTheme.typography.labelLarge)
         }
@@ -216,7 +215,7 @@ fun ServerItem(server: SmbServerInfo, modifier: Modifier = Modifier) {
 fun ServerItemPreview() {
     BackupFilesTheme {
         ServerItem(
-            SmbServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir")
+            SmbServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir"),
         )
     }
 }
@@ -228,9 +227,9 @@ fun HomeBodyPreview() {
         HomeBody(
             servers = listOf(
                 SmbServerInfo(1, "url1", "usr1", "pas1", "shared-folder"),
-                SmbServerInfo(2, "url2", "usr2", "pas2", "shared-folder")
+                SmbServerInfo(2, "url2", "usr2", "pas2", "shared-folder"),
             ),
-            onItemClick = {}
+            onItemClick = {},
         )
     }
 }
@@ -241,7 +240,7 @@ fun HomeBodyEmptyListPreview() {
     BackupFilesTheme {
         HomeBody(
             servers = listOf(),
-            onItemClick = {}
+            onItemClick = {},
         )
     }
 }

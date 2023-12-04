@@ -15,7 +15,6 @@ import com.ad.backupfiles.ui.utils.TestTag.Companion.NO_SAVED_SMBS_MSG_TAG
 import org.junit.Rule
 import org.junit.Test
 
-
 /*
  * @author : Arshdeep Dhillon
  * @created : 23-Nov-23
@@ -29,7 +28,6 @@ class HomeScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
-
 
     @Test
     fun test_default_components_visible_when_zero_smbs_saved() {
@@ -46,17 +44,18 @@ class HomeScreenTest {
     fun test_default_components_visible_when_smbs_saved() {
         val smbs = (1..5).map { i ->
             SmbServerInfo(
-                    serverAddress = "192.100.10.$i",
-                    username = "testname$i",
-                    password = "testpass$i",
-                    sharedFolderName = "testfolder$i"
+                serverAddress = "192.100.10.$i",
+                username = "testname$i",
+                password = "testpass$i",
+                sharedFolderName = "testfolder$i",
             )
         }.toList()
         composeTestRule.setContent {
             BackupFilesTheme {
                 HomeBody(
-                        servers = smbs,
-                        onItemClick = {})
+                    servers = smbs,
+                    onItemClick = {},
+                )
             }
         }
         composeTestRule.onNodeWithTag(NO_SAVED_SMBS_MSG_TAG).assertDoesNotExist()
@@ -64,4 +63,3 @@ class HomeScreenTest {
         composeTestRule.onNodeWithTag(LAZY_COLUMN_TAG).onChildren().onFirst().assert(hasText(smbs[0].serverAddress))
     }
 }
-

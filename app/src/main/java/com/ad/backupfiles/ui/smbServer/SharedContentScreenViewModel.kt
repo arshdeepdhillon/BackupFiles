@@ -44,9 +44,6 @@ import java.util.concurrent.TimeUnit
  * @created : 23-Oct-23
  */
 
-
-
-
 /**
  * Displays content from SMB server.
  */
@@ -65,7 +62,6 @@ class SharedContentScreenViewModel(
     private val _errorState = MutableSharedFlow<ErrorUiState>()
     val errorState: SharedFlow<ErrorUiState> = _errorState.asSharedFlow().shareIn(viewModelScope, SharingStarted.WhileSubscribed(TIMEOUT_MILLIS))
 
-
     /**
      * Holds current UI state
      */
@@ -75,7 +71,7 @@ class SharedContentScreenViewModel(
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = SMBContentUiState()
+            initialValue = SMBContentUiState(),
         )
 
     sealed class ErrorUiState {
@@ -87,7 +83,6 @@ class SharedContentScreenViewModel(
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
-
 
     /**
      * Saves the [persistableDirUri] folder path so it can later be backed up to the SMB server.
@@ -133,18 +128,17 @@ class SharedContentScreenViewModel(
                 .setInputData(
                     workDataOf(
                         SMB_ID_INT_KEY to smbServerId,
-                        WORKER_TAG to BACKUP_FOLDER_TAG
-                    )
+                        WORKER_TAG to BACKUP_FOLDER_TAG,
+                    ),
                 )
                 .build()
             workManager.beginUniqueWork(
                 BACKUP_FOLDER_WORK_NAME,
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
-                backupWork
+                backupWork,
             ).enqueue()
         }
     }
-
 
     /**
      *
@@ -158,8 +152,8 @@ class SharedContentScreenViewModel(
                     .setInputData(
                         workDataOf(
                             SMB_ID_INT_KEY to smbServerId,
-                            WORKER_TAG to SYNC_FOLDER_TAG
-                        )
+                            WORKER_TAG to SYNC_FOLDER_TAG,
+                        ),
                     )
                     .setConstraints(wmConstraints)
                     .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
@@ -168,12 +162,11 @@ class SharedContentScreenViewModel(
                 workManager.beginUniqueWork(
                     BACKUP_FOLDER_WORK_NAME,
                     ExistingWorkPolicy.APPEND_OR_REPLACE,
-                    syncWork
+                    syncWork,
                 ).enqueue()
             }
         }
     }
-
 
     /**
      * Handles the selection or deselection of a directory item.
@@ -198,7 +191,6 @@ class SharedContentScreenViewModel(
         selectedDirectoryIds.clear()
     }
 }
-
 
 /**
  * Represents the UI state of saved directories.

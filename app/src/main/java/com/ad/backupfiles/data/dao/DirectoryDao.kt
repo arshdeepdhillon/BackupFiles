@@ -34,7 +34,6 @@ interface DirectoryDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(directory: DirectoryInfo): Long
 
-
     @Delete
     suspend fun delete(directory: DirectoryInfo)
 
@@ -44,7 +43,6 @@ interface DirectoryDao {
 
     @Query("SELECT EXISTS(SELECT * FROM smb_server_info as smbInfo, directory_info as dirInfo WHERE smbInfo.smbServerId = :smbServerId AND dirInfo.dirPath = :dirPath LIMIT 1)")
     fun isDirectorySaved(smbServerId: Long, dirPath: String): Boolean
-
 
     @Query("UPDATE directory_info SET lastSynced = :currentTime WHERE smbServerId = :smbId AND dirId = :dirId")
     suspend fun updateSyncTime(dirId: Long, smbId: Long, currentTime: Long)

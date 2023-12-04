@@ -23,10 +23,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             BackupFilesTheme {
                 Surface(
-                        modifier = Modifier
-                                .fillMaxSize()
-                                .semantics { testTagsAsResourceId = true },
-                        color = MaterialTheme.colorScheme.background
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .semantics { testTagsAsResourceId = true },
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     BackupFilesApp()
                 }
@@ -34,4 +34,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-

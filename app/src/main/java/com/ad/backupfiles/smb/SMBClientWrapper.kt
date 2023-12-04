@@ -26,7 +26,6 @@ import java.util.Deque
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.coroutineContext
 
-
 /*
  * @author : Arshdeep Dhillon
  * @created : 23-Oct-23
@@ -40,7 +39,6 @@ import kotlin.coroutines.coroutineContext
  */
 class SMBClientWrapper : SMBClientApi {
     private val TAG = SMBClientWrapper::class.java.simpleName
-
 
     companion object {
         @Volatile
@@ -81,7 +79,6 @@ class SMBClientWrapper : SMBClientApi {
             .connectShare(sharedFolder) as DiskShare
     }
 
-
     /**
      * Saves a single file from a DocumentFile to a specified path on SMB server using a provided DiskShare.
      *
@@ -114,7 +111,7 @@ class SMBClientWrapper : SMBClientApi {
                         setOf<FileAttributes>(FileAttributes.FILE_ATTRIBUTE_NORMAL),
                         setOf<SMB2ShareAccess>(SMB2ShareAccess.FILE_SHARE_WRITE),
                         if (isSync) SMB2CreateDisposition.FILE_CREATE else SMB2CreateDisposition.FILE_OVERWRITE_IF,
-                        setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY)
+                        setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY),
                     )
                     var prog: Int
                     var totalBytesRead = 0
@@ -138,7 +135,6 @@ class SMBClientWrapper : SMBClientApi {
                             Log.d(TAG, "Saving file...Done")
                         }
                     }
-
                 } catch (e: SMBApiException) {
                     // If content already exists and we're in sync mode, then continue otherwise raise it
                     if (!(isSync && e.statusCode == NtStatus.STATUS_OBJECT_NAME_COLLISION.value)) {
@@ -168,7 +164,7 @@ class SMBClientWrapper : SMBClientApi {
                 setOf<FileAttributes>(FileAttributes.FILE_ATTRIBUTE_NORMAL),
                 setOf<SMB2ShareAccess>(SMB2ShareAccess.FILE_SHARE_WRITE),
                 SMB2CreateDisposition.FILE_OPEN_IF,
-                setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY)
+                setOf<SMB2CreateOptions>(SMB2CreateOptions.FILE_SEQUENTIAL_ONLY),
             )
             var path: String
             while (dirContentList.isNotEmpty()) {
@@ -184,7 +180,6 @@ class SMBClientWrapper : SMBClientApi {
                 saveSingleFile(context, docOnDevice, path, diskShare, isSync)
             }
         }
-
     }
 
     override suspend fun canConnect(smbServerDto: SmbServerDto): Boolean {
@@ -198,5 +193,4 @@ class SMBClientWrapper : SMBClientApi {
         }
         return false
     }
-
 }

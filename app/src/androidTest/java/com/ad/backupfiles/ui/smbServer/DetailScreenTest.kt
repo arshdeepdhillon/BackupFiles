@@ -42,11 +42,11 @@ class DetailScreenTest {
     @Test
     fun test_components_remain_visible_on_long_input() {
         val uiState = DetailScreenUiState(
-                SmbServerData(
-                        serverAddress = "1.1.1.1",
-                        username = "really_long_user_really_long_user_really_long_user_really_long_user",
-                        sharedFolderName = "really_long_shared_folder_name_really_long_shared_folder_name"
-                )
+            SmbServerData(
+                serverAddress = "1.1.1.1",
+                username = "really_long_user_really_long_user_really_long_user_really_long_user",
+                sharedFolderName = "really_long_shared_folder_name_really_long_shared_folder_name",
+            ),
         )
         composeTestRule.setContent {
             BackupFilesTheme {

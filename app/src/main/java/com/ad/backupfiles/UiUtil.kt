@@ -27,7 +27,9 @@ object UiUtil {
         duration: Int = Toast.LENGTH_SHORT,
     ) {
         toast(
-            context, context.getString(resourceId, *padArgs(args)), duration
+            context,
+            context.getString(resourceId, *padArgs(args)),
+            duration,
         )
     }
 

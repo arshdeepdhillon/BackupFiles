@@ -84,16 +84,16 @@ private fun createCancelIntent(ctx: Context, pendingIntentKeyValue: String): Pen
  * @param notificationTitle The title for the notification (default is [BACKUP_NOTIFICATION_TITLE]).
  */
 fun makeNotification(
-        message: String,
-        ctx: Context,
-        pendingIntentKeyValue: String? = null,
-        notificationTitle: CharSequence = BACKUP_NOTIFICATION_TITLE,
+    message: String,
+    ctx: Context,
+    pendingIntentKeyValue: String? = null,
+    notificationTitle: CharSequence = BACKUP_NOTIFICATION_TITLE,
 ) {
     // Check notification is enabled before creating it.
     if (NotificationManagerCompat.from(ctx).areNotificationsEnabled()) {
         val builder = NotificationCompat.Builder(ctx, MAIN_CHANNEL_ID)
-                .setSmallIcon(R.drawable.notification_icon)
-                .setContentTitle(notificationTitle)
+            .setSmallIcon(R.drawable.notification_icon)
+            .setContentTitle(notificationTitle)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVibrate(LongArray(0))
@@ -105,7 +105,7 @@ fun makeNotification(
         // Show the notification
         if (ActivityCompat.checkSelfPermission(
                 ctx,
-                Manifest.permission.POST_NOTIFICATIONS
+                Manifest.permission.POST_NOTIFICATIONS,
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             NotificationManagerCompat.from(ctx).notify(NOTIFICATION_ID, builder.build())
@@ -142,7 +142,7 @@ fun updateNotificationMessage(
         // Show the notification
         if (ActivityCompat.checkSelfPermission(
                 ctx,
-                Manifest.permission.POST_NOTIFICATIONS
+                Manifest.permission.POST_NOTIFICATIONS,
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             NotificationManagerCompat.from(ctx).notify(NOTIFICATION_ID, builder.build())

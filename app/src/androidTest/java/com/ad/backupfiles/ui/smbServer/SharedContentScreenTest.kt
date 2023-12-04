@@ -40,7 +40,6 @@ class SharedContentScreenTest {
         @BeforeClass
         fun setUpClass() {
             device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
         }
     }
 
@@ -48,18 +47,17 @@ class SharedContentScreenTest {
     fun setup() {
         savedDirs = (0L until MAX_DIRS).map { i ->
             DirectoryDto(
-                    dirId = i,
-                    dirPath = "some_path_on_device_foldername_$i",
-                    dirName = "foldername_$i",
-                    smbServerId = i,
-                    lastSynced = Instant.now().epochSecond
+                dirId = i,
+                dirPath = "some_path_on_device_foldername_$i",
+                dirName = "foldername_$i",
+                smbServerId = i,
+                lastSynced = Instant.now().epochSecond,
             )
         }.toList()
     }
 
     @get:Rule
     val composeTestRule = createComposeRule()
-
 
     /**
      * Verifies correct number of items are visible and there checked/unchecked icons are not visible.
@@ -124,7 +122,6 @@ class SharedContentScreenTest {
 
     @Test
     fun test_long_press_on_all_directory() {
-
         val stateRestorationTester = StateRestorationTester(composeTestRule)
         stateRestorationTester.setContent {
             BackupFilesTheme {
@@ -161,10 +158,7 @@ class SharedContentScreenTest {
             if (i != MAX_DIRS) {
                 composeTestRule.onAllNodesWithContentDescription(descriptionOfUncheckedBox).assertCountEquals(i)
             }
-
         }
         verifyDefaultState(descriptionOfCheckedBox, descriptionOfUncheckedBox)
-
     }
-
 }

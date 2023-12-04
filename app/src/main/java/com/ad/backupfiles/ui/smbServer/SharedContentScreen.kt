@@ -57,7 +57,6 @@ import com.ad.backupfiles.ui.utils.SelectableItemsBody
  * @created : 23-Oct-23
  */
 
-
 /**
  * A stateless singleton representing navigation details
  */
@@ -71,7 +70,6 @@ object SharedContentScreenDestination : NavigationDestination {
     const val argKey = "smbServerArg"
     val routeArgs = "$route/{$argKey}"
 }
-
 
 private const val TAG: String = "SharedContentScreen"
 
@@ -93,7 +91,7 @@ fun SharedContentScreen(
             // Persist the permission of this Uri inorder to access it after a app/phone restart
             context.contentResolver.takePersistableUriPermission(
                 dirUri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
             )
             viewModel.saveDirectory(dirUri)
         }
@@ -126,7 +124,6 @@ fun SharedContentScreen(
                     is ErrorUiState.Empty -> {}
                 }
             }
-
     }
     Scaffold(
         topBar = {
@@ -137,7 +134,7 @@ fun SharedContentScreen(
                     fadeIn() with fadeOut()
                 }.using(
                     // Disable clipping since the faded slide-in/out should be displayed out of bounds.
-                    SizeTransform(clip = false)
+                    SizeTransform(clip = false),
                 )
             }, label = "additional settings") { targetInSelectionMode ->
                 if (targetInSelectionMode) {
@@ -148,7 +145,7 @@ fun SharedContentScreen(
                     BackupFilesTopAppBar(
                         title = stringResource(SharedContentScreenDestination.titleRes),
                         canNavBack = true,
-                        onNavUp = handleNavUp
+                        onNavUp = handleNavUp,
                     )
                 }
             }
@@ -170,22 +167,22 @@ fun SharedContentScreen(
                         dirPickerLauncher.launch(null)
                     },
                     shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad))
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad)),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(id = R.string.add_connection)
+                        contentDescription = stringResource(id = R.string.add_connection),
                     )
                 }
             }
         },
-        modifier = modifier
+        modifier = modifier,
     ) { innerPadding ->
         SelectableItemsBody(
-                modifier = Modifier.padding(innerPadding),
-                savedDirs = uiState.savedDirectories,
-                onItemSelect = { item: Pair<Boolean, DirectoryDto> -> viewModel.onDirectorySelected(item) },
-                resetSelectionState = clearSelectionState
+            modifier = Modifier.padding(innerPadding),
+            savedDirs = uiState.savedDirectories,
+            onItemSelect = { item: Pair<Boolean, DirectoryDto> -> viewModel.onDirectorySelected(item) },
+            resetSelectionState = clearSelectionState,
         ) {
             inSelectionMode = it
         }
@@ -199,12 +196,11 @@ fun SharedContentScreen(
                 titleId = R.string.confirm_title_alert,
                 bodyId = R.string.sync_body_alert,
                 handleCancel = { isSyncDialogActive = false },
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad))
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad)),
             )
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -215,13 +211,12 @@ private fun AdditionalSettings(onSyncClick: () -> Unit) {
             IconButton(onClick = onSyncClick) {
                 Icon(
                     imageVector = Icons.Outlined.Refresh,
-                    contentDescription = "Save newly added content in selected folder on SMB server"
+                    contentDescription = "Save newly added content in selected folder on SMB server",
                 )
             }
-        }
+        },
     )
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -230,4 +225,3 @@ private fun SharedContentScreenPreview() {
         SharedContentScreen(handleNavUp = {})
     }
 }
-

@@ -8,6 +8,9 @@ android {
     namespace = "com.ad.backupfiles"
     compileSdk = 33
 
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
     defaultConfig {
         applicationId = "com.ad.backupfiles"
         minSdk = 26
@@ -20,7 +23,6 @@ android {
             useSupportLibrary = true
         }
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false

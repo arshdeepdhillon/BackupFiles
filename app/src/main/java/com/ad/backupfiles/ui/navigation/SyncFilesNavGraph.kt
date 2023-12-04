@@ -31,49 +31,53 @@ fun BackupFilesNavHost(navController: NavHostController, modifier: Modifier = Mo
     NavHost(
         navController = navController,
         startDestination = HomeDestination.route,
-        modifier = modifier
+        modifier = modifier,
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
                 handleFABClick = { navController.navigate(AddScreenDestination.route) },
-                handleItemClick = { navController.navigate("${DetailScreenDestination.route}/${it}") }
+                handleItemClick = { navController.navigate("${DetailScreenDestination.route}/$it") },
             )
         }
         composable(route = AddScreenDestination.route) {
             AddScreen(
                 handleNavBack = { navController.popBackStack() },
-                handleNavUp = { navController.navigateUp() }
+                handleNavUp = { navController.navigateUp() },
             )
         }
-        composable(route = DetailScreenDestination.routeArgs,
+        composable(
+            route = DetailScreenDestination.routeArgs,
             arguments = listOf(
-                navArgument(DetailScreenDestination.argKey) { type = NavType.IntType }
-            )
+                navArgument(DetailScreenDestination.argKey) { type = NavType.IntType },
+            ),
         ) {
             DetailScreen(
                 handleNavBack = { navController.popBackStack() },
                 handleItemClicked = { navController.navigate("${EditScreenDestination.route}/$it") },
-                handleConnect = { navController.navigate("${SharedContentScreenDestination.route}/$it") }
+                handleConnect = { navController.navigate("${SharedContentScreenDestination.route}/$it") },
             )
         }
-        composable(route = EditScreenDestination.routeArgs,
+        composable(
+            route = EditScreenDestination.routeArgs,
             arguments = listOf(
-                navArgument(EditScreenDestination.argKey) { type = NavType.IntType }
-            )
+                navArgument(EditScreenDestination.argKey) { type = NavType.IntType },
+            ),
         ) {
             EditScreen(
                 handleNavBack = { navController.popBackStack() },
-                handleNavUp = { navController.navigateUp() }
+                handleNavUp = { navController.navigateUp() },
             )
         }
         composable(
             route = SharedContentScreenDestination.routeArgs,
-            arguments = listOf(navArgument(SharedContentScreenDestination.argKey) {
-                type = NavType.LongType
-            })
+            arguments = listOf(
+                navArgument(SharedContentScreenDestination.argKey) {
+                    type = NavType.LongType
+                },
+            ),
         ) {
             SharedContentScreen(
-                handleNavUp = { navController.navigateUp() }
+                handleNavUp = { navController.navigateUp() },
             )
         }
     }

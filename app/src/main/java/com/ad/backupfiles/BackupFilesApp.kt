@@ -43,10 +43,10 @@ fun BackupFilesTopAppBar(
                 IconButton(onClick = onNavUp) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(id = R.string.back_button)
+                        contentDescription = stringResource(id = R.string.back_button),
                     )
                 }
             }
-        }
+        },
     )
 }

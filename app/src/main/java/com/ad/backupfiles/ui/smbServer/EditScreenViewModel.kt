@@ -91,8 +91,8 @@ class EditScreenViewModel(
     private fun updateState(smbServerData: SmbServerData) {
         _uiState.update { currState ->
             currState.copy(
-                    currentUiData = smbServerData,
-                    isUiDataValid = currState.sanitizeAndValidateInputFields()
+                currentUiData = smbServerData,
+                isUiDataValid = currState.sanitizeAndValidateInputFields(),
             )
         }
     }

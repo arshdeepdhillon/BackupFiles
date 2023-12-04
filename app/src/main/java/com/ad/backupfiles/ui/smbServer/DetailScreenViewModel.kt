@@ -33,20 +33,17 @@ class DetailScreenViewModel(
      * Holds current UI state
      */
     var uiState: StateFlow<DetailScreenUiState> =
-            serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().map {
-                DetailScreenUiState(deviceDetails = it.toUiData())
-            }.stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                    initialValue = DetailScreenUiState()
-            )
-
+        serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().map {
+            DetailScreenUiState(deviceDetails = it.toUiData())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = DetailScreenUiState(),
+        )
 
     suspend fun deleteSmbServer() {
         serverInfoRepo.deleteSmbServer(uiState.value.deviceDetails.toSmbServerEntity())
     }
-
-
 }
 
 /**
