@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,14 +27,14 @@ import com.ad.backupfiles.ui.AppViewModelProvider
 import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.InputForm
-import com.ad.backupfiles.ui.utils.SmbServerInfoUiData
+import com.ad.backupfiles.ui.utils.SmbServerData
+import com.ad.backupfiles.ui.utils.TestTag.Companion.SAVE_INPUT_FORM_BUTTON
 import kotlinx.coroutines.launch
 
 /*
  * @author : Arshdeep Dhillon
  * @created : 23-Oct-23
  */
-
 
 /**
  * A stateless singleton representing navigation details
@@ -66,9 +67,9 @@ fun AddScreen(
             BackupFilesTopAppBar(
                 title = stringResource(AddScreenDestination.titleRes),
                 canNavBack = canNavBack,
-                onNavUp = handleNavUp
+                onNavUp = handleNavUp,
             )
-        }
+        },
     ) { innerPadding ->
         AddScreenBody(
             uiState = viewModel.userInputState,
@@ -83,12 +84,10 @@ fun AddScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .fillMaxWidth()
+                .fillMaxWidth(),
         )
     }
-
 }
-
 
 /**
  * Composable function to display the body of an "Add Screen".
@@ -101,28 +100,30 @@ fun AddScreen(
  */
 @Composable
 fun AddScreenBody(
-    uiState: SmbServerInfoUiData,
+    uiState: SmbServerData,
     isUiValid: Boolean,
-    onFieldChange: (SmbServerInfoUiData) -> Unit,
+    onFieldChange: (SmbServerData) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.m_pad)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.m_pad))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.m_pad)),
     ) {
         InputForm(
             modifier = Modifier.fillMaxWidth(),
             smbServerData = uiState,
-            onFieldChange = onFieldChange
+            onFieldChange = onFieldChange,
         )
         Button(
             onClick = onSaveClick,
             enabled = isUiValid,
             shape = MaterialTheme.shapes.small,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(SAVE_INPUT_FORM_BUTTON),
         ) {
-            Text(text = stringResource(id = R.string.save_connection))
+            Text(text = stringResource(id = R.string.add_smb))
         }
     }
 }
@@ -132,10 +133,10 @@ fun AddScreenBody(
 fun AddScreenPreview() {
     BackupFilesTheme {
         AddScreenBody(
-            uiState = SmbServerInfoUiData(),
+            uiState = SmbServerData(),
             isUiValid = false,
             onFieldChange = {},
-            onSaveClick = {}
+            onSaveClick = {},
         )
     }
 }

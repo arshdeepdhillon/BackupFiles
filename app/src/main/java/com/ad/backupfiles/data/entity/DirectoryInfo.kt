@@ -22,14 +22,20 @@ import androidx.room.Relation
  */
 @Entity(
     tableName = "directory_info",
-    foreignKeys = [ForeignKey(
-        entity = SmbServerInfo::class,
-        parentColumns = arrayOf("smbServerId"),
-        childColumns = arrayOf("smbServerId"),
-        onDelete = ForeignKey.CASCADE
-    )], indices = [Index(
-        value = ["smbServerId", "dirPath"], unique = true
-    )]
+    foreignKeys = [
+        ForeignKey(
+            entity = SmbServerInfo::class,
+            parentColumns = arrayOf("smbServerId"),
+            childColumns = arrayOf("smbServerId"),
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
+    indices = [
+        Index(
+            value = ["smbServerId", "dirPath"],
+            unique = true,
+        ),
+    ],
 )
 data class DirectoryInfo(
     @PrimaryKey(autoGenerate = true)
@@ -57,10 +63,13 @@ data class SMBServerWithSavedDirs(
  */
 data class DirectoryDto(val dirId: Long, val dirPath: String, val dirName: String?, val smbServerId: Long, val lastSynced: Long?)
 
-
 /**
  * Converts from DirectoryInfo to DirectoryDto object.
  */
 fun DirectoryInfo.toDto(): DirectoryDto = DirectoryDto(
-    dirId = this.dirId, dirPath = this.dirPath, dirName = this.dirName, lastSynced = this.lastSynced, smbServerId = this.smbServerId
+    dirId = this.dirId,
+    dirPath = this.dirPath,
+    dirName = this.dirName,
+    lastSynced = this.lastSynced,
+    smbServerId = this.smbServerId,
 )

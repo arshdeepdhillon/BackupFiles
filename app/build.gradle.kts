@@ -8,6 +8,10 @@ android {
     namespace = "com.ad.backupfiles"
     compileSdk = 33
 
+    lint {
+        baseline = file("lint-baseline.xml")
+        warningsAsErrors = false
+    }
     defaultConfig {
         applicationId = "com.ad.backupfiles"
         minSdk = 26
@@ -20,7 +24,6 @@ android {
             useSupportLibrary = true
         }
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -86,10 +89,16 @@ dependencies {
 
 
     androidTestImplementation(composeBom)
+    implementation(libs.androidx.uiautomator)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.compose.ui.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+//    testImplementation(libs.mockito)
+//    testImplementation(libs.mockito.kotlin)
+//    androidTestImplementation(libs.mockito.android)
+//    androidTestImplementation(libs.mockito.agent)
 }

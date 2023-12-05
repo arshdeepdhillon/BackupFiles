@@ -1,6 +1,5 @@
 package com.ad.backupfiles.worker
 
-
 import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
@@ -45,11 +44,11 @@ class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWork
         val isSync = workerTag == SYNC_FOLDER_TAG
         notificationTitle = if (isSync) SYNC_NOTIFICATION_TITLE else BACKUP_NOTIFICATION_TITLE
         if (runAttemptCount >= MAX_RETRY_ATTEMPT) {
-            makeStatusNotification(
+            makeNotification(
                 message = if (isSync) "Unable to sync data, retry shortly" else "Unable to backup data, retry shortly",
                 ctx = applicationContext,
                 pendingIntentKeyValue = workerTag,
-                notificationTitle = notificationTitle
+                notificationTitle = notificationTitle,
             )
             return@coroutineScope Result.failure()
         }
@@ -66,14 +65,14 @@ class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWork
                     message = if (isSync) "Sync started" else "Backup started",
                     pendingIntentKeyValue = workerTag,
                     ctx = applicationContext,
-                    notificationTitle = notificationTitle
+                    notificationTitle = notificationTitle,
                 )
             }.onCompletion { failure: Throwable? ->
                 if (failure == null) {
                     updateNotificationMessage(
                         message = if (isSync) "Sync successful" else "Backup successful",
                         ctx = applicationContext,
-                        notificationTitle = notificationTitle
+                        notificationTitle = notificationTitle,
                     )
                 } else if (failure is CancellationException) {
                     Log.d(TAG, "onCompletion else: $failure")
@@ -132,7 +131,7 @@ private fun processException(e: Exception): ExceptionResult {
                 Log.d(TAG, "Failed to a create file, opened file on SMB server must first be closed.", e)
                 return ExceptionResult(
                     result = Result.failure(),
-                    message = "Please close files open from SMB server."
+                    message = "Please close files open from SMB server.",
                 )
             }
             return ExceptionResult(result = Result.failure(), message = "Unable to backup the folder")

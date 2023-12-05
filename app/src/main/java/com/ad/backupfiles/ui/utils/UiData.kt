@@ -12,10 +12,10 @@ import com.ad.backupfiles.data.entity.SmbServerInfo
 const val DELAY_UPSTREAM_TIMEOUT_MILLIS = 5_000L
 
 /**
- * Represents Ui State of [SmbServerInfoUiData].
+ * Represents Ui State of [SmbServerData].
  */
 data class SMBServerUiState(
-    val currentUiData: SmbServerInfoUiData = SmbServerInfoUiData(),
+    val currentUiData: SmbServerData = SmbServerData(),
     val isUiDataValid: Boolean = false,
 )
 
@@ -25,12 +25,12 @@ fun SMBServerUiState.toUiData(): SmbServerDto {
             username = it.username,
             password = it.password,
             serverAddress = it.serverAddress,
-            sharedFolder = it.sharedFolderName
+            sharedFolder = it.sharedFolderName,
         )
     }
 }
 
-data class SmbServerInfoUiData(
+data class SmbServerData(
     val id: Long = 0,
     val serverAddress: String = "",
     val username: String = "",
@@ -41,23 +41,23 @@ data class SmbServerInfoUiData(
 /**
  * Extension function to convert [SMBServerUiState] to [SmbServerInfo].
  */
-fun SmbServerInfoUiData.toSmbServerEntity(): SmbServerInfo = SmbServerInfo(
+fun SmbServerData.toSmbServerEntity(): SmbServerInfo = SmbServerInfo(
     smbServerId = id,
     serverAddress = serverAddress,
     username = username,
     password = password,
-    sharedFolderName = sharedFolderName
+    sharedFolderName = sharedFolderName,
 )
 
 /**
- * Extension function to convert [SmbServerInfo] to [SmbServerInfoUiData].
+ * Extension function to convert [SmbServerInfo] to [SmbServerData].
  */
-fun SmbServerInfo.toUiData(): SmbServerInfoUiData = SmbServerInfoUiData(
+fun SmbServerInfo.toUiData(): SmbServerData = SmbServerData(
     id = smbServerId,
     serverAddress = serverAddress,
     username = username,
     password = password,
-    sharedFolderName = sharedFolderName
+    sharedFolderName = sharedFolderName,
 )
 
 /**
@@ -67,7 +67,7 @@ fun SmbServerInfo.toUiData(): SmbServerInfoUiData = SmbServerInfoUiData(
  */
 fun SMBServerUiState.sanitizeAndValidateInputFields(): Boolean {
     this.currentUiData.also {
-        //TODO this doesn't work!!
+        // TODO this doesn't work!!
         it.username.trim()
         it.serverAddress.trim()
         it.sharedFolderName.trim()

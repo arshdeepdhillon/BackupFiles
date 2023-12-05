@@ -47,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,6 +56,8 @@ import androidx.compose.ui.unit.dp
 import com.ad.backupfiles.R
 import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
+import com.ad.backupfiles.ui.utils.TestTag.Companion.CHECK_BOX
+import com.ad.backupfiles.ui.utils.TestTag.Companion.LAZY_COLUMN_TAG
 import java.text.DateFormat
 import java.time.Instant
 import java.util.Locale
@@ -68,14 +71,14 @@ import java.util.Locale
  * Displays the given list of data in a single column
  *
  * @param modifier The modifier to apply to the composable.
- * @param savedDirs The list of saved folders to display.
+ * @param savedDirs The list of saved directories to display.
  * @param onItemSelect Invoked when an item is clicked in selection mode.
  * @param resetSelectionState Whether to reset the selection state. Defaults to `false`.
  * @param onSelectionModeChange Invoked when the selection mode changes.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ItemListBody(
+fun SelectableItemsBody(
     modifier: Modifier = Modifier,
     savedDirs: List<DirectoryDto>,
     onItemSelect: (Pair<Boolean, DirectoryDto>) -> Unit = {},
@@ -89,7 +92,7 @@ fun ItemListBody(
     DisposableEffect(key1 = isSelectionMode, key2 = resetSelectionState) {
         if (resetSelectionState) {
             selectedDirIds = emptySet()
-        } else {// Update the parents
+        } else { // Update the parents
             onSelectionModeChange(isSelectionMode)
         }
         // Clean up resources (if any) when the effect leaves the Composition
@@ -103,9 +106,10 @@ fun ItemListBody(
     LazyVerticalGrid(
         modifier = modifier
             .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.content_layout_pad)),
+            .padding(dimensionResource(id = R.dimen.content_layout_pad))
+            .testTag(LAZY_COLUMN_TAG),
         columns = GridCells.Fixed(1),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(items = savedDirs) { item ->
             val selected by remember { derivedStateOf { item.dirId in selectedDirIds } }
@@ -127,21 +131,28 @@ fun ItemListBody(
                         onItemSelect(Pair(true, item))
                     })
                 },
-                dirName = item.dirName,
+                directoryName = item.dirName,
                 lastSynced = item.lastSynced,
                 selected = selected,
-                isSelectedMode = isSelectionMode
+                isSelectedMode = isSelectionMode,
             )
-
         }
     }
 }
 
-
+/**
+ * Displays details of a given directory
+ *
+ * @param modifier The modifier for customizing the layout of the composable.
+ * @param directoryName The name of the directory.
+ * @param lastSynced The timestamp of the last synchronization.
+ * @param selected Whether the item is currently selected.
+ * @param isSelectedMode Whether the selection mode is active.
+ */
 @Composable
 fun ItemDetails(
     modifier: Modifier = Modifier,
-    dirName: String?,
+    directoryName: String?,
     lastSynced: Long?,
     selected: Boolean,
     isSelectedMode: Boolean,
@@ -149,64 +160,56 @@ fun ItemDetails(
     Row(
         modifier = modifier
             .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-
         AnimatedVisibility(
             visible = isSelectedMode,
             enter = slideInHorizontally(initialOffsetX = { fullWidth ->
-                //Slide in from left
+                // Slide in from left
                 -fullWidth
             }) + fadeIn(),
             exit = slideOutHorizontally(targetOffsetX = { fullWidth ->
-                //Slide out to left
+                // Slide out to left
                 -fullWidth
             }) + shrinkHorizontally() + fadeOut(),
         ) {
-            CircleCheckBox(modifier.padding(horizontal = dimensionResource(id = R.dimen.m_pad)), selected)
+            CircleCheckBox(
+                modifier
+                    .padding(horizontal = dimensionResource(id = R.dimen.m_pad))
+                    .testTag(CHECK_BOX),
+                selected,
+            )
         }
         Card(
             modifier = modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-            shape = RoundedCornerShape(size = 6.dp)
+            shape = RoundedCornerShape(size = 6.dp),
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(dimensionResource(id = R.dimen.s_pad)),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.folder_24),
                         contentDescription = "Content Type",
-                        modifier = Modifier.padding(dimensionResource(id = R.dimen.s_pad))
+                        modifier = Modifier.padding(dimensionResource(id = R.dimen.s_pad)),
                     )
                     Column {
-                        Text(text = dirName ?: "")
+                        Text(text = directoryName ?: "")
                         Row(
                             modifier = Modifier.fillMaxSize(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Text(
                                 text = "Synced: " + (formatDate(lastSynced) ?: "Not Yet"),
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.labelSmall,
                             )
-//                            if (isDir) {
-//                                Text(
-//                                    text = "${
-//                                        when {
-//                                            numOfFiles == null -> 0
-//                                            numOfFiles <= 99 -> numOfFiles
-//                                            numOfFiles > 99 -> "99+"
-//                                            else -> 0
-//                                        }
-//                                    } items", style = MaterialTheme.typography.labelSmall
-//                                )
-//                            }
                         }
                     }
                 }
@@ -215,28 +218,32 @@ fun ItemDetails(
     }
 }
 
+/**
+ * Represents a circle-shaped checkbox.
+ *
+ * @param modifier The modifier for customizing the layout of the composable.
+ * @param selected Whether the checkbox is selected or not.
+ */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CircleCheckBox(modifier: Modifier = Modifier, selected: Boolean) {
     AnimatedContent(targetState = selected, label = "Item selection icon", transitionSpec = {
         if (targetState) {
             scaleIn(animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium)) with
-                    scaleOut(animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium))
+                scaleOut(animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium))
         } else {
             scaleIn(animationSpec = spring(dampingRatio = Spring.DampingRatioNoBouncy, stiffness = Spring.StiffnessMedium)) with
-                    scaleOut(animationSpec = spring(dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessMedium))
+                scaleOut(animationSpec = spring(dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessMedium))
         }
     }) { targetInSelectionMode ->
         Box(contentAlignment = Alignment.Center, modifier = modifier.clip(CircleShape)) {
             Icon(
                 imageVector = if (targetInSelectionMode) Icons.Default.CheckCircle else Icons.Outlined.CheckCircle,
-                contentDescription = stringResource(R.string.icon_check)
+                contentDescription = stringResource(if (targetInSelectionMode) R.string.icon_checked else R.string.icon_unchecked),
             )
         }
-
     }
 }
-
 
 fun formatDate(timestampSec: Long?): String? {
     if (timestampSec == null) {
@@ -247,21 +254,20 @@ fun formatDate(timestampSec: Long?): String? {
         .format(timestampSec * 1000)
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun ItemListBodyPreview() {
+fun SelectableItemsBodyPreview() {
     val oneDayInSec = 86_400
-    ItemListBody(
+    SelectableItemsBody(
         savedDirs = (0L..5L).toList().map {
             DirectoryDto(
                 dirId = it,
                 smbServerId = 0,
                 dirPath = "/some/dir/path/$it",
                 lastSynced = if ((it % 2).toInt() == 0) null else Instant.now().epochSecond - oneDayInSec * it,
-                dirName = "Directory name $it"
+                dirName = "Directory name $it",
             )
-        }
+        },
     )
 }
 

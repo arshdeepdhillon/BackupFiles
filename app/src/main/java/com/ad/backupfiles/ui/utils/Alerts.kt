@@ -38,7 +38,7 @@ fun GeneralAlert(handleAccept: () -> Unit, handleCancel: () -> Unit, @StringRes 
             TextButton(onClick = handleAccept) {
                 Text(text = stringResource(R.string.yes_alert))
             }
-        }
+        },
     )
 }
 
@@ -51,7 +51,7 @@ fun DeleteConfirmationDialogPreview() {
             handleCancel = { },
             titleId = R.string.confirm_title_alert,
             bodyId = R.string.delete_body_alert,
-            modifier = Modifier
+            modifier = Modifier,
         )
     }
 }

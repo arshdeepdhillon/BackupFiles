@@ -19,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,14 +32,14 @@ import com.ad.backupfiles.ui.AppViewModelProvider
 import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.InputForm
-import com.ad.backupfiles.ui.utils.SmbServerInfoUiData
+import com.ad.backupfiles.ui.utils.SmbServerData
+import com.ad.backupfiles.ui.utils.TestTag.Companion.EDIT_SCREEN_FOOTER
 import kotlinx.coroutines.launch
 
 /*
  * @author : Arshdeep Dhillon
  * @created : 23-Oct-23
  */
-
 
 /**
  * A stateless singleton representing navigation details
@@ -78,17 +79,17 @@ fun EditScreen(
             BackupFilesTopAppBar(
                 title = stringResource(EditScreenDestination.titleRes),
                 canNavBack = true,
-                onNavUp = handleNavUp
+                onNavUp = handleNavUp,
             )
         },
-        modifier = modifier
+        modifier = modifier,
     ) { innerPadding ->
         EditScreenBody(
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
                 .fillMaxWidth(),
-            uiData = viewModel.userInputState,
+            uiState = viewModel.userInputState,
             isUiValid = uiState.isUiDataValid,
             onFieldChange = viewModel::updateUiState,
             handleSave = {
@@ -105,7 +106,7 @@ fun EditScreen(
                         UiUtil.makeToast(context, R.string.connection_issue_with_smb)
                     }
                 }
-            }
+            },
         )
     }
 }
@@ -114,7 +115,7 @@ fun EditScreen(
  * Composable function for displaying the body of an edit screen.
  *
  * @param modifier Modifier for customizing the layout of the EditScreenBody.
- * @param uiData The UI state representing server information.
+ * @param uiState The UI state representing server information.
  * @param isUiValid The UI validation state based on latest Ui state.
  * @param onFieldChange Callback function to handle changes in server details fields.
  * @param handleSave Callback function to handle the save button click.
@@ -123,25 +124,25 @@ fun EditScreen(
 @Composable
 fun EditScreenBody(
     modifier: Modifier = Modifier,
-    uiData: SmbServerInfoUiData,
+    uiState: SmbServerData,
     isUiValid: Boolean,
-    onFieldChange: (SmbServerInfoUiData) -> Unit,
+    onFieldChange: (SmbServerData) -> Unit,
     handleSave: () -> Unit,
     checkConnection: () -> Unit,
 ) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.content_layout_pad)),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.m_pad))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.m_pad)),
     ) {
         InputForm(
             modifier = Modifier.fillMaxWidth(),
-            smbServerData = uiData,
-            onFieldChange = onFieldChange
+            smbServerData = uiState,
+            onFieldChange = onFieldChange,
         )
         EditScreenFooter(
             isDataValid = isUiValid,
             onSaveClick = handleSave,
-            checkConnection = checkConnection
+            checkConnection = checkConnection,
         )
     }
 }
@@ -162,29 +163,53 @@ fun EditScreenFooter(
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Button(
+            modifier = Modifier
+                .testTag(EDIT_SCREEN_FOOTER)
+                .testTag(""),
             onClick = checkConnection,
             enabled = isDataValid,
-            shape = MaterialTheme.shapes.small
+            shape = MaterialTheme.shapes.small,
         ) {
-            Text(stringResource(R.string.Test))
+            Text(stringResource(R.string.test_connection))
         }
         Button(
+            modifier = Modifier.testTag(EDIT_SCREEN_FOOTER),
             onClick = onSaveClick,
             enabled = isDataValid,
-            shape = MaterialTheme.shapes.small
+            shape = MaterialTheme.shapes.small,
         ) {
-            Text(text = stringResource(id = R.string.save_connection))
+            Text(text = stringResource(id = R.string.add_smb))
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun EditScreenPreview() {
+fun EditScreenPreviewUiInValid() {
     BackupFilesTheme {
-        EditScreen(handleNavBack = {}, handleNavUp = {})
+        EditScreenBody(
+            uiState = SmbServerData(),
+            isUiValid = false,
+            onFieldChange = {},
+            handleSave = {},
+            checkConnection = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EditScreenPreviewUiValid() {
+    BackupFilesTheme {
+        EditScreenBody(
+            uiState = SmbServerData(),
+            isUiValid = true,
+            onFieldChange = {},
+            handleSave = {},
+            checkConnection = {},
+        )
     }
 }

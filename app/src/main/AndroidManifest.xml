@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BackupFiles"
-        tools:targetApi="31">
+        tools:targetApi="33">
         <receiver android:name=".receiver.UploadCancelReceiver" />
         <service
             android:name=".worker.UploadFolderWorker"

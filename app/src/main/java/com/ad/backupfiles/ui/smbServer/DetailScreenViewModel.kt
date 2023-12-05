@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.repository.SmbServerInfoRepo
-import com.ad.backupfiles.ui.utils.SmbServerInfoUiData
+import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.toSmbServerEntity
 import com.ad.backupfiles.ui.utils.toUiData
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,24 +32,23 @@ class DetailScreenViewModel(
     /**
      * Holds current UI state
      */
-    var uiState: StateFlow<DetailUIState> =
+    var uiState: StateFlow<DetailScreenUiState> =
         serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().map {
-            DetailUIState(deviceDetails = it.toUiData())
+            DetailScreenUiState(deviceDetails = it.toUiData())
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = DetailUIState()
+            initialValue = DetailScreenUiState(),
         )
-
 
     suspend fun deleteSmbServer() {
         serverInfoRepo.deleteSmbServer(uiState.value.deviceDetails.toSmbServerEntity())
     }
-
-
 }
 
 /**
- * Represents Ui State of [SmbServerInfoUiData].
+ * Represents the latest UI state for displaying details of an SMB server.
+ *
+ * @property deviceDetails Details of the SMB server.
  */
-data class DetailUIState(val deviceDetails: SmbServerInfoUiData = SmbServerInfoUiData())
+data class DetailScreenUiState(val deviceDetails: SmbServerData = SmbServerData())

@@ -1,6 +1,5 @@
 package com.ad.backupfiles.ui.home
 
-
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.pm.PackageManager
 import android.os.Build
@@ -33,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +46,9 @@ import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.ui.AppViewModelProvider
 import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
+import com.ad.backupfiles.ui.utils.TestTag.Companion.LAZY_COLUMN_TAG
+import com.ad.backupfiles.ui.utils.TestTag.Companion.NO_SAVED_SMBS_MSG_TAG
+import com.ad.backupfiles.ui.utils.TestTag.Companion.SMB_ADD_TAG
 
 /*
  * @author : Arshdeep Dhillon
@@ -87,25 +90,27 @@ fun HomeScreen(
             BackupFilesTopAppBar(
                 title = stringResource(id = HomeDestination.titleRes),
                 canNavBack = false,
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = handleFABClick,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad))
+                modifier = Modifier
+                    .testTag(SMB_ADD_TAG)
+                    .padding(dimensionResource(id = R.dimen.m_pad)),
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(id = R.string.add_connection)
+                    contentDescription = stringResource(id = R.string.add_connection),
                 )
             }
-        }
+        },
     ) { innerPadding ->
         if (ContextCompat.checkSelfPermission(
                 context,
-                POST_NOTIFICATIONS
+                POST_NOTIFICATIONS,
             ) == PackageManager.PERMISSION_DENIED
         ) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -117,7 +122,7 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize(),
             servers = homeUiState.sharedServers,
-            onItemClick = handleItemClick
+            onItemClick = handleItemClick,
         )
     }
 }
@@ -137,19 +142,20 @@ fun HomeBody(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.content_layout_pad))
+        modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.content_layout_pad)),
     ) {
         if (servers.isEmpty()) {
             Text(
-                text = stringResource(R.string.info_no_smb_connections),
+                text = stringResource(R.string.message_on_empty_smbs),
+                modifier = Modifier.testTag(NO_SAVED_SMBS_MSG_TAG),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleSmall,
             )
         } else {
             ServerList(
                 servers = servers,
                 handleClick = { onItemClick(it.smbServerId) },
-                modifier = Modifier
+                modifier = Modifier,
             )
         }
     }
@@ -168,13 +174,13 @@ fun ServerList(
     handleClick: (SmbServerInfo) -> Unit,
     modifier: Modifier,
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = modifier.testTag(LAZY_COLUMN_TAG)) {
         itemsIndexed(items = servers) { index, server ->
             ServerItem(
                 server = server,
                 modifier = Modifier
                     .padding(vertical = dimensionResource(id = R.dimen.s_pad))
-                    .clickable { handleClick(server) }
+                    .clickable { handleClick(server) },
             )
         }
     }
@@ -191,7 +197,7 @@ fun ServerItem(server: SmbServerInfo, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(size = 12.dp)
+        shape = RoundedCornerShape(size = 12.dp),
     ) {
         Row(
             modifier = Modifier
@@ -209,7 +215,7 @@ fun ServerItem(server: SmbServerInfo, modifier: Modifier = Modifier) {
 fun ServerItemPreview() {
     BackupFilesTheme {
         ServerItem(
-            SmbServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir")
+            SmbServerInfo(1, "192.168.10.10", "Test Username", "Test Password", "shared-dir"),
         )
     }
 }
@@ -221,9 +227,9 @@ fun HomeBodyPreview() {
         HomeBody(
             servers = listOf(
                 SmbServerInfo(1, "url1", "usr1", "pas1", "shared-folder"),
-                SmbServerInfo(2, "url2", "usr2", "pas2", "shared-folder")
+                SmbServerInfo(2, "url2", "usr2", "pas2", "shared-folder"),
             ),
-            onItemClick = {}
+            onItemClick = {},
         )
     }
 }
@@ -234,7 +240,7 @@ fun HomeBodyEmptyListPreview() {
     BackupFilesTheme {
         HomeBody(
             servers = listOf(),
-            onItemClick = {}
+            onItemClick = {},
         )
     }
 }

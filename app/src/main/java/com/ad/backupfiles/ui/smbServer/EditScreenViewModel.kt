@@ -11,7 +11,7 @@ import com.ad.backupfiles.data.entity.toUiState
 import com.ad.backupfiles.data.repository.SmbServerInfoRepo
 import com.ad.backupfiles.smb.SMBClientWrapper
 import com.ad.backupfiles.ui.utils.SMBServerUiState
-import com.ad.backupfiles.ui.utils.SmbServerInfoUiData
+import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.sanitizeAndValidateInputFields
 import com.ad.backupfiles.ui.utils.toSmbServerEntity
 import com.ad.backupfiles.ui.utils.toUiData
@@ -48,7 +48,7 @@ class EditScreenViewModel(
     private val _uiState = MutableStateFlow(SMBServerUiState())
     val uiState: StateFlow<SMBServerUiState> = _uiState.asStateFlow()
 
-    var userInputState by mutableStateOf(SmbServerInfoUiData())
+    var userInputState by mutableStateOf(SmbServerData())
         private set
 
     init {
@@ -67,9 +67,9 @@ class EditScreenViewModel(
         }
     }
 
-    fun updateUiState(smbServerInfoUiData: SmbServerInfoUiData) {
-        userInputState = smbServerInfoUiData
-        updateState(smbServerInfoUiData)
+    fun updateUiState(smbServerData: SmbServerData) {
+        userInputState = smbServerData
+        updateState(smbServerData)
     }
 
     suspend fun canConnectToServer(): Boolean {
@@ -88,11 +88,11 @@ class EditScreenViewModel(
      * Updates the [uiState] with the value provided in the argument. This method also triggers
      * a validation for input values.
      */
-    private fun updateState(smbServerInfoUiData: SmbServerInfoUiData) {
+    private fun updateState(smbServerData: SmbServerData) {
         _uiState.update { currState ->
             currState.copy(
-                currentUiData = smbServerInfoUiData,
-                isUiDataValid = currState.sanitizeAndValidateInputFields()
+                currentUiData = smbServerData,
+                isUiDataValid = currState.sanitizeAndValidateInputFields(),
             )
         }
     }
