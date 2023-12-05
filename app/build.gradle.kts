@@ -10,6 +10,7 @@ android {
 
     lint {
         baseline = file("lint-baseline.xml")
+        warningsAsErrors = false
     }
     defaultConfig {
         applicationId = "com.ad.backupfiles"
