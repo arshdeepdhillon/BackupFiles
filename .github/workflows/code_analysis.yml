@@ -33,10 +33,6 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 17
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-      - name: Assemble
-        run: ./gradlew assembleDebug
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
@@ -44,8 +40,12 @@ jobs:
         with:
           languages: ${{ matrix.language }}
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+      # TODO: use Autobuild instead of ./gradlew after https://github.com/github/codeql-action/issues/1417 is fixed
+      #      - name: Autobuild
+      #        uses: github/codeql-action/autobuild@v2
+      - name: Build with Gradle
+        run: ./gradlew --scan --full-stacktrace -Dorg.gradle.dependency.verification=off compileDebugAndroidTestSources
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
         with:
