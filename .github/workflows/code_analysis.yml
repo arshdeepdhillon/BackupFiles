@@ -1,4 +1,4 @@
-name: CodeQL Analysis
+name: Code Analysis
 
 on:
   push:
@@ -41,6 +41,9 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
+
+      - name: Assemble
+        run: ./gradlew assembleDebug
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
