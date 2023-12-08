@@ -1,0 +1,52 @@
+name: Code Analysis
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: '00 05 * * 1' # 05:00 on Monday
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ${{ 'ubuntu-latest' }}
+    timeout-minutes: ${{ 360 }}
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'java-kotlin' ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+
+      # TODO: use Autobuild instead of ./gradlew after https://github.com/github/codeql-action/issues/1417 is fixed
+      #      - name: Autobuild
+      #        uses: github/codeql-action/autobuild@v2
+      - name: Build with Gradle
+        run: ./gradlew --scan --full-stacktrace -Dorg.gradle.dependency.verification=off compileDebugAndroidTestSources
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{matrix.language}}"
