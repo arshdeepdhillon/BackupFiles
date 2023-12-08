@@ -35,15 +35,14 @@ jobs:
           java-version: 17
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+      - name: Assemble
+        run: ./gradlew assembleDebug
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
-
-      - name: Assemble
-        run: ./gradlew assembleDebug
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
