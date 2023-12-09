@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.android.kotlin)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.annotation)
+    alias(libs.plugins.hilt.plugin)
 }
 
 android {
@@ -55,48 +56,51 @@ android {
 }
 
 dependencies {
-    val composeBom = platform(libs.androidx.compose.bom)
+    val composeBom = platform(libs.androidx.composeBom)
     implementation(composeBom)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.preview)
+    implementation(libs.androidx.coreKtx)
+    implementation(libs.androidx.activityCompose)
+    implementation(libs.androidx.composeUi)
+    implementation(libs.androidx.composeUiGraphics)
+    implementation(libs.androidx.composeUiPreview)
     implementation(libs.androidx.material3)
     // ViewModel
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycleViewmodelKtx)
     // ViewModel utilities for Compose
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycleViewmodelCompose)
     // LiveData
-    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycleLivedataKtx)
     // Lifecycles only (without ViewModel or LiveData)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycleRuntimeKtx)
     // Lifecycle utilities for Compose
-    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycleRuntimeCompose)
     // Saved state module for ViewModel
-    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycleViewmodelSavedstate)
+    implementation(libs.androidx.navigationCompose)
     implementation(libs.smbj)
-    implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.androidx.room.compiler)
+    implementation(libs.androidx.roomRuntime)
+    annotationProcessor(libs.androidx.roomCompiler)
     // To use Kotlin Symbol Processing (KSP)
-    ksp(libs.androidx.room.compiler)
+    ksp(libs.androidx.roomCompiler)
     // optional - Kotlin Extensions and Coroutines support for Room
-    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.roomKtx)
     implementation(libs.androidx.documentfile)
     // WorkManger
-    implementation(libs.androidx.work.runtime.ktx)
-
+    implementation(libs.androidx.workRuntimeKtx)
+    // DI
+    implementation(libs.hilt)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigationCompose)
+    implementation(libs.hilt.lifecycleViewmodel)
 
     androidTestImplementation(composeBom)
     implementation(libs.androidx.uiautomator)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.compose.ui.junit4)
-    androidTestImplementation(libs.androidx.espresso.core)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-
+    androidTestImplementation(libs.androidx.composeUiJunit4)
+    androidTestImplementation(libs.androidx.espressoCore)
+    debugImplementation(libs.androidx.composeUiTooling)
+    debugImplementation(libs.androidx.composeUiTestManifest)
 //    testImplementation(libs.mockito)
 //    testImplementation(libs.mockito.kotlin)
 //    androidTestImplementation(libs.mockito.android)
