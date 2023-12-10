@@ -5,8 +5,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import com.ad.backupfiles.data.AppContainer
-import com.ad.backupfiles.data.AppDataContainer
+import com.ad.backupfiles.di.ApplicationModuleImpl
+import com.ad.backupfiles.di.api.ApplicationModuleApi
 import com.ad.backupfiles.worker.DETAILED_CHANNEL_DESC
 import com.ad.backupfiles.worker.DETAILED_CHANNEL_ID
 import com.ad.backupfiles.worker.DETAILED_CHANNEL_NAME
@@ -18,14 +18,19 @@ import com.ad.backupfiles.worker.MAIN_CHANNEL_NAME
  * @author : Arshdeep Dhillon
  * @created : 23-Oct-23
  */
-class BackupFilesApplicationEntryPoint : Application() {
+class AppEntryPoint : Application() {
 
-    lateinit var container: AppContainer
+    companion object {
+        lateinit var appModule: ApplicationModuleApi
+    }
+
     override fun onCreate() {
         super.onCreate()
 
         createNotificationChannels()
-        container = AppDataContainer(this)
+
+        // Initialized in the Application so it remains alive as long as the application.
+        appModule = ApplicationModuleImpl(this)
     }
 
     /**

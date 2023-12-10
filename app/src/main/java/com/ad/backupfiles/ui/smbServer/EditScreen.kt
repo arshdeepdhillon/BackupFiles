@@ -24,14 +24,14 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ad.backupfiles.BackupFilesTopAppBar
 import com.ad.backupfiles.R
-import com.ad.backupfiles.UiUtil
+import com.ad.backupfiles.Toast
 import com.ad.backupfiles.data.entity.SmbServerInfo
-import com.ad.backupfiles.ui.AppViewModelProvider
+import com.ad.backupfiles.di.AppViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.shared.InputForm
+import com.ad.backupfiles.ui.shared.TopAppBar
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
-import com.ad.backupfiles.ui.utils.InputForm
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.EDIT_SCREEN_FOOTER
 import kotlinx.coroutines.launch
@@ -69,14 +69,14 @@ fun EditScreen(
     handleNavBack: () -> Unit,
     handleNavUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EditScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: EditScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     Scaffold(
         topBar = {
-            BackupFilesTopAppBar(
+            TopAppBar(
                 title = stringResource(EditScreenDestination.titleRes),
                 canNavBack = true,
                 onNavUp = handleNavUp,
@@ -101,9 +101,9 @@ fun EditScreen(
             checkConnection = {
                 coroutineScope.launch {
                     if (viewModel.canConnectToServer()) {
-                        UiUtil.makeToast(context, R.string.connection_success_with_smb)
+                        Toast.makeToast(context, R.string.connection_success_with_smb)
                     } else {
-                        UiUtil.makeToast(context, R.string.connection_issue_with_smb)
+                        Toast.makeToast(context, R.string.connection_issue_with_smb)
                     }
                 }
             },
@@ -181,7 +181,7 @@ fun EditScreenFooter(
             enabled = isDataValid,
             shape = MaterialTheme.shapes.small,
         ) {
-            Text(text = stringResource(id = R.string.add_smb))
+            Text(text = stringResource(id = R.string.save_smb))
         }
     }
 }

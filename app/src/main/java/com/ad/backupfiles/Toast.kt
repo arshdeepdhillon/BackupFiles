@@ -9,7 +9,10 @@ import androidx.annotation.StringRes
  * @created : 23-Oct-23
  */
 
-object UiUtil {
+/**
+ * Utility object for displaying Toast messages in the application.
+ */
+object Toast {
 
     private const val MAX_ARG_LEN = 20
     private const val MAX_TRUNK_LEN = 15

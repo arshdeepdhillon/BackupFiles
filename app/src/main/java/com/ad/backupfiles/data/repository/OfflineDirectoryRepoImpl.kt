@@ -8,6 +8,7 @@ import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.DirectoryInfo
 import com.ad.backupfiles.data.entity.DirectorySyncInfo
 import com.ad.backupfiles.data.entity.toDto
+import com.ad.backupfiles.data.repository.api.DirectoryInfoApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
@@ -24,14 +25,14 @@ import java.time.Instant
  * @created : 23-Oct-23
  */
 
-class OfflineDirectoryRepo(
+class OfflineDirectoryRepoImpl(
     private val directoryDao: DirectoryDao,
     private val externalScope: CoroutineScope,
-) : DirectoryRepo {
-    private val TAG: String = OfflineDirectoryRepo::class.java.simpleName
+) : DirectoryInfoApi {
+    private val TAG: String = OfflineDirectoryRepoImpl::class.java.simpleName
 
     /**
-     * @see DirectoryRepo.getAllSavedDirectoriesStream
+     * @see DirectoryInfoApi.getAllSavedDirectoriesStream
      */
     override fun getAllSavedDirectoriesStream(smbServerId: Long) =
         directoryDao.getSmbServerWithDirectories(smbServerId)
@@ -40,7 +41,7 @@ class OfflineDirectoryRepo(
         directoryDao.isDirectorySaved(smbServerId, dirPath)
 
     /**
-     * @see DirectoryRepo.insertDirectory
+     * @see DirectoryInfoApi.insertDirectory
      */
     @Transaction
     override suspend fun insertDirectory(dir: DirectoryInfo): Long? {
@@ -53,21 +54,21 @@ class OfflineDirectoryRepo(
     }
 
     /**
-     * @see DirectoryRepo.deleteDirectory
+     * @see DirectoryInfoApi.deleteDirectory
      */
     override suspend fun deleteDirectory(dir: DirectoryInfo) {
         directoryDao.delete(dir)
     }
 
     /**
-     * @see DirectoryRepo.getDirectory
+     * @see DirectoryInfoApi.getDirectory
      */
     override suspend fun getDirectory(dirId: Long, smbServerId: Long): DirectoryDto? {
         return directoryDao.getDirectoryById(dirId, smbServerId)?.toDto()
     }
 
     /**
-     * @see DirectoryRepo.getPendingSyncDirectories
+     * @see DirectoryInfoApi.getPendingSyncDirectories
      */
     override fun getPendingSyncDirectories(smbServerId: Long) = flow {
         directoryDao.getPendingSyncDirectories(smbServerId).onEach {
@@ -76,7 +77,7 @@ class OfflineDirectoryRepo(
     }
 
     /**
-     * @see DirectoryRepo.insertDirectoriesToSync
+     * @see DirectoryInfoApi.insertDirectoriesToSync
      */
     override suspend fun insertDirectoriesToSync(smbServerId: Long, directoryIds: MutableList<Long>) {
         externalScope.launch {
@@ -94,7 +95,7 @@ class OfflineDirectoryRepo(
     }
 
     /**
-     * @see DirectoryRepo.processSyncedDirectory
+     * @see DirectoryInfoApi.processSyncedDirectory
      */
     @Transaction
     override suspend fun processSyncedDirectory(syncedDirectory: DirectorySyncInfo) {
@@ -105,7 +106,7 @@ class OfflineDirectoryRepo(
     }
 
     /**
-     * @see DirectoryRepo.deleteAllPendingSyncDirectories
+     * @see DirectoryInfoApi.deleteAllPendingSyncDirectories
      */
     @Transaction
     override suspend fun deleteAllPendingSyncDirectories(smbServerId: Long) {

@@ -40,17 +40,17 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ad.backupfiles.BackupFilesTopAppBar
 import com.ad.backupfiles.R
-import com.ad.backupfiles.UiUtil
+import com.ad.backupfiles.Toast
 import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.SmbServerInfo
-import com.ad.backupfiles.ui.AppViewModelProvider
+import com.ad.backupfiles.di.AppViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.shared.GeneralAlert
+import com.ad.backupfiles.ui.shared.SelectableItemsBody
+import com.ad.backupfiles.ui.shared.TopAppBar
 import com.ad.backupfiles.ui.smbServer.SharedContentScreenViewModel.ErrorUiState
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
-import com.ad.backupfiles.ui.utils.GeneralAlert
-import com.ad.backupfiles.ui.utils.SelectableItemsBody
 
 /*
  * @author : Arshdeep Dhillon
@@ -78,7 +78,7 @@ private const val TAG: String = "SharedContentScreen"
 fun SharedContentScreen(
     handleNavUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SharedContentScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: SharedContentScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
@@ -118,7 +118,7 @@ fun SharedContentScreen(
             .collect { message ->
                 when (message) {
                     is ErrorUiState.Error -> {
-                        UiUtil.makeToast(context, message.resId, message.args)
+                        Toast.makeToast(context, message.resId, message.args)
                     }
 
                     is ErrorUiState.Empty -> {}
@@ -142,7 +142,7 @@ fun SharedContentScreen(
                         isSyncDialogActive = true
                     }
                 } else {
-                    BackupFilesTopAppBar(
+                    TopAppBar(
                         title = stringResource(SharedContentScreenDestination.titleRes),
                         canNavBack = true,
                         onNavUp = handleNavUp,

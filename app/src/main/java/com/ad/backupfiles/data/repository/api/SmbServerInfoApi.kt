@@ -1,4 +1,4 @@
-package com.ad.backupfiles.data.repository
+package com.ad.backupfiles.data.repository.api
 
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Repository that provides data access to [SmbServerInfo].
  */
-interface SmbServerInfoRepo {
+interface SmbServerInfoApi {
 
     /**
      * Retrieves a flow of lists containing SMB server information in ascending order.

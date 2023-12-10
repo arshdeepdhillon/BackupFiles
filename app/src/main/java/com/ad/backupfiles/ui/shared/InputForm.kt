@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.utils
+package com.ad.backupfiles.ui.shared
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.ad.backupfiles.R
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
+import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.PASSWORD_INPUT_TEXT
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SHARED_FOLDER_INPUT_TEXT
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SMB_IP_INPUT_TEXT

@@ -40,11 +40,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ad.backupfiles.BackupFilesTopAppBar
 import com.ad.backupfiles.R
 import com.ad.backupfiles.data.entity.SmbServerInfo
-import com.ad.backupfiles.ui.AppViewModelProvider
+import com.ad.backupfiles.di.AppViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.shared.TopAppBar
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.TestTag.Companion.LAZY_COLUMN_TAG
 import com.ad.backupfiles.ui.utils.TestTag.Companion.NO_SAVED_SMBS_MSG_TAG
@@ -77,7 +77,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     handleFABClick: () -> Unit,
     handleItemClick: (Long) -> Unit,
-    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -87,7 +87,7 @@ fun HomeScreen(
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            BackupFilesTopAppBar(
+            TopAppBar(
                 title = stringResource(id = HomeDestination.titleRes),
                 canNavBack = false,
                 scrollBehavior = scrollBehavior,

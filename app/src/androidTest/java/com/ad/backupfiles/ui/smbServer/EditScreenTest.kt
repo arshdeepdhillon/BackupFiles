@@ -127,7 +127,7 @@ class EditScreenTest {
         assert(testConnectionPressed, { "Expected the 'Test' connection button to produce and event" })
 
         device.findObject(
-            By.text(InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.add_smb)),
+            By.text(InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.save_smb)),
         ).click()
         assert(savePressed, { "Expected the 'Save' button to produce and event" })
     }

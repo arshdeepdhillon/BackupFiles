@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.utils
+package com.ad.backupfiles.ui.shared
 
 import androidx.annotation.StringRes
 import androidx.compose.material3.AlertDialog

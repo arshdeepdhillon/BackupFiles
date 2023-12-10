@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui
+package com.ad.backupfiles.di
 
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
@@ -6,7 +6,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.ad.backupfiles.BackupFilesApplicationEntryPoint
+import com.ad.backupfiles.AppEntryPoint
 import com.ad.backupfiles.ui.home.HomeViewModel
 import com.ad.backupfiles.ui.smbServer.AddScreenViewModel
 import com.ad.backupfiles.ui.smbServer.DetailScreenViewModel
@@ -18,48 +18,46 @@ import com.ad.backupfiles.ui.smbServer.SharedContentScreenViewModel
  * @created : 23-Oct-23
  */
 
-object AppViewModelProvider {
+object AppViewModelFactory {
     val Factory = viewModelFactory {
 
         // Initializer for HomeViewModel
         initializer {
-            HomeViewModel(backupFilesApplication().container.smbServerRepo)
+            HomeViewModel(AppEntryPoint.appModule)
         }
 
         // Initializer for AddScreenViewModel
         initializer {
             AddScreenViewModel(
-                backupFilesApplication().container.smbServerRepo,
+                AppEntryPoint.appModule,
             )
         }
         // Initializer for DetailScreenViewModel
         initializer {
             DetailScreenViewModel(
                 this.createSavedStateHandle(),
-                backupFilesApplication().container.smbServerRepo,
+                AppEntryPoint.appModule,
             )
         }
         // Initializer for EditScreenViewModel
         initializer {
             EditScreenViewModel(
                 this.createSavedStateHandle(),
-                backupFilesApplication().container.smbServerRepo,
+                AppEntryPoint.appModule,
             )
         }
         // Initializer for SharedContentScreenViewModel
         initializer {
             SharedContentScreenViewModel(
                 this.createSavedStateHandle(),
-                backupFilesApplication().container.directoryRepo,
-                backupFilesApplication().applicationContext,
+                AppEntryPoint.appModule,
             )
         }
     }
 }
 
 /**
- * Extension function to queries for [Application] object and returns an instance of
- * [BackupFilesApplicationEntryPoint].
+ * Extension function to query for [Application] object and returns an instance of [AppEntryPoint].
  */
-fun CreationExtras.backupFilesApplication(): BackupFilesApplicationEntryPoint =
-    (this[AndroidViewModelFactory.APPLICATION_KEY] as BackupFilesApplicationEntryPoint)
+fun CreationExtras.backupFilesApplication(): AppEntryPoint =
+    (this[AndroidViewModelFactory.APPLICATION_KEY] as AppEntryPoint)
