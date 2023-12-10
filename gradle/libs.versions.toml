@@ -3,8 +3,6 @@ activityCompose = "1.7.2"
 composeBom = "2023.03.00"
 coreKtx = "1.9.0"
 dagger = "2.46.1"
-hilt = "1.0.0-alpha03"
-hiltNavigationCompose = "1.0.0"
 documentfile = "1.0.1"
 lifecycleViewmodelKtx = "2.6.2"
 material3 = "1.1.1"
@@ -60,15 +58,9 @@ mockito = { module = "org.mockito:mockito-core", version.ref = "mockitoVersion" 
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockito-android = { module = "io.mockk:mockk-android", version.ref = "mockitoAndroid" }
 mockito-agent = { module = "io.mockk:mockk-agent", version.ref = "mockitoAgent" }
-hilt = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
-#hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger" }
-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
-hilt-navigationCompose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
-hilt-lifecycleViewmodel = { module = "androidx.hilt:hilt-lifecycle-viewmodel", version.ref = "hilt" }
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-annotation = { id = "com.google.devtools.ksp", version.ref = "kotlinAnnotationPlugin" }
-hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }

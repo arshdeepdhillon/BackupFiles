@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.annotation)
-    alias(libs.plugins.hilt.plugin)
 }
 
 android {
@@ -87,12 +86,8 @@ dependencies {
     implementation(libs.androidx.documentfile)
     // WorkManger
     implementation(libs.androidx.workRuntimeKtx)
-    // DI
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigationCompose)
-    implementation(libs.hilt.lifecycleViewmodel)
 
+    // For test
     androidTestImplementation(composeBom)
     implementation(libs.androidx.uiautomator)
     testImplementation(libs.junit)
