@@ -1,4 +1,4 @@
-package com.ad.backupfiles.data.repository
+package com.ad.backupfiles.data.repository.api
 
 import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.DirectoryInfo
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Repository that provides access to backed up [DirectoryInfo]s of SMB servers and [DirectorySyncInfo].
  */
-interface DirectoryRepo {
+interface DirectoryInfoApi {
 
     /**
      * Retrieves a flow of lists containing saved directories associated with the specified SMB server.

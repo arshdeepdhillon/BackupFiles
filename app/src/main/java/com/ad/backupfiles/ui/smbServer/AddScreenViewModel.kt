@@ -4,8 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.ad.backupfiles.data.repository.SmbServerInfoRepo
-import com.ad.backupfiles.smb.SMBClientWrapper
+import com.ad.backupfiles.di.api.ApplicationModuleApi
 import com.ad.backupfiles.ui.utils.SMBServerUiState
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.sanitizeAndValidateInputFields
@@ -20,11 +19,7 @@ import kotlinx.coroutines.flow.update
  * @created : 23-Oct-23
  */
 
-class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepo) : ViewModel() {
-    private val TAG = AddScreenViewModel::class.java.simpleName
-
-    private val smb = SMBClientWrapper()
-
+class AddScreenViewModel(private val appModule: ApplicationModuleApi) : ViewModel() {
     /**
      * Holds current UI state
      */
@@ -50,7 +45,7 @@ class AddScreenViewModel(private val serverInfoRepo: SmbServerInfoRepo) : ViewMo
      */
     suspend fun save() {
         if (_uiState.value.sanitizeAndValidateInputFields()) {
-            serverInfoRepo.upsertSmbServer(_uiState.value.currentUiData.toSmbServerEntity())
+            appModule.smbServerApi.upsertSmbServer(_uiState.value.currentUiData.toSmbServerEntity())
         }
     }
 

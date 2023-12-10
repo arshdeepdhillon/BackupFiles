@@ -36,13 +36,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ad.backupfiles.BackupFilesTopAppBar
 import com.ad.backupfiles.R
 import com.ad.backupfiles.data.entity.SmbServerInfo
-import com.ad.backupfiles.ui.AppViewModelProvider
+import com.ad.backupfiles.di.AppViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.shared.GeneralAlert
+import com.ad.backupfiles.ui.shared.TopAppBar
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
-import com.ad.backupfiles.ui.utils.GeneralAlert
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SHARED_FOLDER_DISPLAY_TEXT
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SMB_CONNECT_BUTTON
@@ -79,13 +79,13 @@ fun DetailScreen(
     handleItemClicked: (Long) -> Unit,
     handleConnect: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DetailScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: DetailScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val uiState = viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
-            BackupFilesTopAppBar(
+            TopAppBar(
                 title = stringResource(DetailScreenDestination.titleRes),
                 canNavBack = true,
                 onNavUp = handleNavBack,

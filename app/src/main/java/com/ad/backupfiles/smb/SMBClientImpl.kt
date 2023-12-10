@@ -32,13 +32,13 @@ import kotlin.coroutines.coroutineContext
  */
 
 /**
- * This wrapper class serves as an interface to interact with SMB server and provides
+ * This class serves as an interface to interact with SMB server and provides
  * methods for various SMB-related operations.
  *
  * @see SMBClientApi
  */
-class SMBClientWrapper : SMBClientApi {
-    private val TAG = SMBClientWrapper::class.java.simpleName
+class SMBClientImpl : SMBClientApi {
+    private val TAG = SMBClientImpl::class.java.simpleName
 
     companion object {
         @Volatile
@@ -152,8 +152,8 @@ class SMBClientWrapper : SMBClientApi {
         isSync: Boolean,
     ) {
         val (username, password, serverAddress, sharedFolder) = smbServerDto
-        val dirName = FileUtils.getDirName(context, folderToSave) ?: return
-        val dirContentList: Deque<DocumentFile> = FileUtils.getFilesInDir(context, folderToSave)
+        val dirName = DocumentHelper.getDirName(context, folderToSave) ?: return
+        val dirContentList: Deque<DocumentFile> = DocumentHelper.getFilesInDir(context, folderToSave)
 
         getDiskShare(username, password, serverAddress, sharedFolder).use { diskShare ->
             Log.d(TAG, "Folder exists on SMB server?: " + diskShare.folderExists(dirName))

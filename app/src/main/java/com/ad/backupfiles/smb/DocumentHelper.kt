@@ -12,7 +12,7 @@ import java.util.LinkedList
  * @created : 23-Oct-23
  */
 
-object FileUtils {
+object DocumentHelper {
 
     /**
      * Retrieve the display name of the file from given [Uri].

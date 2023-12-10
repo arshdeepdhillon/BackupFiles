@@ -8,8 +8,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.entity.toUiState
-import com.ad.backupfiles.data.repository.SmbServerInfoRepo
-import com.ad.backupfiles.smb.SMBClientWrapper
+import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
+import com.ad.backupfiles.di.api.ApplicationModuleApi
+import com.ad.backupfiles.smb.SMBClientImpl
 import com.ad.backupfiles.ui.utils.SMBServerUiState
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.sanitizeAndValidateInputFields
@@ -31,16 +32,15 @@ import kotlinx.coroutines.withContext
  */
 
 /**
- * Updates the fields of an item from [SmbServerInfoRepo]'s data source
+ * Updates the fields of an item from [SmbServerInfoApi]'s data source
  */
 class EditScreenViewModel(
-    stateHandle: SavedStateHandle,
-    private val serverInfoRepo: SmbServerInfoRepo,
+    @Suppress("unused") private val stateHandle: SavedStateHandle,
+    private val appModule: ApplicationModuleApi,
 ) : ViewModel() {
-    private val smbServerId: Long = checkNotNull(stateHandle[EditScreenDestination.argKey])
-
     private val TAG = EditScreenViewModel::class.java.simpleName
-    private val smb = SMBClientWrapper()
+    private val smb = SMBClientImpl()
+    private val smbServerId: Long = checkNotNull(stateHandle[EditScreenDestination.argKey])
 
     /**
      * Holds current UI state
@@ -53,7 +53,7 @@ class EditScreenViewModel(
 
     init {
         viewModelScope.launch {
-            _uiState.value = serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().first().toUiState(true)
+            _uiState.value = appModule.smbServerApi.getSmbServerStream(smbServerId).filterNotNull().first().toUiState(true)
             userInputState = _uiState.value.currentUiData
         }
     }
@@ -63,7 +63,7 @@ class EditScreenViewModel(
      */
     suspend fun updateItem() {
         if (_uiState.value.sanitizeAndValidateInputFields()) {
-            serverInfoRepo.upsertSmbServer(_uiState.value.currentUiData.toSmbServerEntity())
+            appModule.smbServerApi.upsertSmbServer(_uiState.value.currentUiData.toSmbServerEntity())
         }
     }
 

@@ -5,10 +5,10 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker.Result
 import androidx.work.WorkerParameters
-import com.ad.backupfiles.data.AppDataContainer
+import com.ad.backupfiles.AppEntryPoint
 import com.ad.backupfiles.data.entity.SmbServerDto
 import com.ad.backupfiles.data.entity.toDto
-import com.ad.backupfiles.smb.SMBClientWrapper
+import com.ad.backupfiles.smb.api.SMBClientApi
 import com.hierynomus.mserref.NtStatus
 import com.hierynomus.mssmb2.SMBApiException
 import com.hierynomus.smbj.common.SMBRuntimeException
@@ -31,11 +31,11 @@ private val TAG = UploadFolderWorker::class.java.simpleName
 class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
     // These variables are initialized once and reused during retry
 
-    private val directoryRepo = AppDataContainer(applicationContext).directoryRepo
-    private val smbServerRepo = AppDataContainer(applicationContext).smbServerRepo
+    private val directoryRepo = AppEntryPoint.appModule.directoryInfoApi
+    private val smbServerRepo = AppEntryPoint.appModule.smbServerApi
     private val UNKNOWN_ID: Long = -1L
     private lateinit var notificationTitle: CharSequence
-    private var smbWrapper: SMBClientWrapper = SMBClientWrapper()
+    private var smbClientApi: SMBClientApi = AppEntryPoint.appModule.smbClientApi
 
     override suspend fun doWork(): Result = coroutineScope {
         Log.d(TAG, "Worker started!")
@@ -46,7 +46,7 @@ class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWork
         if (runAttemptCount >= MAX_RETRY_ATTEMPT) {
             makeNotification(
                 message = if (isSync) "Unable to sync data, retry shortly" else "Unable to backup data, retry shortly",
-                ctx = applicationContext,
+                ctx = AppEntryPoint.appModule.appContext,
                 pendingIntentKeyValue = workerTag,
                 notificationTitle = notificationTitle,
             )
@@ -64,14 +64,14 @@ class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWork
                 updateNotificationMessage(
                     message = if (isSync) "Sync started" else "Backup started",
                     pendingIntentKeyValue = workerTag,
-                    ctx = applicationContext,
+                    ctx = AppEntryPoint.appModule.appContext,
                     notificationTitle = notificationTitle,
                 )
             }.onCompletion { failure: Throwable? ->
                 if (failure == null) {
                     updateNotificationMessage(
                         message = if (isSync) "Sync successful" else "Backup successful",
-                        ctx = applicationContext,
+                        ctx = AppEntryPoint.appModule.appContext,
                         notificationTitle = notificationTitle,
                     )
                 } else if (failure is CancellationException) {
@@ -80,13 +80,17 @@ class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWork
                 }
             }.collect { dirToSync ->
                 Log.d(TAG, "doWork: Before launch")
-                smbWrapper.saveFolder(applicationContext, smbDto, dirToSync.dirPath, isSync)
+                smbClientApi.saveFolder(AppEntryPoint.appModule.appContext, smbDto, dirToSync.dirPath, isSync)
                 directoryRepo.processSyncedDirectory(dirToSync)
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             processException(e).let { processedExc ->
-                updateNotificationMessage(message = processedExc.message, ctx = applicationContext, notificationTitle = notificationTitle)
+                updateNotificationMessage(
+                    message = processedExc.message,
+                    ctx = AppEntryPoint.appModule.appContext,
+                    notificationTitle = notificationTitle,
+                )
                 workResult = processedExc.result
             }
         }

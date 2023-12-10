@@ -16,8 +16,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.ad.backupfiles.R
 import com.ad.backupfiles.data.entity.DirectoryDto
+import com.ad.backupfiles.ui.shared.SelectableItemsBody
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
-import com.ad.backupfiles.ui.utils.SelectableItemsBody
 import com.ad.backupfiles.ui.utils.TestTag.Companion.CHECK_BOX
 import com.ad.backupfiles.ui.utils.TestTag.Companion.LAZY_COLUMN_TAG
 import org.junit.Before

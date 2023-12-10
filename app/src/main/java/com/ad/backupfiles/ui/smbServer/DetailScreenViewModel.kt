@@ -3,7 +3,7 @@ package com.ad.backupfiles.ui.smbServer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ad.backupfiles.data.repository.SmbServerInfoRepo
+import com.ad.backupfiles.di.api.ApplicationModuleApi
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.toSmbServerEntity
 import com.ad.backupfiles.ui.utils.toUiData
@@ -19,8 +19,8 @@ import kotlinx.coroutines.flow.stateIn
  */
 
 class DetailScreenViewModel(
-    stateHandle: SavedStateHandle,
-    private val serverInfoRepo: SmbServerInfoRepo,
+    @Suppress("unused") private val stateHandle: SavedStateHandle,
+    private val appModule: ApplicationModuleApi,
 ) : ViewModel() {
 
     companion object {
@@ -33,7 +33,7 @@ class DetailScreenViewModel(
      * Holds current UI state
      */
     var uiState: StateFlow<DetailScreenUiState> =
-        serverInfoRepo.getSmbServerStream(smbServerId).filterNotNull().map {
+        appModule.smbServerApi.getSmbServerStream(smbServerId).filterNotNull().map {
             DetailScreenUiState(deviceDetails = it.toUiData())
         }.stateIn(
             scope = viewModelScope,
@@ -42,7 +42,7 @@ class DetailScreenViewModel(
         )
 
     suspend fun deleteSmbServer() {
-        serverInfoRepo.deleteSmbServer(uiState.value.deviceDetails.toSmbServerEntity())
+        appModule.smbServerApi.deleteSmbServer(uiState.value.deviceDetails.toSmbServerEntity())
     }
 }
 

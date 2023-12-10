@@ -6,10 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.ad.backupfiles.ui.navigation.BackupFilesNavHost
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 
 /*
@@ -33,4 +37,9 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+@Composable
+fun BackupFilesApp(navController: NavHostController = rememberNavController()) {
+    BackupFilesNavHost(navController = navController)
 }

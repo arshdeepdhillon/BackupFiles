@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.utils
+package com.ad.backupfiles.ui.shared
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility

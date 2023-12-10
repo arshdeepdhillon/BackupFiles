@@ -8,7 +8,7 @@
     <string name="shared_folder_name">Shared Folder</string>
     <string name="add_connection">Add</string>
     <string name="connect">Connect</string>
-    <string name="add_smb">Add</string>
+    <string name="save_smb">Save</string>
     <string name="cancel_notification">Cancel</string>
     <string name="message_on_empty_smbs">Add a SMB server to backup files</string>
     <string name="smb_server_add_title">Add Device Info</string>

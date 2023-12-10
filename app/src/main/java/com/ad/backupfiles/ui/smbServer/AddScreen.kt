@@ -21,12 +21,12 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ad.backupfiles.BackupFilesTopAppBar
 import com.ad.backupfiles.R
-import com.ad.backupfiles.ui.AppViewModelProvider
+import com.ad.backupfiles.di.AppViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.shared.InputForm
+import com.ad.backupfiles.ui.shared.TopAppBar
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
-import com.ad.backupfiles.ui.utils.InputForm
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SAVE_INPUT_FORM_BUTTON
 import kotlinx.coroutines.launch
@@ -58,13 +58,13 @@ fun AddScreen(
     handleNavBack: () -> Unit,
     handleNavUp: () -> Unit,
     canNavBack: Boolean = true,
-    viewModel: AddScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: AddScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
-            BackupFilesTopAppBar(
+            TopAppBar(
                 title = stringResource(AddScreenDestination.titleRes),
                 canNavBack = canNavBack,
                 onNavUp = handleNavUp,
@@ -123,7 +123,7 @@ fun AddScreenBody(
                 .fillMaxWidth()
                 .testTag(SAVE_INPUT_FORM_BUTTON),
         ) {
-            Text(text = stringResource(id = R.string.add_smb))
+            Text(text = stringResource(id = R.string.save_smb))
         }
     }
 }
