@@ -31,9 +31,9 @@ private val TAG = UploadFolderWorker::class.java.simpleName
 class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
     // These variables are initialized once and reused during retry
 
-    private val directoryRepo = AppEntryPoint.appModule.directoryInfoApi
-    private val smbServerRepo = AppEntryPoint.appModule.smbServerApi
     private val UNKNOWN_ID: Long = -1L
+    private val dirInfoApi = AppEntryPoint.appModule.directoryInfoApi
+    private val smbInfoApi = AppEntryPoint.appModule.smbServerApi
     private lateinit var notificationTitle: CharSequence
     private var smbClientApi: SMBClientApi = AppEntryPoint.appModule.smbClientApi
 
@@ -57,10 +57,10 @@ class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWork
             return@coroutineScope Result.failure()
         }
 
-        val smbDto: SmbServerDto = smbServerRepo.getSmbServer(smbId).toDto()
+        val smbDto: SmbServerDto = smbInfoApi.getSmbServer(smbId).toDto()
         var workResult: Result = Result.success()
         try {
-            directoryRepo.getPendingSyncDirectories(smbId).cancellable().onStart {
+            dirInfoApi.getPendingSyncDirectories(smbId).cancellable().onStart {
                 updateNotificationMessage(
                     message = if (isSync) "Sync started" else "Backup started",
                     pendingIntentKeyValue = workerTag,
@@ -76,12 +76,12 @@ class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWork
                     )
                 } else if (failure is CancellationException) {
                     Log.d(TAG, "onCompletion else: $failure")
-                    directoryRepo.deleteAllPendingSyncDirectories(smbId)
+                    dirInfoApi.deleteAllPendingSyncDirectories(smbId)
                 }
             }.collect { dirToSync ->
                 Log.d(TAG, "doWork: Before launch")
                 smbClientApi.saveFolder(AppEntryPoint.appModule.appContext, smbDto, dirToSync.dirPath, isSync)
-                directoryRepo.processSyncedDirectory(dirToSync)
+                dirInfoApi.processSyncedDirectory(dirToSync)
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e

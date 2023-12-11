@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.entity.toUiState
 import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
 import com.ad.backupfiles.di.api.ApplicationModuleApi
-import com.ad.backupfiles.smb.SMBClientImpl
 import com.ad.backupfiles.ui.utils.SMBServerUiState
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.sanitizeAndValidateInputFields
@@ -39,7 +38,7 @@ class EditScreenViewModel(
     private val appModule: ApplicationModuleApi,
 ) : ViewModel() {
     private val TAG = EditScreenViewModel::class.java.simpleName
-    private val smb = SMBClientImpl()
+    private val smbClientApi = appModule.smbClientApi
     private val smbServerId: Long = checkNotNull(stateHandle[EditScreenDestination.argKey])
 
     /**
@@ -74,7 +73,7 @@ class EditScreenViewModel(
 
     suspend fun canConnectToServer(): Boolean {
         return withContext(Dispatchers.IO) {
-            return@withContext if (smb.canConnect(_uiState.value.toUiData())) {
+            return@withContext if (smbClientApi.canConnect(_uiState.value.toUiData())) {
                 Log.d(TAG, "Successfully connected with new changes")
                 true
             } else {
