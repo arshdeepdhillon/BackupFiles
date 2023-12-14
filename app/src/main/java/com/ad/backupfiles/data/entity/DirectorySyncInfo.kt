@@ -26,7 +26,8 @@ import androidx.room.PrimaryKey
             parentColumns = arrayOf("smbServerId"),
             childColumns = arrayOf("smbServerId"),
             onDelete = ForeignKey.CASCADE,
-        ), ForeignKey(
+        ),
+        ForeignKey(
             entity = DirectoryInfo::class,
             parentColumns = arrayOf("dirId"),
             childColumns = arrayOf("dirId"),

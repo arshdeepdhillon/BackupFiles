@@ -94,6 +94,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.composeUiJunit4)
     androidTestImplementation(libs.androidx.espressoCore)
+    androidTestImplementation(libs.cashturbine)
     debugImplementation(libs.androidx.composeUiTooling)
     debugImplementation(libs.androidx.composeUiTestManifest)
 //    testImplementation(libs.mockito)

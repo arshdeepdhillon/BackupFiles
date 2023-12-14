@@ -21,16 +21,6 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface DirectoryDao {
-    @Transaction
-    suspend fun insertAndQueueForBackup(directory: DirectoryInfo): Long? {
-        val insertedId = insert(directory)
-        insertDirectoryForSync(DirectorySyncInfo(dirId = insertedId, smbServerId = directory.smbServerId, dirPath = directory.dirPath))
-        return insertedId
-    }
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertDirectoryForSync(dirToQueue: DirectorySyncInfo): Long
-
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(directory: DirectoryInfo): Long
 
@@ -44,11 +34,28 @@ interface DirectoryDao {
     @Query("SELECT EXISTS(SELECT * FROM smb_server_info as smbInfo, directory_info as dirInfo WHERE smbInfo.smbServerId = :smbServerId AND dirInfo.dirPath = :dirPath LIMIT 1)")
     fun isDirectorySaved(smbServerId: Long, dirPath: String): Boolean
 
-    @Query("UPDATE directory_info SET lastSynced = :currentTime WHERE smbServerId = :smbId AND dirId = :dirId")
-    suspend fun updateSyncTime(dirId: Long, smbId: Long, currentTime: Long)
-
     @Query("SELECT * FROM directory_info WHERE smbServerId = :smbServerId AND dirId = :dirId")
     suspend fun getDirectoryById(dirId: Long, smbServerId: Long): DirectoryInfo?
+
+    // Below are sync related instructions
+    @Transaction
+    suspend fun insertAndQueueForBackup(directory: DirectoryInfo): Long {
+        val insertedId = insert(directory)
+        insertDirectoryForSync(
+            DirectorySyncInfo(
+                dirId = insertedId,
+                smbServerId = directory.smbServerId,
+                dirPath = directory.dirPath,
+            ),
+        )
+        return insertedId
+    }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertDirectoryForSync(dirToQueue: DirectorySyncInfo): Long
+
+    @Query("UPDATE directory_info SET lastSynced = :newTime WHERE smbServerId = :smbId AND dirId = :dirId")
+    suspend fun updateSyncTime(dirId: Long, smbId: Long, newTime: Long)
 
     @Query("SELECT * FROM directory_sync_pending WHERE smbServerId = :smbServerId")
     fun getPendingSyncDirectories(smbServerId: Long): List<DirectorySyncInfo>

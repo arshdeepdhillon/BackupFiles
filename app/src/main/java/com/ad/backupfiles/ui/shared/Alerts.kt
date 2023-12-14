@@ -23,7 +23,13 @@ import com.ad.backupfiles.ui.theme.BackupFilesTheme
  * @param modifier Modifier for customizing the layout.
  */
 @Composable
-fun GeneralAlert(handleAccept: () -> Unit, handleCancel: () -> Unit, @StringRes titleId: Int, @StringRes bodyId: Int, modifier: Modifier) {
+fun GeneralAlert(
+    handleAccept: () -> Unit,
+    handleCancel: () -> Unit,
+    @StringRes titleId: Int,
+    @StringRes bodyId: Int,
+    modifier: Modifier,
+) {
     AlertDialog(
         onDismissRequest = { /* Do nothing */ },
         title = { Text(stringResource(titleId)) },

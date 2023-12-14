@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
@@ -25,6 +26,7 @@ import org.junit.Test
  * @author : Arshdeep Dhillon
  * @created : 26-Nov-23
 */
+@LargeTest
 class DetailScreenTest {
     companion object {
         private lateinit var device: UiDevice

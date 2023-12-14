@@ -52,15 +52,17 @@ class EditScreenViewModel(
 
     init {
         viewModelScope.launch {
-            _uiState.value = appModule.smbServerApi.getSmbServerStream(smbServerId).filterNotNull().first().toUiState(true)
+            _uiState.value =
+                appModule.smbServerApi.getSmbServerStream(smbServerId).filterNotNull().first()
+                    .toUiState(true)
             userInputState = _uiState.value.currentUiData
         }
     }
 
     /**
-     * Update the item in the [ItemsRepository]'s data source
+     * Saves the SMB related changes into database.
      */
-    suspend fun updateItem() {
+    suspend fun saveChanges() {
         if (_uiState.value.sanitizeAndValidateInputFields()) {
             appModule.smbServerApi.upsertSmbServer(_uiState.value.currentUiData.toSmbServerEntity())
         }

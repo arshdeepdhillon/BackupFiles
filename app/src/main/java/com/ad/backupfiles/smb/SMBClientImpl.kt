@@ -153,7 +153,8 @@ class SMBClientImpl : SMBClientApi {
     ) {
         val (username, password, serverAddress, sharedFolder) = smbServerDto
         val dirName = DocumentHelper.getDirName(context, folderToSave) ?: return
-        val dirContentList: Deque<DocumentFile> = DocumentHelper.getFilesInDir(context, folderToSave)
+        val dirContentList: Deque<DocumentFile> =
+            DocumentHelper.getFilesInDir(context, folderToSave)
 
         getDiskShare(username, password, serverAddress, sharedFolder).use { diskShare ->
             Log.d(TAG, "Folder exists on SMB server?: " + diskShare.folderExists(dirName))

@@ -56,25 +56,30 @@ class SharedContentScreenViewModel(
 
     private val smbServerId: Long = checkNotNull(stateHandle[SharedContentScreenDestination.argKey])
     private val workManager = WorkManager.getInstance(appModule.appContext)
-    private val wmConstraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+    private val wmConstraints =
+        Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
     private val _errorState = MutableSharedFlow<ErrorUiState>()
-    val errorState: SharedFlow<ErrorUiState> = _errorState.asSharedFlow().shareIn(viewModelScope, SharingStarted.WhileSubscribed(TIMEOUT_MILLIS))
+    val errorState: SharedFlow<ErrorUiState> = _errorState.asSharedFlow()
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(TIMEOUT_MILLIS))
 
     /**
      * Holds current UI state
      */
     var uiState: StateFlow<SMBContentUiState> =
-        appModule.directoryInfoApi.getAllSavedDirectoriesStream(smbServerId).filterNotNull().map { smbServerWithSavedDir ->
-            SMBContentUiState(savedDirectories = smbServerWithSavedDir.savedDirs.map { it.toDto() })
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-            initialValue = SMBContentUiState(),
-        )
+        appModule.directoryInfoApi.getAllSavedDirectoriesStream(smbServerId).filterNotNull()
+            .map { smbServerWithSavedDir ->
+                SMBContentUiState(savedDirectories = smbServerWithSavedDir.savedDirs.map { it.toDto() })
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                initialValue = SMBContentUiState(),
+            )
 
     sealed class ErrorUiState {
         /* Note: If using the same object without changing its contents, StateFlow will not emit.*/
-        data class Error(@StringRes val resId: Int, val args: List<String?> = emptyList()) : ErrorUiState()
+        data class Error(@StringRes val resId: Int, val args: List<String?> = emptyList()) :
+            ErrorUiState()
+
         object Empty : ErrorUiState()
     }
 
@@ -90,14 +95,29 @@ class SharedContentScreenViewModel(
      */
     fun saveDirectory(persistableDirUri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
-            val dirName: String? = DocumentFile.fromTreeUri(appModule.appContext, persistableDirUri)?.name
-            if (appModule.directoryInfoApi.isDirectorySaved(smbServerId, persistableDirUri.toString())) {
-                _errorState.emit(ErrorUiState.Error(resId = R.string.error_folder_already_saved, args = listOf(dirName)))
+            val dirName: String? =
+                DocumentFile.fromTreeUri(appModule.appContext, persistableDirUri)?.name
+            if (appModule.directoryInfoApi.isDirectorySaved(
+                    smbServerId,
+                    persistableDirUri.toString(),
+                )
+            ) {
+                _errorState.emit(
+                    ErrorUiState.Error(
+                        resId = R.string.error_folder_already_saved,
+                        args = listOf(dirName),
+                    ),
+                )
                 return@launch
             }
             val savedDirId: Long? = save(persistableDirUri)
             if (savedDirId == null) {
-                _errorState.emit(ErrorUiState.Error(resId = R.string.generic_error_failed_to_save_folder, args = listOf(dirName)))
+                _errorState.emit(
+                    ErrorUiState.Error(
+                        resId = R.string.generic_error_failed_to_save_folder,
+                        args = listOf(dirName),
+                    ),
+                )
                 return@launch
             }
             runBackupWorker(savedDirId)
@@ -150,7 +170,10 @@ class SharedContentScreenViewModel(
     fun syncSelectedFolder() {
         if (selectedDirectoryIds.isNotEmpty()) {
             viewModelScope.launch {
-                appModule.directoryInfoApi.insertDirectoriesToSync(smbServerId, selectedDirectoryIds)
+                appModule.directoryInfoApi.insertDirectoriesToSync(
+                    smbServerId,
+                    selectedDirectoryIds,
+                )
                 val syncWork = OneTimeWorkRequestBuilder<UploadFolderWorker>()
                     .addTag(SYNC_FOLDER_TAG)
                     .setInputData(
@@ -160,7 +183,11 @@ class SharedContentScreenViewModel(
                         ),
                     )
                     .setConstraints(wmConstraints)
-                    .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                    .setBackoffCriteria(
+                        BackoffPolicy.LINEAR,
+                        MIN_BACKOFF_MILLIS,
+                        TimeUnit.MILLISECONDS,
+                    )
                     .build()
 
                 workManager.beginUniqueWork(

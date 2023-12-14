@@ -8,6 +8,7 @@ import androidx.compose.ui.test.isNotEnabled
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.test.filters.LargeTest
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.PASSWORD_INPUT_TEXT
@@ -23,6 +24,7 @@ import org.junit.Test
  * @author : Arshdeep Dhillon
  * @created : 26-Nov-23
 */
+@LargeTest
 class AddScreenTest {
     private lateinit var uiState: SmbServerData
 
@@ -31,14 +33,24 @@ class AddScreenTest {
 
     @Before
     fun setup() {
-        uiState = SmbServerData(serverAddress = "1.1.1.1", username = "someuser", password = "somepassword", sharedFolderName = "shared_folder")
+        uiState = SmbServerData(
+            serverAddress = "1.1.1.1",
+            username = "someuser",
+            password = "somepassword",
+            sharedFolderName = "shared_folder",
+        )
     }
 
     @Test
     fun test_default_components_visible_when_ui_is_invalid() {
         composeTestRule.setContent {
             BackupFilesTheme {
-                AddScreenBody(uiState = SmbServerData(), isUiValid = false, onFieldChange = {}, onSaveClick = {})
+                AddScreenBody(
+                    uiState = SmbServerData(),
+                    isUiValid = false,
+                    onFieldChange = {},
+                    onSaveClick = {},
+                )
             }
         }
         composeTestRule.onNodeWithTag(SMB_IP_INPUT_TEXT).assert(isEnabled())
@@ -52,13 +64,19 @@ class AddScreenTest {
     fun test_default_components_visible_when_ui_is_valid() {
         composeTestRule.setContent {
             BackupFilesTheme {
-                AddScreenBody(uiState = uiState, isUiValid = true, onFieldChange = {}, onSaveClick = {})
+                AddScreenBody(
+                    uiState = uiState,
+                    isUiValid = true,
+                    onFieldChange = {},
+                    onSaveClick = {},
+                )
             }
         }
         composeTestRule.onNodeWithTag(SMB_IP_INPUT_TEXT).assert(hasText(uiState.serverAddress))
         composeTestRule.onNodeWithTag(USERNAME_INPUT_TEXT).assert(hasText(uiState.username))
         composeTestRule.onNodeWithTag(PASSWORD_INPUT_TEXT).assert(hasText(uiState.password))
-        composeTestRule.onNodeWithTag(SHARED_FOLDER_INPUT_TEXT).assert(hasText(uiState.sharedFolderName))
+        composeTestRule.onNodeWithTag(SHARED_FOLDER_INPUT_TEXT)
+            .assert(hasText(uiState.sharedFolderName))
         composeTestRule.onNodeWithTag(SAVE_INPUT_FORM_BUTTON).assert(isEnabled())
     }
 
@@ -67,7 +85,12 @@ class AddScreenTest {
         val stateRestorationTester = StateRestorationTester(composeTestRule)
         stateRestorationTester.setContent {
             BackupFilesTheme {
-                AddScreenBody(uiState = uiState, isUiValid = true, onFieldChange = {}, onSaveClick = {})
+                AddScreenBody(
+                    uiState = uiState,
+                    isUiValid = true,
+                    onFieldChange = {},
+                    onSaveClick = {},
+                )
             }
         }
         // Simulate a recreation (ie: Configuration changes) to test restore of Ui state
@@ -76,7 +99,8 @@ class AddScreenTest {
         composeTestRule.onNodeWithTag(SMB_IP_INPUT_TEXT).assert(hasText(uiState.serverAddress))
         composeTestRule.onNodeWithTag(USERNAME_INPUT_TEXT).assert(hasText(uiState.username))
         composeTestRule.onNodeWithTag(PASSWORD_INPUT_TEXT).assert(hasText(uiState.password))
-        composeTestRule.onNodeWithTag(SHARED_FOLDER_INPUT_TEXT).assert(hasText(uiState.sharedFolderName))
+        composeTestRule.onNodeWithTag(SHARED_FOLDER_INPUT_TEXT)
+            .assert(hasText(uiState.sharedFolderName))
         composeTestRule.onNodeWithTag(SAVE_INPUT_FORM_BUTTON).assert(isEnabled())
     }
 }

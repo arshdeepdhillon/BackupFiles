@@ -17,6 +17,7 @@ kotlinAnnotationPlugin = "1.8.21-1.0.11"
 
 # Test
 androidJunit = "1.1.5"
+cashTurbine = "0.9.0"
 espressoCore = "3.5.1"
 uiAutomator = "2.2.0"
 mockitoVersion = "5.7.0"
@@ -54,6 +55,8 @@ androidx-workRuntimeKtx = { module = "androidx.work:work-runtime-ktx", version.r
 junit = { module = "junit:junit", version.ref = "junit" }
 smbj = { module = "com.hierynomus:smbj", version.ref = "smbj" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiAutomator" }
+cashturbine = { module = "app.cash.turbine:turbine", version.ref = "cashTurbine" }
+
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockitoVersion" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockito-android = { module = "io.mockk:mockk-android", version.ref = "mockitoAndroid" }

@@ -26,8 +26,13 @@ interface SMBClientApi {
      *
      * @param context The context used for accessing resources and file operations.
      * @param smbServerDto The SMB server details to which the folder should be saved.
-     * @param uri The Uri of the folder to be saved.
+     * @param folderToSave The folder to save.
      * @param isSync backup the missing content of [smbServerDto] on the server if true, otherwise do normal backup
      */
-    suspend fun saveFolder(context: Context, smbServerDto: SmbServerDto, folderToSave: String, isSync: Boolean = false)
+    suspend fun saveFolder(
+        context: Context,
+        smbServerDto: SmbServerDto,
+        folderToSave: String,
+        isSync: Boolean = false,
+    )
 }

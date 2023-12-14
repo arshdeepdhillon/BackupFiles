@@ -21,7 +21,8 @@ class OfflineSmbServerRepoImpl(private val smbServerDao: SmbServerDao) : SmbServ
     /**
      * @see SmbServerInfoApi.getSmbServerStream
      */
-    override fun getSmbServerStream(smbServerId: Long): Flow<SmbServerInfo?> = smbServerDao.getByIdStream(smbServerId)
+    override fun getSmbServerStream(smbServerId: Long): Flow<SmbServerInfo?> =
+        smbServerDao.getByIdStream(smbServerId)
 
     /**
      * @see SmbServerInfoApi.getSmbServer

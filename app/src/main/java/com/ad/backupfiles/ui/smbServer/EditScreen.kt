@@ -94,7 +94,7 @@ fun EditScreen(
             onFieldChange = viewModel::updateUiState,
             handleSave = {
                 coroutineScope.launch {
-                    viewModel.updateItem()
+                    viewModel.saveChanges()
                     handleNavBack()
                 }
             },

@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.test.filters.LargeTest
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.TestTag.Companion.LAZY_COLUMN_TAG
@@ -24,6 +25,7 @@ import org.junit.Test
  * Instrumented test, which will execute on an Android device.
  */
 
+@LargeTest
 class HomeScreenTest {
 
     @get:Rule
@@ -60,6 +62,7 @@ class HomeScreenTest {
         }
         composeTestRule.onNodeWithTag(NO_SAVED_SMBS_MSG_TAG).assertDoesNotExist()
         composeTestRule.onNodeWithTag(LAZY_COLUMN_TAG).onChildren().assertCountEquals(5)
-        composeTestRule.onNodeWithTag(LAZY_COLUMN_TAG).onChildren().onFirst().assert(hasText(smbs[0].serverAddress))
+        composeTestRule.onNodeWithTag(LAZY_COLUMN_TAG).onChildren().onFirst()
+            .assert(hasText(smbs[0].serverAddress))
     }
 }
