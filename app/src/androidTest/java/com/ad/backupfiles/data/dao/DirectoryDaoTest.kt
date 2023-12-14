@@ -29,7 +29,7 @@ import org.junit.Test
 */
 @OptIn(ExperimentalCoroutinesApi::class)
 @MediumTest
-class TestDirectoryDao {
+class DirectoryDaoTest {
 
     private lateinit var backupDb: BackupFilesDatabase
     private lateinit var dirDao: DirectoryDao

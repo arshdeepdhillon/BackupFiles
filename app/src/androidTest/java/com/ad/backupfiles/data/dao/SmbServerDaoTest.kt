@@ -23,7 +23,7 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @MediumTest
-class TestSmbServerDao {
+class SmbServerDaoTest {
 
     private lateinit var backupDb: BackupFilesDatabase
     private lateinit var smbDao: SmbServerDao
