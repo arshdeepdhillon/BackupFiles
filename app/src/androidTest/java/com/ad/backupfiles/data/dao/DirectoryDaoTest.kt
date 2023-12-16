@@ -11,7 +11,6 @@ import com.ad.backupfiles.data.entity.DirectoryInfo
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runTest
@@ -119,7 +118,7 @@ class DirectoryDaoTest {
     }
 
     @Test
-    fun test_directories_are_correctly_mapped_to_smb_severs() = runBlocking {
+    fun test_directories_are_correctly_mapped_to_smb_severs() = runTest {
         dirs.forEach { dirDao.insert(it) }
         smbs.forEach { smb ->
             dirDao.getSmbServerWithDirectories(smb.smbServerId).test {

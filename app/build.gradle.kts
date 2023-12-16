@@ -90,15 +90,16 @@ dependencies {
     // For test
     androidTestImplementation(composeBom)
     implementation(libs.androidx.uiautomator)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.composeUiJunit4)
     androidTestImplementation(libs.androidx.espressoCore)
     androidTestImplementation(libs.cashturbine)
     debugImplementation(libs.androidx.composeUiTooling)
     debugImplementation(libs.androidx.composeUiTestManifest)
-//    testImplementation(libs.mockito)
-//    testImplementation(libs.mockito.kotlin)
-//    androidTestImplementation(libs.mockito.android)
-//    androidTestImplementation(libs.mockito.agent)
+
+    // Unit tests
+    testImplementation(libs.kotlin.coroutineTest)
+    testImplementation(libs.cashturbine)
+    testImplementation(libs.junit)
+    testImplementation(libs.bundles.mockkBundle)
 }

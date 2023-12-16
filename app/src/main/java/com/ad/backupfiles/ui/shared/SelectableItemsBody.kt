@@ -238,8 +238,8 @@ fun CircleCheckBox(modifier: Modifier = Modifier, selected: Boolean) {
                     scaleOut(
                         animationSpec = spring(
                             dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessMedium
-                        )
+                            stiffness = Spring.StiffnessMedium,
+                        ),
                     )
         } else {
             scaleIn(

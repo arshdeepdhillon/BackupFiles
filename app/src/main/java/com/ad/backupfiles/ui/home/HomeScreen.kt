@@ -79,7 +79,7 @@ fun HomeScreen(
     handleItemClick: (Long) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
-    val homeUiState by viewModel.homeUiState.collectAsState()
+    val viewState by viewModel.homeViewState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val launcher =
@@ -121,7 +121,7 @@ fun HomeScreen(
             modifier = modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
-            servers = homeUiState.sharedServers,
+            servers = viewState.sharedServers,
             onItemClick = handleItemClick,
         )
     }
@@ -175,7 +175,7 @@ fun ServerList(
     modifier: Modifier,
 ) {
     LazyColumn(modifier = modifier.testTag(LAZY_COLUMN_TAG)) {
-        itemsIndexed(items = servers) { index, server ->
+        itemsIndexed(items = servers) { _, server ->
             ServerItem(
                 server = server,
                 modifier = Modifier

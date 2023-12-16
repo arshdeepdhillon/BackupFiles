@@ -23,7 +23,7 @@ object AppViewModelFactory {
 
         // Initializer for HomeViewModel
         initializer {
-            HomeViewModel(AppEntryPoint.appModule)
+            HomeViewModel(AppEntryPoint.appModule.smbServerApi)
         }
 
         // Initializer for AddScreenViewModel
