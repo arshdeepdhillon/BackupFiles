@@ -40,5 +40,5 @@ fun SmbServerInfo.toDto(): SmbServerDto = SmbServerDto(
 
 fun SmbServerInfo.toUiState(isEntryValid: Boolean): SMBServerUiState = SMBServerUiState(
     currentUiData = this.toUiData(),
-    isUiDataValid = isEntryValid,
+    isValid = isEntryValid,
 )

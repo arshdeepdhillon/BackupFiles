@@ -7,8 +7,8 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.ad.backupfiles.AppEntryPoint
-import com.ad.backupfiles.ui.home.HomeViewModel
-import com.ad.backupfiles.ui.smbServer.AddScreenViewModel
+import com.ad.backupfiles.ui.addSmbScreen.AddServerViewModel
+import com.ad.backupfiles.ui.homeScreen.HomeViewModel
 import com.ad.backupfiles.ui.smbServer.DetailScreenViewModel
 import com.ad.backupfiles.ui.smbServer.EditScreenViewModel
 import com.ad.backupfiles.ui.smbServer.SharedContentScreenViewModel
@@ -28,8 +28,8 @@ object AppViewModelFactory {
 
         // Initializer for AddScreenViewModel
         initializer {
-            AddScreenViewModel(
-                AppEntryPoint.appModule,
+            AddServerViewModel(
+                AppEntryPoint.appModule.smbServerApi,
             )
         }
         // Initializer for DetailScreenViewModel

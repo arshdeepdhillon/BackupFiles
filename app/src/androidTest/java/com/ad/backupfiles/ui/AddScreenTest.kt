@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assert
@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.filters.LargeTest
+import com.ad.backupfiles.ui.addSmbScreen.AddScreenBody
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.PASSWORD_INPUT_TEXT

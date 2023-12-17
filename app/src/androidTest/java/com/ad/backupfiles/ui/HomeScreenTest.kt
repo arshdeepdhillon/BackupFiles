@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.home
+package com.ad.backupfiles.ui
 
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.filters.LargeTest
 import com.ad.backupfiles.data.entity.SmbServerInfo
+import com.ad.backupfiles.ui.homeScreen.HomeBody
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.TestTag.Companion.LAZY_COLUMN_TAG
 import com.ad.backupfiles.ui.utils.TestTag.Companion.NO_SAVED_SMBS_MSG_TAG

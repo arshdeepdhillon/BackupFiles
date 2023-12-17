@@ -3,6 +3,8 @@ package com.ad.backupfiles.data.repository
 import com.ad.backupfiles.data.dao.SmbServerDao
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
+import com.ad.backupfiles.ui.utils.SmbServerData
+import com.ad.backupfiles.ui.utils.toSmbServerEntity
 import kotlinx.coroutines.flow.Flow
 
 /*
@@ -32,8 +34,8 @@ class OfflineSmbServerRepoImpl(private val smbServerDao: SmbServerDao) : SmbServ
     /**
      * @see SmbServerInfoApi.upsertSmbServer
      */
-    override suspend fun upsertSmbServer(smbServerInfo: SmbServerInfo) =
-        smbServerDao.upsert(smbServerInfo)
+    override suspend fun upsertSmbServer(smbServerData: SmbServerData) =
+        smbServerDao.upsert(smbServerData.toSmbServerEntity())
 
     /**
      * @see SmbServerInfoApi.deleteSmbServer

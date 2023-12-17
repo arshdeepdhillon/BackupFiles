@@ -90,7 +90,7 @@ fun EditScreen(
                 .verticalScroll(rememberScrollState())
                 .fillMaxWidth(),
             uiState = viewModel.userInputState,
-            isUiValid = uiState.isUiDataValid,
+            isUiValid = uiState.isValid,
             onFieldChange = viewModel::updateUiState,
             handleSave = {
                 coroutineScope.launch {

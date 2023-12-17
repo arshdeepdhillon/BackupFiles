@@ -1,6 +1,7 @@
 package com.ad.backupfiles.data.repository.api
 
 import com.ad.backupfiles.data.entity.SmbServerInfo
+import com.ad.backupfiles.ui.utils.SmbServerData
 import kotlinx.coroutines.flow.Flow
 
 /*
@@ -29,12 +30,11 @@ interface SmbServerInfoApi {
     fun getSmbServerStream(smbServerId: Long): Flow<SmbServerInfo?>
 
     /**
-     * Inserts or updates an [SmbServerInfo] object in the data source.
-     * If the specified [smbServerInfo] already exists, it will be updated; otherwise, a new server entry will be inserted.
+     * Updates the given [SmbServerData] if it already exists, otherwise it is inserted.
      *
-     * @param smbServerInfo The [SmbServerInfo] object to insert or update.
+     * @param smbServerData The [SmbServerData] to update or insert.
      */
-    suspend fun upsertSmbServer(smbServerInfo: SmbServerInfo)
+    suspend fun upsertSmbServer(smbServerData: SmbServerData)
 
     /**
      * Deletes a [SmbServerInfo] specified by [smbServerInfo].

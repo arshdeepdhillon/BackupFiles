@@ -12,9 +12,9 @@ import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
 import com.ad.backupfiles.di.api.ApplicationModuleApi
 import com.ad.backupfiles.ui.utils.SMBServerUiState
 import com.ad.backupfiles.ui.utils.SmbServerData
-import com.ad.backupfiles.ui.utils.sanitizeAndValidateInputFields
-import com.ad.backupfiles.ui.utils.toSmbServerEntity
+import com.ad.backupfiles.ui.utils.sanitizeData
 import com.ad.backupfiles.ui.utils.toUiData
+import com.ad.backupfiles.ui.utils.validateData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -63,8 +63,8 @@ class EditScreenViewModel(
      * Saves the SMB related changes into database.
      */
     suspend fun saveChanges() {
-        if (_uiState.value.sanitizeAndValidateInputFields()) {
-            appModule.smbServerApi.upsertSmbServer(_uiState.value.currentUiData.toSmbServerEntity())
+        if (validateData(_uiState.value.currentUiData)) {
+            appModule.smbServerApi.upsertSmbServer(_uiState.value.currentUiData)
         }
     }
 
@@ -91,10 +91,9 @@ class EditScreenViewModel(
      */
     private fun updateState(smbServerData: SmbServerData) {
         _uiState.update { currState ->
-            currState.copy(
-                currentUiData = smbServerData,
-                isUiDataValid = currState.sanitizeAndValidateInputFields(),
-            )
+            val sanitizedUiData = sanitizeData(smbServerData)
+            currState.copy(currentUiData = sanitizedUiData, isValid = validateData(sanitizedUiData))
+
         }
     }
 }

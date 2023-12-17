@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui
 
 import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals

@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.home
+package com.ad.backupfiles.ui.homeScreen
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.pm.PackageManager

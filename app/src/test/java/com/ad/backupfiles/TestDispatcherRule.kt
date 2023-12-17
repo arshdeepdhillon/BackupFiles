@@ -17,7 +17,7 @@ import org.junit.runner.Description
 /**
  * Mocks the main dispatcher with a [TestDispatcher].
  *
- * **Note: Use this TestWatcher in instrumentation tests.**
+ * **Note: Use this TestWatcher in unit tests.**
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class TestDispatcherRule(
