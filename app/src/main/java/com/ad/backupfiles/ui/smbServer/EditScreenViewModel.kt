@@ -10,12 +10,11 @@ import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.entity.toUiState
 import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
 import com.ad.backupfiles.di.api.ApplicationModuleApi
-import com.ad.backupfiles.smb.SMBClientImpl
 import com.ad.backupfiles.ui.utils.SMBServerUiState
 import com.ad.backupfiles.ui.utils.SmbServerData
-import com.ad.backupfiles.ui.utils.sanitizeAndValidateInputFields
-import com.ad.backupfiles.ui.utils.toSmbServerEntity
+import com.ad.backupfiles.ui.utils.sanitizeData
 import com.ad.backupfiles.ui.utils.toUiData
+import com.ad.backupfiles.ui.utils.validateData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +38,7 @@ class EditScreenViewModel(
     private val appModule: ApplicationModuleApi,
 ) : ViewModel() {
     private val TAG = EditScreenViewModel::class.java.simpleName
-    private val smb = SMBClientImpl()
+    private val smbClientApi = appModule.smbClientApi
     private val smbServerId: Long = checkNotNull(stateHandle[EditScreenDestination.argKey])
 
     /**
@@ -53,17 +52,19 @@ class EditScreenViewModel(
 
     init {
         viewModelScope.launch {
-            _uiState.value = appModule.smbServerApi.getSmbServerStream(smbServerId).filterNotNull().first().toUiState(true)
+            _uiState.value =
+                appModule.smbServerApi.getSmbServerStream(smbServerId).filterNotNull().first()
+                    .toUiState(true)
             userInputState = _uiState.value.currentUiData
         }
     }
 
     /**
-     * Update the item in the [ItemsRepository]'s data source
+     * Saves the SMB related changes into database.
      */
-    suspend fun updateItem() {
-        if (_uiState.value.sanitizeAndValidateInputFields()) {
-            appModule.smbServerApi.upsertSmbServer(_uiState.value.currentUiData.toSmbServerEntity())
+    suspend fun saveChanges() {
+        if (validateData(_uiState.value.currentUiData)) {
+            appModule.smbServerApi.upsertSmbServer(_uiState.value.currentUiData)
         }
     }
 
@@ -74,7 +75,7 @@ class EditScreenViewModel(
 
     suspend fun canConnectToServer(): Boolean {
         return withContext(Dispatchers.IO) {
-            return@withContext if (smb.canConnect(_uiState.value.toUiData())) {
+            return@withContext if (smbClientApi.canConnect(_uiState.value.toUiData())) {
                 Log.d(TAG, "Successfully connected with new changes")
                 true
             } else {
@@ -90,10 +91,8 @@ class EditScreenViewModel(
      */
     private fun updateState(smbServerData: SmbServerData) {
         _uiState.update { currState ->
-            currState.copy(
-                currentUiData = smbServerData,
-                isUiDataValid = currState.sanitizeAndValidateInputFields(),
-            )
+            val sanitizedUiData = sanitizeData(smbServerData)
+            currState.copy(currentUiData = sanitizedUiData, isValid = validateData(sanitizedUiData))
         }
     }
 }

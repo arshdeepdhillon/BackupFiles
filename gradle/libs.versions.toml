@@ -2,7 +2,6 @@
 activityCompose = "1.7.2"
 composeBom = "2023.03.00"
 coreKtx = "1.9.0"
-dagger = "2.46.1"
 documentfile = "1.0.1"
 lifecycleViewmodelKtx = "2.6.2"
 material3 = "1.1.1"
@@ -12,17 +11,19 @@ smbj = "0.13.0"
 workRuntimeKtx = "2.8.1"
 androidGradlePlugin = "8.1.0"
 kotlin = "1.8.21"
+kotlinCoroutineTest = "1.6.4"
 kotlinAnnotationPlugin = "1.8.21-1.0.11"
 
 
 # Test
 androidJunit = "1.1.5"
+cashTurbine = "0.9.0"
 espressoCore = "3.5.1"
 uiAutomator = "2.2.0"
 mockitoVersion = "5.8.0"
 mockitoKotlin = "4.0.0"
-mockitoAndroid = "1.13.8"
-mockitoAgent = "1.13.8"
+mockkAndroid = "1.13.8"
+mockkAgent = "1.13.8"
 junit = "4.13.2"
 
 
@@ -54,10 +55,17 @@ androidx-workRuntimeKtx = { module = "androidx.work:work-runtime-ktx", version.r
 junit = { module = "junit:junit", version.ref = "junit" }
 smbj = { module = "com.hierynomus:smbj", version.ref = "smbj" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiAutomator" }
-mockito = { module = "org.mockito:mockito-core", version.ref = "mockitoVersion" }
-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
-mockito-android = { module = "io.mockk:mockk-android", version.ref = "mockitoAndroid" }
-mockito-agent = { module = "io.mockk:mockk-agent", version.ref = "mockitoAgent" }
+cashturbine = { module = "app.cash.turbine:turbine", version.ref = "cashTurbine" }
+kotlin-coroutineTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinCoroutineTest" }
+#mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoVersion" }
+#mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+#mockk-kotlin = { module = "io.mockk:mockk", version.ref = "mockkAndroid" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
+mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
+
+
+[bundles]
+mockkBundle = ["mockk-android", "mockk-agent"]
 
 
 [plugins]

@@ -72,7 +72,12 @@ private fun createCancelIntent(ctx: Context, pendingIntentKeyValue: String): Pen
     }
 
     // Unique requestCode is required for reflecting the current worker tag.
-    return PendingIntent.getBroadcast(ctx, if (pendingIntentKeyValue == BACKUP_FOLDER_TAG) 0 else 1, cancelUploadIntent, PendingIntent.FLAG_IMMUTABLE)
+    return PendingIntent.getBroadcast(
+        ctx,
+        if (pendingIntentKeyValue == BACKUP_FOLDER_TAG) 0 else 1,
+        cancelUploadIntent,
+        PendingIntent.FLAG_IMMUTABLE,
+    )
 }
 
 /**
@@ -99,7 +104,11 @@ fun makeNotification(
             .setVibrate(LongArray(0))
 
         pendingIntentKeyValue?.let { key ->
-            builder.addAction(NULL_ICON, ctx.getString(R.string.cancel_notification), createCancelIntent(ctx, key))
+            builder.addAction(
+                NULL_ICON,
+                ctx.getString(R.string.cancel_notification),
+                createCancelIntent(ctx, key),
+            )
         }
 
         // Show the notification
@@ -137,7 +146,11 @@ fun updateNotificationMessage(
             .setVibrate(LongArray(0))
 
         pendingIntentKeyValue?.let { key ->
-            builder.addAction(NULL_ICON, ctx.getString(R.string.cancel_notification), createCancelIntent(ctx, key))
+            builder.addAction(
+                NULL_ICON,
+                ctx.getString(R.string.cancel_notification),
+                createCancelIntent(ctx, key),
+            )
         }
         // Show the notification
         if (ActivityCompat.checkSelfPermission(

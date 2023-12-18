@@ -16,7 +16,7 @@ const val DELAY_UPSTREAM_TIMEOUT_MILLIS = 5_000L
  */
 data class SMBServerUiState(
     val currentUiData: SmbServerData = SmbServerData(),
-    val isUiDataValid: Boolean = false,
+    val isValid: Boolean = false,
 )
 
 fun SMBServerUiState.toUiData(): SmbServerDto {
@@ -61,17 +61,22 @@ fun SmbServerInfo.toUiData(): SmbServerData = SmbServerData(
 )
 
 /**
- * Sanitizes and validates the input fields in the ServerInfoUiState to ensure data integrity.
+ * Sanitizes the fields of [SmbServerData] to ensure data integrity.
  *
- * @return `true` if the input fields are valid; `false` otherwise.
+ * @return [SmbServerData] sanitized data
  */
-fun SMBServerUiState.sanitizeAndValidateInputFields(): Boolean {
-    this.currentUiData.also {
-        // TODO this doesn't work!!
-        it.username.trim()
-        it.serverAddress.trim()
-        it.sharedFolderName.trim()
-    }.also {
-        return it.serverAddress.isNotBlank()
-    }
+fun sanitizeData(currentUiData: SmbServerData): SmbServerData {
+    return currentUiData.copy(
+        serverAddress = currentUiData.serverAddress.trim(),
+        username = currentUiData.username.trim(),
+    )
+}
+
+/**
+ * Validates minimum fields are defined.
+ *
+ * @return `true` if the minimum fields are valid, `false` otherwise.
+ */
+fun validateData(currentUiData: SmbServerData): Boolean {
+    return currentUiData.serverAddress.isNotBlank()
 }

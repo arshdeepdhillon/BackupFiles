@@ -1,14 +1,14 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui.addServerScreen
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.ad.backupfiles.di.api.ApplicationModuleApi
+import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
 import com.ad.backupfiles.ui.utils.SMBServerUiState
 import com.ad.backupfiles.ui.utils.SmbServerData
-import com.ad.backupfiles.ui.utils.sanitizeAndValidateInputFields
-import com.ad.backupfiles.ui.utils.toSmbServerEntity
+import com.ad.backupfiles.ui.utils.sanitizeData
+import com.ad.backupfiles.ui.utils.validateData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,12 +19,12 @@ import kotlinx.coroutines.flow.update
  * @created : 23-Oct-23
  */
 
-class AddScreenViewModel(private val appModule: ApplicationModuleApi) : ViewModel() {
+class AddServerViewModel(private val smbServerApi: SmbServerInfoApi) : ViewModel() {
     /**
      * Holds current UI state
      */
-    private val _uiState = MutableStateFlow(SMBServerUiState())
-    val uiState: StateFlow<SMBServerUiState> = _uiState.asStateFlow()
+    private val _viewState = MutableStateFlow(SMBServerUiState())
+    val viewState: StateFlow<SMBServerUiState> = _viewState.asStateFlow()
 
     var userInputState by mutableStateOf(SmbServerData())
         private set
@@ -37,28 +37,18 @@ class AddScreenViewModel(private val appModule: ApplicationModuleApi) : ViewMode
      */
     fun updateUiState(deviceDetails: SmbServerData) {
         userInputState = deviceDetails
-        updateState(deviceDetails)
+        _viewState.update { currState ->
+            val sanitizedUiData = sanitizeData(deviceDetails)
+            currState.copy(currentUiData = sanitizedUiData, isValid = validateData(sanitizedUiData))
+        }
     }
 
     /**
      * Asynchronously saves the SMB server information after validating the input.
      */
     suspend fun save() {
-        if (_uiState.value.sanitizeAndValidateInputFields()) {
-            appModule.smbServerApi.upsertSmbServer(_uiState.value.currentUiData.toSmbServerEntity())
-        }
-    }
-
-    /**
-     * Updates the [uiState] with the value provided in the argument. This method also triggers
-     * a validation for input values.
-     */
-    private fun updateState(smbServerData: SmbServerData) {
-        _uiState.update { currState ->
-            currState.copy(
-                currentUiData = smbServerData,
-                isUiDataValid = currState.sanitizeAndValidateInputFields(),
-            )
+        if (validateData(_viewState.value.currentUiData)) {
+            smbServerApi.upsertSmbServer(_viewState.value.currentUiData)
         }
     }
 }

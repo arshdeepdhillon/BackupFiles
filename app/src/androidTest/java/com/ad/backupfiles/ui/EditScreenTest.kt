@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui
 
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertAll
@@ -10,10 +10,12 @@ import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import com.ad.backupfiles.R
+import com.ad.backupfiles.ui.smbServer.EditScreenBody
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.EDIT_SCREEN_FOOTER
@@ -30,6 +32,7 @@ import org.junit.Test
  * @author : Arshdeep Dhillon
  * @created : 27-Nov-23
 */
+@LargeTest
 class EditScreenTest {
     companion object {
         private lateinit var device: UiDevice
@@ -44,7 +47,12 @@ class EditScreenTest {
 
     @Before
     fun setup() {
-        uiState = SmbServerData(serverAddress = "1.1.1.1", username = "someuser", password = "somepassword", sharedFolderName = "shared_folder")
+        uiState = SmbServerData(
+            serverAddress = "1.1.1.1",
+            username = "someuser",
+            password = "somepassword",
+            sharedFolderName = "shared_folder",
+        )
     }
 
     @get:Rule
@@ -124,7 +132,10 @@ class EditScreenTest {
         device.findObject(
             By.text(InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.test_connection)),
         ).click()
-        assert(testConnectionPressed, { "Expected the 'Test' connection button to produce and event" })
+        assert(
+            testConnectionPressed,
+            { "Expected the 'Test' connection button to produce and event" },
+        )
 
         device.findObject(
             By.text(InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.save_smb)),

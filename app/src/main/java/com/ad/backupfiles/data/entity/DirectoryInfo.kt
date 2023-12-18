@@ -61,7 +61,13 @@ data class SMBServerWithSavedDirs(
  * @property smbServerId The identifier of the associated SMB server.
  * @property lastSynced The [java.time.Instant.now] seconds since the directory was last synchronized (can be null if it has not yet been synced).
  */
-data class DirectoryDto(val dirId: Long, val dirPath: String, val dirName: String?, val smbServerId: Long, val lastSynced: Long?)
+data class DirectoryDto(
+    val dirId: Long,
+    val dirPath: String,
+    val dirName: String?,
+    val smbServerId: Long,
+    val lastSynced: Long?,
+)
 
 /**
  * Converts from DirectoryInfo to DirectoryDto object.

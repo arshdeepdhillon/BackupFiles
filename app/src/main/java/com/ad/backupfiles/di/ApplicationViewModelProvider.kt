@@ -7,9 +7,9 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.ad.backupfiles.AppEntryPoint
-import com.ad.backupfiles.ui.home.HomeViewModel
-import com.ad.backupfiles.ui.smbServer.AddScreenViewModel
-import com.ad.backupfiles.ui.smbServer.DetailScreenViewModel
+import com.ad.backupfiles.ui.addServerScreen.AddServerViewModel
+import com.ad.backupfiles.ui.detailServerScreen.DetailServerViewModel
+import com.ad.backupfiles.ui.homeScreen.HomeViewModel
 import com.ad.backupfiles.ui.smbServer.EditScreenViewModel
 import com.ad.backupfiles.ui.smbServer.SharedContentScreenViewModel
 
@@ -23,20 +23,20 @@ object AppViewModelFactory {
 
         // Initializer for HomeViewModel
         initializer {
-            HomeViewModel(AppEntryPoint.appModule)
+            HomeViewModel(AppEntryPoint.appModule.smbServerApi)
         }
 
         // Initializer for AddScreenViewModel
         initializer {
-            AddScreenViewModel(
-                AppEntryPoint.appModule,
+            AddServerViewModel(
+                AppEntryPoint.appModule.smbServerApi,
             )
         }
         // Initializer for DetailScreenViewModel
         initializer {
-            DetailScreenViewModel(
+            DetailServerViewModel(
                 this.createSavedStateHandle(),
-                AppEntryPoint.appModule,
+                AppEntryPoint.appModule.smbServerApi,
             )
         }
         // Initializer for EditScreenViewModel

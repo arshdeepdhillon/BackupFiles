@@ -1,10 +1,9 @@
-package com.ad.backupfiles.ui.home
+package com.ad.backupfiles.ui.homeScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
-import com.ad.backupfiles.di.api.ApplicationModuleApi
 import com.ad.backupfiles.ui.utils.DELAY_UPSTREAM_TIMEOUT_MILLIS
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,12 +18,14 @@ import kotlinx.coroutines.flow.stateIn
 /**
  * ViewModel for the [HomeScreen]
  */
-class HomeViewModel(@Suppress("unused") private val appModule: ApplicationModuleApi) : ViewModel() {
+class HomeViewModel(@Suppress("unused") private val smbServerApi: SmbServerInfoApi) : ViewModel() {
 
     /**
      * Holds the state of [HomeUiState]. Items are retrieved from [SmbServerInfoApi] and mapped to [HomeUiState]
      */
-    val homeUiState: StateFlow<HomeUiState> = appModule.smbServerApi.getAllSmbServersAscStream().map { HomeUiState(it) }.stateIn(
+    val viewState: StateFlow<HomeUiState> = smbServerApi.getAllSmbServersAscStream().map {
+        HomeUiState(it)
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(DELAY_UPSTREAM_TIMEOUT_MILLIS),
         initialValue = HomeUiState(),

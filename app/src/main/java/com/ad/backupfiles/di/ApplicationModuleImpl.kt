@@ -37,7 +37,10 @@ class ApplicationModuleImpl(private val context: Context) : ApplicationModuleApi
      * @see ApplicationModuleApi.directoryInfoApi
      */
     override val directoryInfoApi: DirectoryInfoApi by lazy {
-        OfflineDirectoryRepoImpl(BackupFilesDatabase.getDatabase(context).directoryDao(), applicationScope)
+        OfflineDirectoryRepoImpl(
+            BackupFilesDatabase.getDatabase(context).directoryDao(),
+            applicationScope,
+        )
     }
 
     /**

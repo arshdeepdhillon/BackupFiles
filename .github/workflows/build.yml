@@ -41,13 +41,22 @@ jobs:
       - name: Check spotless
         run: ./gradlew spotlessCheck --init-script gradle/init.gradle.kts --no-configuration-cache
 
+      - name: Run Local Unit tests
+        run: ./gradlew testDebugUnitTest testReleaseUnitTest
+      - name: Upload test results (XML)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: '**/build/test-results/test*UnitTest/**.xml'
+
   androidTest:
     name: "Instrumentation Tests"
     runs-on: macOS-latest # enables hardware acceleration in the virtual machine
     timeout-minutes: 55
     strategy:
       matrix:
-        api-level: [30]
+        api-level: [ 30 ]
 
     steps:
       - name: Checkout
@@ -87,7 +96,7 @@ jobs:
   apk:
     runs-on: ubuntu-latest
     if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
-    needs: [unitTest, androidTest]
+    needs: [ unitTest, androidTest ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4

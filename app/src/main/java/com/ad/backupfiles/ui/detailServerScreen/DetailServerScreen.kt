@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui.detailServerScreen
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
@@ -79,10 +79,10 @@ fun DetailScreen(
     handleItemClicked: (Long) -> Unit,
     handleConnect: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DetailScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
+    viewModel: DetailServerViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val uiState = viewModel.uiState.collectAsState()
+    val viewState = viewModel.viewState.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -93,7 +93,7 @@ fun DetailScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { handleItemClicked(uiState.value.deviceDetails.id) },
+                onClick = { handleItemClicked(viewState.value.serverInfo.id) },
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad)),
             ) {
@@ -106,14 +106,14 @@ fun DetailScreen(
         modifier = modifier,
     ) { innerPadding ->
         DetailBody(
-            uiState = uiState.value,
+            uiState = viewState.value,
             handleDelete = {
                 coroutineScope.launch {
                     viewModel.deleteSmbServer()
                     handleNavBack()
                 }
             },
-            handleConnect = { handleConnect(uiState.value.deviceDetails.id) },
+            handleConnect = { handleConnect(viewState.value.serverInfo.id) },
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
@@ -134,7 +134,7 @@ fun DetailBody(
     ) {
         var isDeleteDialogActive by rememberSaveable { mutableStateOf(false) }
         ServerDetailForm(
-            item = uiState.deviceDetails.toSmbServerEntity(),
+            item = uiState.serverInfo.toSmbServerEntity(),
             modifier = Modifier.fillMaxWidth(),
         )
         Row(
@@ -254,7 +254,7 @@ fun DetailScreenPreview() {
     BackupFilesTheme {
         DetailBody(
             uiState = DetailScreenUiState(
-                deviceDetails = SmbServerData(
+                serverInfo = SmbServerData(
                     serverAddress = "192.123.123.123",
                     username = "Editing name",
                     password = "Editing pass",

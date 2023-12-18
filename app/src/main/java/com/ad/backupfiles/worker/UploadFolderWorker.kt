@@ -31,9 +31,9 @@ private val TAG = UploadFolderWorker::class.java.simpleName
 class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
     // These variables are initialized once and reused during retry
 
-    private val directoryRepo = AppEntryPoint.appModule.directoryInfoApi
-    private val smbServerRepo = AppEntryPoint.appModule.smbServerApi
     private val UNKNOWN_ID: Long = -1L
+    private val dirInfoApi = AppEntryPoint.appModule.directoryInfoApi
+    private val smbInfoApi = AppEntryPoint.appModule.smbServerApi
     private lateinit var notificationTitle: CharSequence
     private var smbClientApi: SMBClientApi = AppEntryPoint.appModule.smbClientApi
 
@@ -57,10 +57,10 @@ class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWork
             return@coroutineScope Result.failure()
         }
 
-        val smbDto: SmbServerDto = smbServerRepo.getSmbServer(smbId).toDto()
+        val smbDto: SmbServerDto = smbInfoApi.getSmbServer(smbId).toDto()
         var workResult: Result = Result.success()
         try {
-            directoryRepo.getPendingSyncDirectories(smbId).cancellable().onStart {
+            dirInfoApi.getPendingSyncDirectories(smbId).cancellable().onStart {
                 updateNotificationMessage(
                     message = if (isSync) "Sync started" else "Backup started",
                     pendingIntentKeyValue = workerTag,
@@ -76,12 +76,17 @@ class UploadFolderWorker(ctx: Context, params: WorkerParameters) : CoroutineWork
                     )
                 } else if (failure is CancellationException) {
                     Log.d(TAG, "onCompletion else: $failure")
-                    directoryRepo.deleteAllPendingSyncDirectories(smbId)
+                    dirInfoApi.deleteAllPendingSyncDirectories(smbId)
                 }
             }.collect { dirToSync ->
                 Log.d(TAG, "doWork: Before launch")
-                smbClientApi.saveFolder(AppEntryPoint.appModule.appContext, smbDto, dirToSync.dirPath, isSync)
-                directoryRepo.processSyncedDirectory(dirToSync)
+                smbClientApi.saveFolder(
+                    AppEntryPoint.appModule.appContext,
+                    smbDto,
+                    dirToSync.dirPath,
+                    isSync,
+                )
+                dirInfoApi.processSyncedDirectory(dirToSync)
             }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
@@ -112,13 +117,19 @@ private fun processException(e: Exception): ExceptionResult {
     when (e) {
         is TimeoutException -> {
             Log.d(TAG, "Connection timeout!", e)
-            return ExceptionResult(result = Result.failure(), message = "Backup failed, retry shortly.")
+            return ExceptionResult(
+                result = Result.failure(),
+                message = "Backup failed, retry shortly.",
+            )
         }
 
         is ConnectException -> {
             if (e.localizedMessage?.contains("EHOSTUNREACH") == true) {
                 Log.d(TAG, "Incorrect IP address of backup server", e)
-                return ExceptionResult(result = Result.failure(), message = "Backup server not found or it is offline")
+                return ExceptionResult(
+                    result = Result.failure(),
+                    message = "Backup server not found or it is offline",
+                )
             }
             return ExceptionResult(result = Result.failure(), message = "Backup server offline.")
         }
@@ -128,17 +139,27 @@ private fun processException(e: Exception): ExceptionResult {
             return ExceptionResult(result = Result.failure(), message = "Backup server offline.")
         }
 
-        is UnknownHostException -> return ExceptionResult(result = Result.failure(), message = "Backup server not found")
+        is UnknownHostException -> return ExceptionResult(
+            result = Result.failure(),
+            message = "Backup server not found",
+        )
 
         is SMBApiException -> {
             if (e.statusCode == NtStatus.STATUS_SHARING_VIOLATION.value) {
-                Log.d(TAG, "Failed to a create file, opened file on SMB server must first be closed.", e)
+                Log.d(
+                    TAG,
+                    "Failed to a create file, opened file on SMB server must first be closed.",
+                    e,
+                )
                 return ExceptionResult(
                     result = Result.failure(),
                     message = "Please close files open from SMB server.",
                 )
             }
-            return ExceptionResult(result = Result.failure(), message = "Unable to backup the folder")
+            return ExceptionResult(
+                result = Result.failure(),
+                message = "Unable to backup the folder",
+            )
         }
 
         is SMBRuntimeException -> {
@@ -146,16 +167,25 @@ private fun processException(e: Exception): ExceptionResult {
             while (cause != null) {
                 if (TimeoutException::class.java.isInstance(cause)) {
                     Log.e(TAG, "Timeout while trying to connect with SMB server", e)
-                    return ExceptionResult(result = Result.failure(), message = "Connection issue, retry shortly.")
+                    return ExceptionResult(
+                        result = Result.failure(),
+                        message = "Connection issue, retry shortly.",
+                    )
                 }
                 cause = cause.cause
             }
-            return ExceptionResult(result = Result.failure(), message = "Error backing up, retry shortly.")
+            return ExceptionResult(
+                result = Result.failure(),
+                message = "Error backing up, retry shortly.",
+            )
         }
 
         else -> {
             Log.d(TAG, "Unknown error. Unable to backup given folder", e)
-            return ExceptionResult(result = Result.failure(), message = "Unable to backup the folder.")
+            return ExceptionResult(
+                result = Result.failure(),
+                message = "Unable to backup the folder.",
+            )
         }
     }
 }

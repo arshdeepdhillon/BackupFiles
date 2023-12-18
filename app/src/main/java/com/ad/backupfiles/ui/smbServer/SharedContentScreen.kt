@@ -71,8 +71,6 @@ object SharedContentScreenDestination : NavigationDestination {
     val routeArgs = "$route/{$argKey}"
 }
 
-private const val TAG: String = "SharedContentScreen"
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun SharedContentScreen(
@@ -85,17 +83,18 @@ fun SharedContentScreen(
     var inSelectionMode by rememberSaveable { mutableStateOf(false) }
     var isSyncDialogActive by rememberSaveable { mutableStateOf(false) }
     var clearSelectionState by rememberSaveable { mutableStateOf(false) }
-    val dirPickerLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { dirUri: Uri? ->
-        // dirUri can be null when no folder is selected
-        if (dirUri != null) {
-            // Persist the permission of this Uri inorder to access it after a app/phone restart
-            context.contentResolver.takePersistableUriPermission(
-                dirUri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
-            )
-            viewModel.saveDirectory(dirUri)
+    val dirPickerLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { dirUri: Uri? ->
+            // dirUri can be null when no folder is selected
+            if (dirUri != null) {
+                // Persist the permission of this Uri inorder to access it after a app/phone restart
+                context.contentResolver.takePersistableUriPermission(
+                    dirUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+                )
+                viewModel.saveDirectory(dirUri)
+            }
         }
-    }
 
     // Reset the state back to false after it has changed from false (default) -> true
     DisposableEffect(key1 = clearSelectionState) {

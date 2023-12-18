@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui.addServerScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,7 +50,7 @@ object AddScreenDestination : NavigationDestination {
  * @param handleNavBack Callback function to handle navigating back to the previous screen.
  * @param handleNavUp Callback function to handle navigating up within the screen hierarchy.
  * @param canNavBack Flag indicating whether the user can navigate back to the previous screen.
- * @param viewModel The [AddScreenViewModel] used for managing the data and logic of the Add Screen.
+ * @param viewModel The [AddServerViewModel] used for managing the data and logic of the Add Screen.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,9 +58,9 @@ fun AddScreen(
     handleNavBack: () -> Unit,
     handleNavUp: () -> Unit,
     canNavBack: Boolean = true,
-    viewModel: AddScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
+    viewModel: AddServerViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val viewState by viewModel.viewState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
@@ -73,7 +73,7 @@ fun AddScreen(
     ) { innerPadding ->
         AddScreenBody(
             uiState = viewModel.userInputState,
-            isUiValid = uiState.isUiDataValid,
+            isUiValid = viewState.isValid,
             onFieldChange = viewModel::updateUiState,
             onSaveClick = {
                 coroutineScope.launch {

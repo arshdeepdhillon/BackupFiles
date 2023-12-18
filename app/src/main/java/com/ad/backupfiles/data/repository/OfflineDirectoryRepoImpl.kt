@@ -79,12 +79,19 @@ class OfflineDirectoryRepoImpl(
     /**
      * @see DirectoryInfoApi.insertDirectoriesToSync
      */
-    override suspend fun insertDirectoriesToSync(smbServerId: Long, directoryIds: MutableList<Long>) {
+    override suspend fun insertDirectoriesToSync(
+        smbServerId: Long,
+        directoryIds: MutableList<Long>,
+    ) {
         externalScope.launch {
             directoryIds.asFlow().mapNotNull { dirId ->
                 directoryDao.getDirectoryById(dirId, smbServerId)
             }.map { dirInfo ->
-                DirectorySyncInfo(dirId = dirInfo.dirId, smbServerId = dirInfo.smbServerId, dirPath = dirInfo.dirPath)
+                DirectorySyncInfo(
+                    dirId = dirInfo.dirId,
+                    smbServerId = dirInfo.smbServerId,
+                    dirPath = dirInfo.dirPath,
+                )
             }.onEach { directorySyncInfo ->
                 directoryDao.insertDirectoryForSync(directorySyncInfo)
             }.catch { exception ->
@@ -100,7 +107,11 @@ class OfflineDirectoryRepoImpl(
     @Transaction
     override suspend fun processSyncedDirectory(syncedDirectory: DirectorySyncInfo) {
         externalScope.launch {
-            directoryDao.updateSyncTime(syncedDirectory.dirId, syncedDirectory.smbServerId, Instant.now().epochSecond)
+            directoryDao.updateSyncTime(
+                syncedDirectory.dirId,
+                syncedDirectory.smbServerId,
+                Instant.now().epochSecond,
+            )
             directoryDao.deleteFromSync(syncedDirectory)
         }
     }
