@@ -85,7 +85,7 @@ class DetailServerViewModelTest {
         }
     }
 
-    @Ignore(value = "StateIn not emitting call values during test")
+    @Ignore(value = "StateIn not emitting all values during test")
     @Test
     fun test_correct_smb_info() = runTest {
         val expected = SmbServerData()
