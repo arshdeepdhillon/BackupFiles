@@ -12,7 +12,7 @@ workRuntimeKtx = "2.8.1"
 androidGradlePlugin = "8.1.0"
 kotlin = "1.8.21"
 kotlinCoroutineTest = "1.6.4"
-kotlinAnnotationPlugin = "1.8.21-1.0.11"
+kotlinAnnotationPlugin = "1.9.21-1.0.16"
 
 
 # Test
