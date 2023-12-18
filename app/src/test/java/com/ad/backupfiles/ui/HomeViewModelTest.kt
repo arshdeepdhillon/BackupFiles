@@ -41,7 +41,7 @@ class HomeViewModelTest {
         testRepository = TestRepository()
     }
 
-    private fun getVMState() = viewModel.homeViewState
+    private fun getVMState() = viewModel.viewState
 
     @Test
     fun test_nothing_is_returned_when_there_are_no_smbs() = runTest {

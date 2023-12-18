@@ -10,8 +10,8 @@ import androidx.compose.ui.test.performClick
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import com.ad.backupfiles.ui.smbServer.DetailBody
-import com.ad.backupfiles.ui.smbServer.DetailScreenUiState
+import com.ad.backupfiles.ui.detailServerScreen.DetailBody
+import com.ad.backupfiles.ui.detailServerScreen.DetailScreenUiState
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SHARED_FOLDER_DISPLAY_TEXT

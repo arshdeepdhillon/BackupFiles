@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.addSmbScreen
+package com.ad.backupfiles.ui.addServerScreen
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

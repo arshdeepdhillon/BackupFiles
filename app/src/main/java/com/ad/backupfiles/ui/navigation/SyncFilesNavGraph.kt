@@ -7,12 +7,12 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ad.backupfiles.ui.addSmbScreen.AddScreen
-import com.ad.backupfiles.ui.addSmbScreen.AddScreenDestination
+import com.ad.backupfiles.ui.addServerScreen.AddScreen
+import com.ad.backupfiles.ui.addServerScreen.AddScreenDestination
+import com.ad.backupfiles.ui.detailServerScreen.DetailScreen
+import com.ad.backupfiles.ui.detailServerScreen.DetailScreenDestination
 import com.ad.backupfiles.ui.homeScreen.HomeDestination
 import com.ad.backupfiles.ui.homeScreen.HomeScreen
-import com.ad.backupfiles.ui.smbServer.DetailScreen
-import com.ad.backupfiles.ui.smbServer.DetailScreenDestination
 import com.ad.backupfiles.ui.smbServer.EditScreen
 import com.ad.backupfiles.ui.smbServer.EditScreenDestination
 import com.ad.backupfiles.ui.smbServer.SharedContentScreen

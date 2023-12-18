@@ -3,7 +3,7 @@ package com.ad.backupfiles.ui
 import app.cash.turbine.test
 import com.ad.backupfiles.TestDispatcherRule
 import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
-import com.ad.backupfiles.ui.addSmbScreen.AddServerViewModel
+import com.ad.backupfiles.ui.addServerScreen.AddServerViewModel
 import com.ad.backupfiles.ui.utils.SMBServerUiState
 import com.ad.backupfiles.ui.utils.SmbServerData
 import io.mockk.MockKAnnotations

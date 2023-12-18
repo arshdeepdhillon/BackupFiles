@@ -79,7 +79,7 @@ fun HomeScreen(
     handleItemClick: (Long) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
-    val viewState by viewModel.homeViewState.collectAsState()
+    val viewState by viewModel.viewState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val launcher =

@@ -23,14 +23,13 @@ class HomeViewModel(@Suppress("unused") private val smbServerApi: SmbServerInfoA
     /**
      * Holds the state of [HomeUiState]. Items are retrieved from [SmbServerInfoApi] and mapped to [HomeUiState]
      */
-    val homeViewState: StateFlow<HomeUiState> =
-        smbServerApi.getAllSmbServersAscStream().map {
-            HomeUiState(it)
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(DELAY_UPSTREAM_TIMEOUT_MILLIS),
-            initialValue = HomeUiState(),
-        )
+    val viewState: StateFlow<HomeUiState> = smbServerApi.getAllSmbServersAscStream().map {
+        HomeUiState(it)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(DELAY_UPSTREAM_TIMEOUT_MILLIS),
+        initialValue = HomeUiState(),
+    )
 }
 
 /**

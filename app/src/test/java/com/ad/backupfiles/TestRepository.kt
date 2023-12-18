@@ -15,6 +15,7 @@ class TestRepository<T> {
     val flow = MutableSharedFlow<T>()
 
     suspend fun emit(value: T) {
+        println("Emit: $value")
         flow.emit(value)
     }
 }
