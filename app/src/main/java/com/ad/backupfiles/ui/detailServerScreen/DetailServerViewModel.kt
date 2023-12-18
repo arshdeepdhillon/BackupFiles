@@ -34,14 +34,11 @@ class DetailServerViewModel(
     var viewState: StateFlow<DetailScreenUiState> =
         smbServerApi.getSmbServerStream(smbServerId).filterNotNull().map {
             DetailScreenUiState(serverInfo = it.toUiData())
-        }
-//            .onCompletion { println("SHARED FLOW COMPLETED") }
-//            .onEach {  println("onEach: $it") }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = DetailScreenUiState(),
-            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = DetailScreenUiState(),
+        )
 
     suspend fun deleteSmbServer() {
         smbServerApi.deleteSmbServer(viewState.value.serverInfo.toSmbServerEntity())

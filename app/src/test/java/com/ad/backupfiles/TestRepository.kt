@@ -13,9 +13,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
  */
 class TestRepository<T> {
     val flow = MutableSharedFlow<T>()
-
     suspend fun emit(value: T) {
-        println("Emit: $value")
+        println("${Thread.currentThread().name}: Emitting $value")
         flow.emit(value)
     }
 }
