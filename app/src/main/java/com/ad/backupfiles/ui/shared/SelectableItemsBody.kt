@@ -235,12 +235,12 @@ fun CircleCheckBox(modifier: Modifier = Modifier, selected: Boolean) {
                     stiffness = Spring.StiffnessMedium,
                 ),
             ) with
-                    scaleOut(
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessMedium,
-                        ),
-                    )
+                scaleOut(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessMedium,
+                    ),
+                )
         } else {
             scaleIn(
                 animationSpec = spring(
@@ -248,12 +248,12 @@ fun CircleCheckBox(modifier: Modifier = Modifier, selected: Boolean) {
                     stiffness = Spring.StiffnessMedium,
                 ),
             ) with
-                    scaleOut(
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioHighBouncy,
-                            stiffness = Spring.StiffnessMedium,
-                        ),
-                    )
+                scaleOut(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioHighBouncy,
+                        stiffness = Spring.StiffnessMedium,
+                    ),
+                )
         }
     }) { targetInSelectionMode ->
         Box(contentAlignment = Alignment.Center, modifier = modifier.clip(CircleShape)) {
