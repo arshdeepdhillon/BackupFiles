@@ -130,5 +130,4 @@ class AddServerViewModelTest {
             mockSmbServerApi.upsertSmbServer(expected2)
         }
     }
-
 }

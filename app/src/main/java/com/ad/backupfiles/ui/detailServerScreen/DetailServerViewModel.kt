@@ -20,10 +20,9 @@ import kotlinx.coroutines.flow.stateIn
 
 class DetailServerViewModel(
     @Suppress("unused") private val stateHandle: SavedStateHandle,
-    private val smbServerApi: SmbServerInfoApi
+    private val smbServerApi: SmbServerInfoApi,
 ) : ViewModel() {
     private val smbServerId: Long = checkNotNull(stateHandle[DetailScreenDestination.argKey])
-
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L

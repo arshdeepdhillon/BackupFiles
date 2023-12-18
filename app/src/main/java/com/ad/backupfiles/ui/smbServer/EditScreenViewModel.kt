@@ -93,7 +93,6 @@ class EditScreenViewModel(
         _uiState.update { currState ->
             val sanitizedUiData = sanitizeData(smbServerData)
             currState.copy(currentUiData = sanitizedUiData, isValid = validateData(sanitizedUiData))
-
         }
     }
 }

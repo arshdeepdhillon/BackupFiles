@@ -68,7 +68,7 @@ fun SmbServerInfo.toUiData(): SmbServerData = SmbServerData(
 fun sanitizeData(currentUiData: SmbServerData): SmbServerData {
     return currentUiData.copy(
         serverAddress = currentUiData.serverAddress.trim(),
-        username = currentUiData.username.trim()
+        username = currentUiData.username.trim(),
     )
 }
 

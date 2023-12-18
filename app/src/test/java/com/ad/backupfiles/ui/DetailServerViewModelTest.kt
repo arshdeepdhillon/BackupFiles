@@ -55,10 +55,7 @@ class DetailServerViewModelTest {
         mockStateHandle = SavedStateHandle().apply { set(DetailScreenDestination.argKey, 0L) }
         viewModel = DetailServerViewModel(mockStateHandle, mockSmbServerApi)
         every { mockSmbServerApi.getSmbServerStream(any()) } returns testRepository.flow
-
-
     }
-
 
     private fun createUiData(smbServerData: SmbServerData): DetailScreenUiState =
         DetailScreenUiState(smbServerData)
@@ -88,7 +85,6 @@ class DetailServerViewModelTest {
         }
     }
 
-
     @Ignore(value = "StateIn not emitting call values during test")
     @Test
     fun test_correct_smb_info() = runTest {
@@ -99,7 +95,7 @@ class DetailServerViewModelTest {
                 username = "someuser1",
                 password = "somepassword1",
                 sharedFolderName = "shared_folder1",
-            )
+            ),
         )
         val expected2 = createUiData(
             SmbServerData(
@@ -107,7 +103,7 @@ class DetailServerViewModelTest {
                 username = "someuser2",
                 password = "somepassword2",
                 sharedFolderName = "shared_folder2",
-            )
+            ),
         )
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             getVMState().collect()
@@ -121,6 +117,4 @@ class DetailServerViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
-
-
 }
