@@ -44,18 +44,21 @@ class EditScreenViewModel(
     /**
      * Holds current UI state
      */
-    private val _uiState = MutableStateFlow(SMBServerUiState())
-    val uiState: StateFlow<SMBServerUiState> = _uiState.asStateFlow()
+    private val _viewState = MutableStateFlow(SMBServerUiState())
+    val viewState: StateFlow<SMBServerUiState> = _viewState.asStateFlow()
 
     var userInputState by mutableStateOf(SmbServerData())
         private set
 
     init {
         viewModelScope.launch {
-            _uiState.value =
-                smbServerApi.getSmbServerStream(smbServerId).filterNotNull().first()
-                    .toUiState(true)
-            userInputState = _uiState.value.currentUiData
+            _viewState.value = smbServerApi
+                .getSmbServerStream(smbServerId)
+                .filterNotNull()
+                .first()
+                .let { it.toUiState(validateData(it.toUiData())) }
+
+            userInputState = _viewState.value.currentUiData
         }
     }
 
@@ -63,36 +66,34 @@ class EditScreenViewModel(
      * Saves the SMB related changes into database.
      */
     suspend fun saveChanges() {
-        if (validateData(_uiState.value.currentUiData)) {
-            smbServerApi.upsertSmbServer(_uiState.value.currentUiData)
-        }
-    }
-
-    fun updateUiState(smbServerData: SmbServerData) {
-        userInputState = smbServerData
-        updateState(smbServerData)
-    }
-
-    suspend fun canConnectToServer(): Boolean {
-        return withContext(Dispatchers.IO) {
-            return@withContext if (smbClientApi.canConnect(_uiState.value.toUiData())) {
-                Log.d(TAG, "Successfully connected with new changes")
-                true
-            } else {
-                Log.e(TAG, "Unable to connect with SMB Server ${_uiState.value.toUiData()}")
-                false
-            }
+        if (validateData(_viewState.value.currentUiData)) {
+            smbServerApi.upsertSmbServer(_viewState.value.currentUiData)
         }
     }
 
     /**
-     * Updates the [uiState] with the value provided in the argument. This method also triggers
-     * a validation for input values.
+     * Updates the UI state based on the provided [smbServerData] data.
+     *
+     * @param smbServerData The SMB server data containing information to update the UI state.
      */
-    private fun updateState(smbServerData: SmbServerData) {
-        _uiState.update { currState ->
+    fun updateUiState(smbServerData: SmbServerData) {
+        userInputState = smbServerData
+
+        _viewState.update { currState ->
             val sanitizedUiData = sanitizeData(smbServerData)
             currState.copy(currentUiData = sanitizedUiData, isValid = validateData(sanitizedUiData))
+        }
+    }
+
+    suspend fun canConnectToServer(): Boolean {
+        return withContext(Dispatchers.IO) {
+            return@withContext if (smbClientApi.canConnect(_viewState.value.toUiData())) {
+                Log.d(TAG, "Successfully connected with new changes")
+                true
+            } else {
+                Log.e(TAG, "Unable to connect with SMB Server ${_viewState.value.toUiData()}")
+                false
+            }
         }
     }
 }

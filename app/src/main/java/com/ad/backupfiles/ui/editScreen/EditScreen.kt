@@ -71,7 +71,7 @@ fun EditScreen(
     modifier: Modifier = Modifier,
     viewModel: EditScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.viewState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     Scaffold(
