@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.backupfiles.data.entity.toUiState
 import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
-import com.ad.backupfiles.di.api.ApplicationModuleApi
+import com.ad.backupfiles.smb.api.SMBClientApi
 import com.ad.backupfiles.ui.utils.SMBServerUiState
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.sanitizeData
@@ -35,10 +35,10 @@ import kotlinx.coroutines.withContext
  */
 class EditScreenViewModel(
     @Suppress("unused") private val stateHandle: SavedStateHandle,
-    private val appModule: ApplicationModuleApi,
+    private val smbServerApi: SmbServerInfoApi,
+    private val smbClientApi: SMBClientApi,
 ) : ViewModel() {
     private val TAG = EditScreenViewModel::class.java.simpleName
-    private val smbClientApi = appModule.smbClientApi
     private val smbServerId: Long = checkNotNull(stateHandle[EditScreenDestination.argKey])
 
     /**
@@ -53,7 +53,7 @@ class EditScreenViewModel(
     init {
         viewModelScope.launch {
             _uiState.value =
-                appModule.smbServerApi.getSmbServerStream(smbServerId).filterNotNull().first()
+                smbServerApi.getSmbServerStream(smbServerId).filterNotNull().first()
                     .toUiState(true)
             userInputState = _uiState.value.currentUiData
         }
@@ -64,7 +64,7 @@ class EditScreenViewModel(
      */
     suspend fun saveChanges() {
         if (validateData(_uiState.value.currentUiData)) {
-            appModule.smbServerApi.upsertSmbServer(_uiState.value.currentUiData)
+            smbServerApi.upsertSmbServer(_uiState.value.currentUiData)
         }
     }
 

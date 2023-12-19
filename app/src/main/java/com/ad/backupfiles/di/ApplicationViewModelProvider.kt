@@ -43,7 +43,8 @@ object AppViewModelFactory {
         initializer {
             EditScreenViewModel(
                 this.createSavedStateHandle(),
-                AppEntryPoint.appModule,
+                AppEntryPoint.appModule.smbServerApi,
+                AppEntryPoint.appModule.smbClientApi,
             )
         }
         // Initializer for SharedContentScreenViewModel
