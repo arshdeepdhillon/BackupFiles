@@ -11,10 +11,10 @@ import com.ad.backupfiles.ui.addServerScreen.AddScreen
 import com.ad.backupfiles.ui.addServerScreen.AddScreenDestination
 import com.ad.backupfiles.ui.detailServerScreen.DetailScreen
 import com.ad.backupfiles.ui.detailServerScreen.DetailScreenDestination
+import com.ad.backupfiles.ui.editScreen.EditScreen
+import com.ad.backupfiles.ui.editScreen.EditScreenDestination
 import com.ad.backupfiles.ui.homeScreen.HomeDestination
 import com.ad.backupfiles.ui.homeScreen.HomeScreen
-import com.ad.backupfiles.ui.smbServer.EditScreen
-import com.ad.backupfiles.ui.smbServer.EditScreenDestination
 import com.ad.backupfiles.ui.smbServer.SharedContentScreen
 import com.ad.backupfiles.ui.smbServer.SharedContentScreenDestination
 

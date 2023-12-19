@@ -15,7 +15,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import com.ad.backupfiles.R
-import com.ad.backupfiles.ui.smbServer.EditScreenBody
+import com.ad.backupfiles.ui.editScreen.EditScreenBody
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.EDIT_SCREEN_FOOTER

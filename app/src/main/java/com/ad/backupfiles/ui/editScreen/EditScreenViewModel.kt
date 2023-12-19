@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui.editScreen
 
 import android.util.Log
 import androidx.compose.runtime.getValue
