@@ -15,8 +15,8 @@ import com.ad.backupfiles.ui.editScreen.EditScreen
 import com.ad.backupfiles.ui.editScreen.EditScreenDestination
 import com.ad.backupfiles.ui.homeScreen.HomeDestination
 import com.ad.backupfiles.ui.homeScreen.HomeScreen
-import com.ad.backupfiles.ui.smbServer.SharedContentScreen
-import com.ad.backupfiles.ui.smbServer.SharedContentScreenDestination
+import com.ad.backupfiles.ui.savedDirectoriesScreen.SavedDirectoriesScreen
+import com.ad.backupfiles.ui.savedDirectoriesScreen.SavedDirectoriesScreenDestination
 
 /*
  * @author : Arshdeep Dhillon
@@ -54,7 +54,7 @@ fun BackupFilesNavHost(navController: NavHostController, modifier: Modifier = Mo
             DetailScreen(
                 handleNavBack = { navController.popBackStack() },
                 handleItemClicked = { navController.navigate("${EditScreenDestination.route}/$it") },
-                handleConnect = { navController.navigate("${SharedContentScreenDestination.route}/$it") },
+                handleConnect = { navController.navigate("${SavedDirectoriesScreenDestination.route}/$it") },
             )
         }
         composable(
@@ -69,14 +69,14 @@ fun BackupFilesNavHost(navController: NavHostController, modifier: Modifier = Mo
             )
         }
         composable(
-            route = SharedContentScreenDestination.routeArgs,
+            route = SavedDirectoriesScreenDestination.routeArgs,
             arguments = listOf(
-                navArgument(SharedContentScreenDestination.argKey) {
+                navArgument(SavedDirectoriesScreenDestination.argKey) {
                     type = NavType.LongType
                 },
             ),
         ) {
-            SharedContentScreen(
+            SavedDirectoriesScreen(
                 handleNavUp = { navController.navigateUp() },
             )
         }

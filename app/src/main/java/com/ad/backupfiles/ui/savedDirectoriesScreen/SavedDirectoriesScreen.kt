@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui.savedDirectoriesScreen
 
 import android.content.Intent
 import android.net.Uri
@@ -46,10 +46,10 @@ import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.di.AppViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.savedDirectoriesScreen.SavedDirectoriesScreenViewModel.ErrorUiState
 import com.ad.backupfiles.ui.shared.GeneralAlert
 import com.ad.backupfiles.ui.shared.SelectableItemsBody
 import com.ad.backupfiles.ui.shared.TopAppBar
-import com.ad.backupfiles.ui.smbServer.SharedContentScreenViewModel.ErrorUiState
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 
 /*
@@ -60,9 +60,9 @@ import com.ad.backupfiles.ui.theme.BackupFilesTheme
 /**
  * A stateless singleton representing navigation details
  */
-object SharedContentScreenDestination : NavigationDestination {
-    override val route = "shared_content_smb_server"
-    override val titleRes = R.string.smb_server_saved_title
+object SavedDirectoriesScreenDestination : NavigationDestination {
+    override val route = "saved_directories"
+    override val titleRes = R.string.smb_server_saved_directories_title
 
     /**
      * Used for retrieving a specific [SmbServerInfo] to display
@@ -73,10 +73,10 @@ object SharedContentScreenDestination : NavigationDestination {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun SharedContentScreen(
+fun SavedDirectoriesScreen(
     handleNavUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SharedContentScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
+    viewModel: SavedDirectoriesScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
@@ -142,7 +142,7 @@ fun SharedContentScreen(
                     }
                 } else {
                     TopAppBar(
-                        title = stringResource(SharedContentScreenDestination.titleRes),
+                        title = stringResource(SavedDirectoriesScreenDestination.titleRes),
                         canNavBack = true,
                         onNavUp = handleNavUp,
                     )
@@ -219,8 +219,8 @@ private fun AdditionalSettings(onSyncClick: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-private fun SharedContentScreenPreview() {
+private fun SavedDirectoriesScreenPreview() {
     BackupFilesTheme {
-        SharedContentScreen(handleNavUp = {})
+        SavedDirectoriesScreen(handleNavUp = {})
     }
 }

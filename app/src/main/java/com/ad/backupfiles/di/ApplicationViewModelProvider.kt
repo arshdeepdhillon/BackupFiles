@@ -11,7 +11,7 @@ import com.ad.backupfiles.ui.addServerScreen.AddServerViewModel
 import com.ad.backupfiles.ui.detailServerScreen.DetailServerViewModel
 import com.ad.backupfiles.ui.editScreen.EditScreenViewModel
 import com.ad.backupfiles.ui.homeScreen.HomeViewModel
-import com.ad.backupfiles.ui.smbServer.SharedContentScreenViewModel
+import com.ad.backupfiles.ui.savedDirectoriesScreen.SavedDirectoriesScreenViewModel
 
 /*
  * @author : Arshdeep Dhillon
@@ -20,26 +20,20 @@ import com.ad.backupfiles.ui.smbServer.SharedContentScreenViewModel
 
 object AppViewModelFactory {
     val Factory = viewModelFactory {
-
-        // Initializer for HomeViewModel
         initializer {
             HomeViewModel(AppEntryPoint.appModule.smbServerApi)
         }
-
-        // Initializer for AddScreenViewModel
         initializer {
             AddServerViewModel(
                 AppEntryPoint.appModule.smbServerApi,
             )
         }
-        // Initializer for DetailScreenViewModel
         initializer {
             DetailServerViewModel(
                 this.createSavedStateHandle(),
                 AppEntryPoint.appModule.smbServerApi,
             )
         }
-        // Initializer for EditScreenViewModel
         initializer {
             EditScreenViewModel(
                 this.createSavedStateHandle(),
@@ -47,9 +41,8 @@ object AppViewModelFactory {
                 AppEntryPoint.appModule.smbClientApi,
             )
         }
-        // Initializer for SharedContentScreenViewModel
         initializer {
-            SharedContentScreenViewModel(
+            SavedDirectoriesScreenViewModel(
                 this.createSavedStateHandle(),
                 AppEntryPoint.appModule,
             )

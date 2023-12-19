@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui.savedDirectoriesScreen
 
 import android.net.Uri
 import androidx.annotation.StringRes
@@ -44,9 +44,10 @@ import java.util.concurrent.TimeUnit
  */
 
 /**
- * Displays content from SMB server.
+ * Displays saved directories for the selected SMB server.
+ * It also keeps track of selected folders.
  */
-class SharedContentScreenViewModel(
+class SavedDirectoriesScreenViewModel(
     @Suppress("unused") private val stateHandle: SavedStateHandle,
     private val appModule: ApplicationModuleApi,
 ) : ViewModel() {
@@ -54,7 +55,7 @@ class SharedContentScreenViewModel(
     /** A mutable set containing the Ids of selected directories.*/
     private var selectedDirectoryIds = mutableListOf<Long>()
 
-    private val smbServerId: Long = checkNotNull(stateHandle[SharedContentScreenDestination.argKey])
+    private val smbServerId: Long = checkNotNull(stateHandle[SavedDirectoriesScreenDestination.argKey])
     private val workManager = WorkManager.getInstance(appModule.appContext)
     private val wmConstraints =
         Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
