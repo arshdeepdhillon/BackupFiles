@@ -1,8 +1,8 @@
 package com.ad.backupfiles.ui
 
 import app.cash.turbine.test
-import com.ad.backupfiles.TestDispatcherRule
-import com.ad.backupfiles.TestRepository
+import com.ad.backupfiles.FakeRepository
+import com.ad.backupfiles.MainDispatcherRule
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
 import com.ad.backupfiles.ui.homeScreen.HomeViewModel
@@ -10,6 +10,9 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -25,28 +28,31 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
+    private lateinit var vmUnderTest: HomeViewModel
+    private lateinit var fakeRepository: FakeRepository<List<SmbServerInfo>>
+    private val testDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
+
     @MockK
     private lateinit var mockSmbServerApi: SmbServerInfoApi
 
-    private lateinit var viewModel: HomeViewModel
-    private lateinit var testRepository: TestRepository<List<SmbServerInfo>>
-    private val testDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
-
     @get: Rule
-    val dispatcherRule = TestDispatcherRule(testDispatcher)
+    val dispatcherRule = MainDispatcherRule(testDispatcher)
 
     @Before
     fun setup() {
         MockKAnnotations.init(this, relaxed = true)
-        testRepository = TestRepository()
+        fakeRepository = FakeRepository()
     }
 
-    private fun getVMState() = viewModel.viewState
+    private fun getVMState() = vmUnderTest.viewState
+        .onStart { println("${Thread.currentThread().name}: Shared Flow Started") }
+        .onEach { println("${Thread.currentThread().name}: Emitted Received: $it") }
+        .onCompletion { println("${Thread.currentThread().name}: Shared Flow Completed") }
 
     @Test
-    fun test_nothing_is_returned_when_there_are_no_smbs() = runTest {
-        viewModel = HomeViewModel(mockSmbServerApi)
-        every { mockSmbServerApi.getAllSmbServersAscStream() } returns testRepository.flow
+    fun test_initial_state_is_returned() = runTest {
+        vmUnderTest = HomeViewModel(mockSmbServerApi)
+        every { mockSmbServerApi.getAllSmbServersAscStream() } returns fakeRepository.flow
 
         getVMState().test {
             // First value emitted will be the 'initialValue' of this homeViewState
@@ -65,8 +71,8 @@ class HomeViewModelTest {
                 sharedFolderName = "share_folder_$i",
             )
         }.toList()
-        every { mockSmbServerApi.getAllSmbServersAscStream() } returns testRepository.flow
-        viewModel = HomeViewModel(mockSmbServerApi)
+        every { mockSmbServerApi.getAllSmbServersAscStream() } returns fakeRepository.flow
+        vmUnderTest = HomeViewModel(mockSmbServerApi)
 
         getVMState().test {
             // First value emitted will be the 'initialValue' of this homeViewState
@@ -74,7 +80,7 @@ class HomeViewModelTest {
         }
 
         // Verify the original smbs returned are correct
-        testRepository.emit(savedSmbs)
+        fakeRepository.emit(savedSmbs)
         getVMState().test {
             val actualSmbs = awaitItem().sharedServers
             assertEquals(savedSmbs.size, actualSmbs.size)
@@ -90,7 +96,7 @@ class HomeViewModelTest {
                 username = "newusername",
             )
         }
-        testRepository.emit(modifiedSmbs)
+        fakeRepository.emit(modifiedSmbs)
         getVMState().test {
             val actualSmbs = awaitItem().sharedServers
             assertEquals(modifiedSmbs.size, actualSmbs.size)

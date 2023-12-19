@@ -20,7 +20,7 @@ import org.junit.runner.Description
  * **Note: Use this TestWatcher in unit tests.**
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class TestDispatcherRule(
+class MainDispatcherRule(
     private val testDispatcher: TestDispatcher = StandardTestDispatcher(name = "MyTestDispatcher"),
 ) : TestWatcher() {
     override fun starting(description: Description) {
