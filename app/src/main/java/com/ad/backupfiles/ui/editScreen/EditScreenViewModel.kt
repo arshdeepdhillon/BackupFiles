@@ -85,13 +85,19 @@ class EditScreenViewModel(
         }
     }
 
+    /**
+     * Attempts to establish a connection with the SMB server to check if it's reachable,
+     * using the data from the current view state.
+     *
+     * @return `true` if the connection is successful, `false` otherwise.
+     */
     suspend fun canConnectToServer(): Boolean {
         return withContext(Dispatchers.IO) {
             return@withContext if (smbClientApi.canConnect(_viewState.value.toUiData())) {
                 Log.d(TAG, "Successfully connected with new changes")
                 true
             } else {
-                Log.e(TAG, "Unable to connect with SMB Server ${_viewState.value.toUiData()}")
+                Log.d(TAG, "Unable to connect with SMB Server ${_viewState.value.toUiData()}")
                 false
             }
         }
