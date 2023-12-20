@@ -1,5 +1,6 @@
 package com.ad.backupfiles.ui.savedDirectoriesScreen
 
+import android.content.Context
 import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.documentfile.provider.DocumentFile
@@ -18,7 +19,7 @@ import com.ad.backupfiles.R
 import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.DirectoryInfo
 import com.ad.backupfiles.data.entity.toDto
-import com.ad.backupfiles.di.api.ApplicationModuleApi
+import com.ad.backupfiles.data.repository.api.DirectoryInfoApi
 import com.ad.backupfiles.worker.BACKUP_FOLDER_TAG
 import com.ad.backupfiles.worker.BACKUP_FOLDER_WORK_NAME
 import com.ad.backupfiles.worker.SMB_ID_INT_KEY
@@ -47,17 +48,16 @@ import java.util.concurrent.TimeUnit
  * Displays saved directories for the selected SMB server.
  * It also keeps track of selected folders.
  */
-class SavedDirectoriesScreenViewModel(
+class SavedDirectoriesViewModel(
     @Suppress("unused") private val stateHandle: SavedStateHandle,
-    private val appModule: ApplicationModuleApi,
+    private val appContext: Context,
+    private val directoryInfoApi: DirectoryInfoApi,
 ) : ViewModel() {
 
-    /** A mutable set containing the Ids of selected directories.*/
-    private var selectedDirectoryIds = mutableListOf<Long>()
-
-    private val smbServerId: Long = checkNotNull(stateHandle[SavedDirectoriesScreenDestination.argKey])
-    private val workManager = WorkManager.getInstance(appModule.appContext)
-    private val wmConstraints =
+    private val smbServerId: Long =
+        checkNotNull(stateHandle[SavedDirectoriesScreenDestination.argKey])
+    private val workManager = WorkManager.getInstance(appContext)
+    private val workManagerConstraints =
         Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
     private val _errorState = MutableSharedFlow<ErrorUiState>()
     val errorState: SharedFlow<ErrorUiState> = _errorState.asSharedFlow()
@@ -67,7 +67,7 @@ class SavedDirectoriesScreenViewModel(
      * Holds current UI state
      */
     var uiState: StateFlow<SMBContentUiState> =
-        appModule.directoryInfoApi.getAllSavedDirectoriesStream(smbServerId).filterNotNull()
+        directoryInfoApi.getAllSavedDirectoriesStream(smbServerId).filterNotNull()
             .map { smbServerWithSavedDir ->
                 SMBContentUiState(savedDirectories = smbServerWithSavedDir.savedDirs.map { it.toDto() })
             }.stateIn(
@@ -97,8 +97,8 @@ class SavedDirectoriesScreenViewModel(
     fun saveDirectory(persistableDirUri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             val dirName: String? =
-                DocumentFile.fromTreeUri(appModule.appContext, persistableDirUri)?.name
-            if (appModule.directoryInfoApi.isDirectorySaved(
+                DocumentFile.fromTreeUri(appContext, persistableDirUri)?.name
+            if (directoryInfoApi.isDirectorySaved(
                     smbServerId,
                     persistableDirUri.toString(),
                 )
@@ -132,8 +132,8 @@ class SavedDirectoriesScreenViewModel(
      * @return [Long] id of the saved directory or null if Uri is invalid.
      */
     private suspend fun save(dirToSaveUri: Uri): Long? {
-        return DocumentFile.fromTreeUri(appModule.appContext, dirToSaveUri)?.let { doc ->
-            return appModule.directoryInfoApi.insertDirectory(
+        return DocumentFile.fromTreeUri(appContext, dirToSaveUri)?.let { doc ->
+            return directoryInfoApi.insertDirectory(
                 DirectoryInfo(
                     smbServerId = smbServerId,
                     dirPath = dirToSaveUri.toString(),
@@ -145,10 +145,10 @@ class SavedDirectoriesScreenViewModel(
 
     private fun runBackupWorker(dirId: Long) {
         viewModelScope.launch {
-            appModule.directoryInfoApi.insertDirectoriesToSync(smbServerId, mutableListOf(dirId))
+            directoryInfoApi.insertDirectoriesToSync(smbServerId, mutableListOf(dirId))
             val backupWork = OneTimeWorkRequestBuilder<UploadFolderWorker>()
                 .addTag(BACKUP_FOLDER_TAG)
-                .setConstraints(wmConstraints)
+                .setConstraints(workManagerConstraints)
                 .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
                 .setInputData(
                     workDataOf(
@@ -168,10 +168,10 @@ class SavedDirectoriesScreenViewModel(
     /**
      *
      */
-    fun syncSelectedFolder() {
+    fun syncSelectedFolder(selectedDirectoryIds: MutableList<Long>) {
         if (selectedDirectoryIds.isNotEmpty()) {
             viewModelScope.launch {
-                appModule.directoryInfoApi.insertDirectoriesToSync(
+                directoryInfoApi.insertDirectoriesToSync(
                     smbServerId,
                     selectedDirectoryIds,
                 )
@@ -183,7 +183,7 @@ class SavedDirectoriesScreenViewModel(
                             WORKER_TAG to SYNC_FOLDER_TAG,
                         ),
                     )
-                    .setConstraints(wmConstraints)
+                    .setConstraints(workManagerConstraints)
                     .setBackoffCriteria(
                         BackoffPolicy.LINEAR,
                         MIN_BACKOFF_MILLIS,
@@ -198,29 +198,6 @@ class SavedDirectoriesScreenViewModel(
                 ).enqueue()
             }
         }
-    }
-
-    /**
-     * Handles the selection or deselection of a directory item.
-     *
-     * @param item A Pair representing selection status of the folder
-     * @property Pair.first  folder is selected if true, otherwise it's unselected
-     * @property Pair.second [DirectoryDto] contains details about the folder.
-     */
-    fun onDirectorySelected(item: Pair<Boolean, DirectoryDto>) {
-        if (item.first) {
-            selectedDirectoryIds.add(item.second.dirId)
-        } else {
-            selectedDirectoryIds.remove(item.second.dirId)
-        }
-    }
-
-    /**
-     * Clears the selection state.
-     */
-    fun onClearSelectionState() {
-        // Do appropriate cleanup related to selected directories here.
-        selectedDirectoryIds.clear()
     }
 }
 

@@ -1,9 +1,6 @@
 package com.ad.backupfiles.di
 
-import android.app.Application
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.createSavedStateHandle
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.ad.backupfiles.AppEntryPoint
@@ -11,14 +8,15 @@ import com.ad.backupfiles.ui.addServerScreen.AddServerViewModel
 import com.ad.backupfiles.ui.detailServerScreen.DetailServerViewModel
 import com.ad.backupfiles.ui.editScreen.EditScreenViewModel
 import com.ad.backupfiles.ui.homeScreen.HomeViewModel
-import com.ad.backupfiles.ui.savedDirectoriesScreen.SavedDirectoriesScreenViewModel
+import com.ad.backupfiles.ui.savedDirectoriesScreen.SavedDirectoriesViewModel
+import com.ad.backupfiles.ui.savedDirectoriesScreen.SyncTrackerViewModel
 
 /*
  * @author : Arshdeep Dhillon
  * @created : 23-Oct-23
  */
 
-object AppViewModelFactory {
+object ApplicationViewModelFactory {
     val Factory = viewModelFactory {
         initializer {
             HomeViewModel(AppEntryPoint.appModule.smbServerApi)
@@ -42,16 +40,14 @@ object AppViewModelFactory {
             )
         }
         initializer {
-            SavedDirectoriesScreenViewModel(
+            SavedDirectoriesViewModel(
                 this.createSavedStateHandle(),
-                AppEntryPoint.appModule,
+                AppEntryPoint.appModule.appContext,
+                AppEntryPoint.appModule.directoryInfoApi,
             )
+        }
+        initializer {
+            SyncTrackerViewModel()
         }
     }
 }
-
-/**
- * Extension function to query for [Application] object and returns an instance of [AppEntryPoint].
- */
-fun CreationExtras.backupFilesApplication(): AppEntryPoint =
-    (this[AndroidViewModelFactory.APPLICATION_KEY] as AppEntryPoint)

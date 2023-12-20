@@ -27,7 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.backupfiles.R
 import com.ad.backupfiles.Toast
 import com.ad.backupfiles.data.entity.SmbServerInfo
-import com.ad.backupfiles.di.AppViewModelFactory
+import com.ad.backupfiles.di.ApplicationViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.shared.InputForm
 import com.ad.backupfiles.ui.shared.TopAppBar
@@ -69,7 +69,7 @@ fun EditScreen(
     handleNavBack: () -> Unit,
     handleNavUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EditScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
+    viewModel: EditScreenViewModel = viewModel(factory = ApplicationViewModelFactory.Factory),
 ) {
     val uiState by viewModel.viewState.collectAsState()
     val coroutineScope = rememberCoroutineScope()

@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.backupfiles.R
-import com.ad.backupfiles.di.AppViewModelFactory
+import com.ad.backupfiles.di.ApplicationViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.shared.InputForm
 import com.ad.backupfiles.ui.shared.TopAppBar
@@ -58,7 +58,7 @@ fun AddScreen(
     handleNavBack: () -> Unit,
     handleNavUp: () -> Unit,
     canNavBack: Boolean = true,
-    viewModel: AddServerViewModel = viewModel(factory = AppViewModelFactory.Factory),
+    viewModel: AddServerViewModel = viewModel(factory = ApplicationViewModelFactory.Factory),
 ) {
     val viewState by viewModel.viewState.collectAsState()
     val coroutineScope = rememberCoroutineScope()

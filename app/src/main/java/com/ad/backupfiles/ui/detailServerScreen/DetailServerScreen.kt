@@ -38,7 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.backupfiles.R
 import com.ad.backupfiles.data.entity.SmbServerInfo
-import com.ad.backupfiles.di.AppViewModelFactory
+import com.ad.backupfiles.di.ApplicationViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.shared.GeneralAlert
 import com.ad.backupfiles.ui.shared.TopAppBar
@@ -79,7 +79,7 @@ fun DetailScreen(
     handleItemClicked: (Long) -> Unit,
     handleConnect: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: DetailServerViewModel = viewModel(factory = AppViewModelFactory.Factory),
+    viewModel: DetailServerViewModel = viewModel(factory = ApplicationViewModelFactory.Factory),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val viewState = viewModel.viewState.collectAsState()

@@ -44,9 +44,9 @@ import com.ad.backupfiles.R
 import com.ad.backupfiles.Toast
 import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.SmbServerInfo
-import com.ad.backupfiles.di.AppViewModelFactory
+import com.ad.backupfiles.di.ApplicationViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
-import com.ad.backupfiles.ui.savedDirectoriesScreen.SavedDirectoriesScreenViewModel.ErrorUiState
+import com.ad.backupfiles.ui.savedDirectoriesScreen.SavedDirectoriesViewModel.ErrorUiState
 import com.ad.backupfiles.ui.shared.GeneralAlert
 import com.ad.backupfiles.ui.shared.SelectableItemsBody
 import com.ad.backupfiles.ui.shared.TopAppBar
@@ -76,7 +76,8 @@ object SavedDirectoriesScreenDestination : NavigationDestination {
 fun SavedDirectoriesScreen(
     handleNavUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SavedDirectoriesScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
+    viewModel: SavedDirectoriesViewModel = viewModel(factory = ApplicationViewModelFactory.Factory),
+    syncTrackerViewModel: SyncTrackerViewModel = viewModel(factory = ApplicationViewModelFactory.Factory),
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
@@ -105,7 +106,7 @@ fun SavedDirectoriesScreen(
 
     // When in selection mode and back button is pressed, clear selected items
     BackHandler(enabled = inSelectionMode) {
-        viewModel.onClearSelectionState()
+        syncTrackerViewModel.onClearSelectionState()
 
         // The parent compo ItemListBody know
         clearSelectionState = true
@@ -180,7 +181,7 @@ fun SavedDirectoriesScreen(
         SelectableItemsBody(
             modifier = Modifier.padding(innerPadding),
             savedDirs = uiState.savedDirectories,
-            onItemSelect = { item: Pair<Boolean, DirectoryDto> -> viewModel.onDirectorySelected(item) },
+            onItemSelect = { item: Pair<Boolean, DirectoryDto> -> syncTrackerViewModel.onDirectorySelected(item) },
             resetSelectionState = clearSelectionState,
         ) {
             inSelectionMode = it
@@ -190,7 +191,7 @@ fun SavedDirectoriesScreen(
                 handleAccept = {
                     isSyncDialogActive = false // Hide the dialog
                     clearSelectionState = true // Clear the selected items
-                    viewModel.syncSelectedFolder()
+                    viewModel.syncSelectedFolder(syncTrackerViewModel.directoriesToSync())
                 },
                 titleId = R.string.confirm_title_alert,
                 bodyId = R.string.sync_body_alert,
