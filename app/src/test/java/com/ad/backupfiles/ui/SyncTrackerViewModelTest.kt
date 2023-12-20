@@ -8,6 +8,7 @@ import io.mockk.MockKAnnotations
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
@@ -58,25 +59,29 @@ class SyncTrackerViewModelTest {
     @Test
     fun test_selected_directories_should_only_sync() = runTest {
         vmUnderTest = SyncTrackerViewModel()
-        directories.filter { it.first }.forEach { vmUnderTest.onDirectorySelected(it) }
-        assertEquals(directories.filter { it.first }.size, vmUnderTest.directoriesToSync().size)
-        assertEquals(directories.filter { it.first }.map { it.second.dirId }, vmUnderTest.directoriesToSync())
+        val selectedDirs = directories.filter { it.first }
+
+        selectedDirs.forEach { vmUnderTest.onDirectorySelected(it) }
+        assertEquals(selectedDirs.size, vmUnderTest.directoriesToSync().size)
+        assertEquals(selectedDirs.map { it.second.dirId }, vmUnderTest.directoriesToSync())
     }
 
     @Test
     fun test_unselected_directories_do_not_sync() = runTest {
         vmUnderTest = SyncTrackerViewModel()
+        val selectedDirs = directories.filter { it.first }
+        val unselectedDirs = directories.filter { !it.first }
+
         directories.forEach { vmUnderTest.onDirectorySelected(it) }
-        assertEquals(directories.filter { it.first }.size, vmUnderTest.directoriesToSync().size)
-        assertEquals(
-            directories.filter { it.first }.map { it.second.dirId },
-            vmUnderTest.directoriesToSync(),
-        )
+        assertEquals(selectedDirs.size, vmUnderTest.directoriesToSync().size)
+        assertEquals(selectedDirs.map { it.second.dirId }, vmUnderTest.directoriesToSync())
+        assertNotEquals(unselectedDirs.map { it.second.dirId }, vmUnderTest.directoriesToSync())
     }
 
     @Test
     fun test_selection_state_is_cleared_when_manually_triggered() = runTest {
         vmUnderTest = SyncTrackerViewModel()
+
         directories.forEach { vmUnderTest.onDirectorySelected(it) }
         vmUnderTest.onClearSelectionState()
         assertEquals(0, vmUnderTest.directoriesToSync().size)
