@@ -42,8 +42,7 @@ object ApplicationViewModelFactory {
         initializer {
             SavedDirectoriesViewModel(
                 this.createSavedStateHandle(),
-                AppEntryPoint.appModule.appContext,
-                AppEntryPoint.appModule.directoryInfoApi,
+                AppEntryPoint.appModule,
             )
         }
         initializer {
