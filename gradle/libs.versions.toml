@@ -8,7 +8,7 @@ material3 = "1.1.1"
 navigationCompose = "2.5.3"
 roomRuntime = "2.5.2"
 smbj = "0.13.0"
-workRuntimeKtx = "2.8.1"
+worker = "2.8.1"
 androidGradlePlugin = "8.1.0"
 kotlin = "1.9.21"
 kotlinCoroutineTest = "1.6.4"
@@ -17,6 +17,7 @@ kotlinAnnotationPlugin = "1.9.21-1.0.16"
 
 # Test
 androidJunit = "1.1.5"
+androidTestCore = "1.5.0"
 cashTurbine = "0.9.0"
 espressoCore = "3.5.1"
 uiAutomator = "2.2.0"
@@ -34,6 +35,7 @@ androidx-coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" 
 androidx-documentfile = { module = "androidx.documentfile:documentfile", version.ref = "documentfile" }
 androidx-espressoCore = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidJunit" }
+androidx-test = { module = "androidx.test:core-ktx", version.ref = "androidTestCore" }
 androidx-lifecycleLivedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-lifecycleRuntimeCompose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleViewmodelKtx" }
 androidx-lifecycleRuntimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleViewmodelKtx" }
@@ -51,7 +53,8 @@ androidx-composeUiTestManifest = { module = "androidx.compose.ui:ui-test-manifes
 androidx-roomKtx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-roomRuntime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-roomCompiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
-androidx-workRuntimeKtx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+androidx-workRuntimeKtx = { module = "androidx.work:work-runtime-ktx", version.ref = "worker" }
+androidx-workerTest = { module = "androidx.work:work-testing", version.ref = "worker" }
 junit = { module = "junit:junit", version.ref = "junit" }
 smbj = { module = "com.hierynomus:smbj", version.ref = "smbj" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiAutomator" }
@@ -62,6 +65,7 @@ kotlin-coroutineTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test
 #mockk-kotlin = { module = "io.mockk:mockk", version.ref = "mockkAndroid" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
+
 
 
 [bundles]

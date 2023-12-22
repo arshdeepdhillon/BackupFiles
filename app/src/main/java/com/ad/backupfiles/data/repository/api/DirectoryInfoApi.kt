@@ -65,6 +65,7 @@ interface DirectoryInfoApi {
     // START: Sync related operations
     /**
      * Synchronously queues the directories for synchronization with the SMB server.
+     * Duplicate sync request is ignore.
      *
      * @param smbServerId The ID of the SMB server associated with the directories.
      * @param directoryIds The list of directory IDs to synchronize.
