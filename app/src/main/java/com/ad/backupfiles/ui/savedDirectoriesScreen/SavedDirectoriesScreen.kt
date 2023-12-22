@@ -191,7 +191,7 @@ fun SavedDirectoriesScreen(
                 handleAccept = {
                     isSyncDialogActive = false // Hide the dialog
                     clearSelectionState = true // Clear the selected items
-                    viewModel.syncSelectedFolder(syncTrackerViewModel.directoriesToSync())
+                    viewModel.queueSyncWork(syncTrackerViewModel.directoriesToSync())
                 },
                 titleId = R.string.confirm_title_alert,
                 bodyId = R.string.sync_body_alert,
