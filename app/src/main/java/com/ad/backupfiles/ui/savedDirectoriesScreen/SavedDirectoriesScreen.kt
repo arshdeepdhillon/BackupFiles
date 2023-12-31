@@ -36,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,9 +49,9 @@ import com.ad.backupfiles.di.ApplicationViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.savedDirectoriesScreen.SavedDirectoriesViewModel.ErrorUiState
 import com.ad.backupfiles.ui.shared.GeneralAlert
-import com.ad.backupfiles.ui.shared.SelectableItemsBody
 import com.ad.backupfiles.ui.shared.TopAppBar
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
+import com.ad.backupfiles.ui.utils.TestTag.Companion.PICK_DIR_TAG
 
 /*
  * @author : Arshdeep Dhillon
@@ -167,7 +168,9 @@ fun SavedDirectoriesScreen(
                         dirPickerLauncher.launch(null)
                     },
                     shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad)),
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.m_pad))
+                        .testTag(PICK_DIR_TAG),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,

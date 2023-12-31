@@ -10,10 +10,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.ad.backupfiles.R
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
+import com.ad.backupfiles.ui.utils.TestTag.Companion.TOP_APP_BAR_BACK_BUTTON
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +32,7 @@ fun TopAppBar(
         scrollBehavior = scrollBehavior,
         navigationIcon = {
             if (canNavBack) {
-                IconButton(onClick = onNavUp) {
+                IconButton(onClick = onNavUp, modifier = Modifier.testTag(TOP_APP_BAR_BACK_BUTTON)) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = stringResource(id = R.string.back_button),

@@ -44,6 +44,7 @@ import com.ad.backupfiles.ui.shared.GeneralAlert
 import com.ad.backupfiles.ui.shared.TopAppBar
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.SmbServerData
+import com.ad.backupfiles.ui.utils.TestTag.Companion.EDIT_SMB_SERVER_FAB
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SHARED_FOLDER_DISPLAY_TEXT
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SMB_CONNECT_BUTTON
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SMB_DELETE_ALERT
@@ -95,7 +96,9 @@ fun DetailScreen(
             FloatingActionButton(
                 onClick = { handleItemClicked(viewState.value.serverInfo.id) },
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad)),
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.m_pad))
+                    .testTag(EDIT_SMB_SERVER_FAB),
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,

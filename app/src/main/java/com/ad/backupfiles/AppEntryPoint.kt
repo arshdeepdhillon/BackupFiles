@@ -13,6 +13,7 @@ import com.ad.backupfiles.worker.DETAILED_CHANNEL_NAME
 import com.ad.backupfiles.worker.MAIN_CHANNEL_DESC
 import com.ad.backupfiles.worker.MAIN_CHANNEL_ID
 import com.ad.backupfiles.worker.MAIN_CHANNEL_NAME
+import org.jetbrains.annotations.TestOnly
 
 /*
  * @author : Arshdeep Dhillon
@@ -22,6 +23,11 @@ class AppEntryPoint : Application() {
 
     companion object {
         lateinit var appModule: ApplicationModuleApi
+
+        @TestOnly
+        fun setAppModuleForTest(testAppModule: ApplicationModuleApi) {
+            appModule = testAppModule
+        }
     }
 
     override fun onCreate() {

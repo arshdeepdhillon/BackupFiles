@@ -29,7 +29,9 @@ import com.ad.backupfiles.ui.shared.TopAppBar
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SAVE_INPUT_FORM_BUTTON
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /*
  * @author : Arshdeep Dhillon
@@ -78,7 +80,7 @@ fun AddScreen(
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.save()
-                    handleNavBack()
+                    withContext(Dispatchers.Main) { handleNavBack() }
                 }
             },
             modifier = Modifier

@@ -1,5 +1,6 @@
 package com.ad.backupfiles.ui
 
+import android.content.res.Resources
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertIsDisplayed
@@ -15,6 +16,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import com.ad.backupfiles.R
+import com.ad.backupfiles.TestHelper.getString
 import com.ad.backupfiles.ui.editScreen.EditScreenBody
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.SmbServerData
@@ -34,6 +36,8 @@ import org.junit.Test
 */
 @LargeTest
 class EditScreenTest {
+    private lateinit var resource: Resources
+
     companion object {
         private lateinit var device: UiDevice
         private lateinit var uiState: SmbServerData
@@ -47,6 +51,7 @@ class EditScreenTest {
 
     @Before
     fun setup() {
+        resource = InstrumentationRegistry.getInstrumentation().targetContext.resources
         uiState = SmbServerData(
             serverAddress = "1.1.1.1",
             username = "someuser",
@@ -129,17 +134,13 @@ class EditScreenTest {
         composeTestRule.onNodeWithTag(USERNAME_INPUT_TEXT).assert(hasText(username))
         composeTestRule.onNodeWithTag(PASSWORD_INPUT_TEXT).assert(hasText(password))
         composeTestRule.onNodeWithTag(SHARED_FOLDER_INPUT_TEXT).assert(hasText(sharedFolderName))
-        device.findObject(
-            By.text(InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.test_connection)),
-        ).click()
+        device.findObject(By.text(getString(resource, R.string.test_connection))).click()
         assert(
             testConnectionPressed,
             { "Expected the 'Test' connection button to produce and event" },
         )
 
-        device.findObject(
-            By.text(InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.save_smb)),
-        ).click()
+        device.findObject(By.text(getString(resource, R.string.save_smb))).click()
         assert(savePressed, { "Expected the 'Save' button to produce and event" })
     }
 }

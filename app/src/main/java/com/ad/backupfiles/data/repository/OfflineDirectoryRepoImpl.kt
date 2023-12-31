@@ -107,11 +107,13 @@ class OfflineDirectoryRepoImpl(
     @Transaction
     override suspend fun processSyncedDirectory(syncedDirectory: DirectorySyncInfo) {
         externalScope.launch {
+            println("before processSyncedDirectory")
             directoryDao.updateSyncTime(
                 syncedDirectory.dirId,
                 syncedDirectory.smbServerId,
                 Instant.now().epochSecond,
             )
+            println("after processSyncedDirectory")
             directoryDao.deleteFromSync(syncedDirectory)
         }
     }

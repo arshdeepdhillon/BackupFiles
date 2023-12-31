@@ -5,8 +5,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import app.cash.turbine.test
+import com.ad.backupfiles.TestDispatcherRule
 import com.ad.backupfiles.data.BackupFilesDatabase
-import com.ad.backupfiles.data.TestDispatcherRule
 import com.ad.backupfiles.data.entity.DirectoryInfo
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,10 +41,7 @@ class DirectoryDaoTest {
     @Before
     fun setup() {
         // Setup in-memory database for testing
-        backupDb = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            BackupFilesDatabase::class.java,
-        ).build()
+        backupDb = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), BackupFilesDatabase::class.java).build()
         smbDao = backupDb.smbServerDao()
         dirDao = backupDb.directoryDao()
 
@@ -148,8 +145,8 @@ class DirectoryDaoTest {
         tempDirs.removeIf { expDir ->
             val actualSyncDir = dirDao.getPendingSyncDirectories(expDir.smbServerId)[0]
             expDir.dirId == actualSyncDir.dirId &&
-                expDir.smbServerId == actualSyncDir.smbServerId &&
-                expDir.dirPath == actualSyncDir.dirPath
+                    expDir.smbServerId == actualSyncDir.smbServerId &&
+                    expDir.dirPath == actualSyncDir.dirPath
         }
         assertTrue(
             "These Directories should have been synced: '$tempDirs'",

@@ -35,4 +35,6 @@
     <string name="icon_unchecked">Item selected</string>
     <string name="error_folder_already_saved">%1$s already saved</string>
     <string name="generic_error_failed_to_save_folder">Could not save %1$s</string>
+    <string name="sync_status_title">"Synced: "</string>
+    <string name="not_yet_sync_status">Not Yet</string>
 </resources>

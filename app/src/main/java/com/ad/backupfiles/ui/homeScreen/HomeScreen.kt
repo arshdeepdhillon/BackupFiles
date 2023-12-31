@@ -59,7 +59,7 @@ import com.ad.backupfiles.ui.utils.TestTag.Companion.SMB_ADD_TAG
  * A stateless singleton representing navigation details
  */
 object HomeDestination : NavigationDestination {
-    override val route = "Home"
+    override val route = "home"
     override val titleRes = R.string.app_name
 }
 

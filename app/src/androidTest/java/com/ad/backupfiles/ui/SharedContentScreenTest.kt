@@ -1,5 +1,6 @@
 package com.ad.backupfiles.ui
 
+import android.content.res.Resources
 import androidx.compose.ui.test.assertAll
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.isEnabled
@@ -16,8 +17,9 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import com.ad.backupfiles.R
+import com.ad.backupfiles.TestHelper.getString
 import com.ad.backupfiles.data.entity.DirectoryDto
-import com.ad.backupfiles.ui.shared.SelectableItemsBody
+import com.ad.backupfiles.ui.savedDirectoriesScreen.SelectableItemsBody
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.TestTag.Companion.CHECK_BOX
 import com.ad.backupfiles.ui.utils.TestTag.Companion.LAZY_COLUMN_TAG
@@ -33,6 +35,11 @@ import java.time.Instant
 */
 @LargeTest
 class SharedContentScreenTest {
+    private lateinit var resource: Resources
+
+    @get:Rule
+    val composeTestRule = createComposeRule()
+
     companion object {
         private lateinit var device: UiDevice
         private lateinit var savedDirs: List<DirectoryDto>
@@ -47,6 +54,8 @@ class SharedContentScreenTest {
 
     @Before
     fun setup() {
+        resource = InstrumentationRegistry.getInstrumentation().targetContext.resources
+
         savedDirs = (0L until MAX_DIRS).map { i ->
             DirectoryDto(
                 dirId = i,
@@ -57,9 +66,6 @@ class SharedContentScreenTest {
             )
         }.toList()
     }
-
-    @get:Rule
-    val composeTestRule = createComposeRule()
 
     /**
      * Verifies correct number of items are visible and there checked/unchecked icons are not visible.
@@ -95,10 +101,8 @@ class SharedContentScreenTest {
                 SelectableItemsBody(savedDirs = savedDirs)
             }
         }
-        val descriptionOfCheckedBox =
-            InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.icon_checked)
-        val descriptionOfUncheckedBox =
-            InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.icon_unchecked)
+        val descriptionOfCheckedBox = getString(resource, R.string.icon_checked)
+        val descriptionOfUncheckedBox = getString(resource, R.string.icon_unchecked)
         verifyDefaultState(descriptionOfCheckedBox, descriptionOfUncheckedBox)
     }
 
@@ -110,10 +114,8 @@ class SharedContentScreenTest {
                 SelectableItemsBody(savedDirs = savedDirs)
             }
         }
-        val descriptionOfCheckedBox =
-            InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.icon_checked)
-        val descriptionOfUncheckedBox =
-            InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.icon_unchecked)
+        val descriptionOfCheckedBox = getString(resource, R.string.icon_checked)
+        val descriptionOfUncheckedBox = getString(resource, R.string.icon_unchecked)
         verifyDefaultState(descriptionOfCheckedBox, descriptionOfUncheckedBox)
 
         // Long press on first item and verify the only on checkbox state is in checked state and rest are in unchecked state
@@ -143,10 +145,8 @@ class SharedContentScreenTest {
                 SelectableItemsBody(savedDirs = savedDirs)
             }
         }
-        val descriptionOfCheckedBox =
-            InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.icon_checked)
-        val descriptionOfUncheckedBox =
-            InstrumentationRegistry.getInstrumentation().targetContext.resources.getString(R.string.icon_unchecked)
+        val descriptionOfCheckedBox = getString(resource, R.string.icon_checked)
+        val descriptionOfUncheckedBox = getString(resource, R.string.icon_unchecked)
         verifyDefaultState(descriptionOfCheckedBox, descriptionOfUncheckedBox)
 
         // Long press on all items and simultaneously verify the correct state of checkboxes

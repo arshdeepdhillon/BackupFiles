@@ -21,10 +21,7 @@ androidTestCore = "1.5.0"
 cashTurbine = "0.9.0"
 espressoCore = "3.5.1"
 uiAutomator = "2.2.0"
-mockitoVersion = "5.8.0"
-mockitoKotlin = "4.0.0"
-mockkAndroid = "1.13.8"
-mockkAgent = "1.13.8"
+mockkVersion = "1.13.8"
 junit = "4.13.2"
 
 
@@ -44,6 +41,7 @@ androidx-lifecycleViewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmo
 androidx-lifecycleViewmodelSavedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "lifecycleViewmodelKtx" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-navigationCompose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-navigationTest = { module = "androidx.navigation:navigation-testing", version.ref = "navigationCompose" }
 androidx-composeUi = { module = "androidx.compose.ui:ui" }
 androidx-composeUiGraphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-composeUiPreview = { module = "androidx.compose.ui:ui-tooling-preview" }
@@ -60,12 +58,9 @@ smbj = { module = "com.hierynomus:smbj", version.ref = "smbj" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiAutomator" }
 cashturbine = { module = "app.cash.turbine:turbine", version.ref = "cashTurbine" }
 kotlin-coroutineTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinCoroutineTest" }
-#mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoVersion" }
-#mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
-#mockk-kotlin = { module = "io.mockk:mockk", version.ref = "mockkAndroid" }
-mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
-mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
-
+mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkVersion" }
+mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkVersion" }
 
 
 [bundles]
