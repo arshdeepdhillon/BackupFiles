@@ -86,8 +86,7 @@ class NavigationTest {
     }
 
     private fun setupDependencyInjection() {
-        mockAppModule =
-            MockApplicationModuleImpl(context = context, testScope = testScope, smbDao = smbDao, dirDao = dirDao, smbClient = mockSmbClientApi)
+        mockAppModule = MockApplicationModuleImpl(context = context, testScope = testScope, smbDao = smbDao, dirDao = dirDao, smbClient = mockSmbClientApi)
         AppEntryPoint.setAppModuleForTest(mockAppModule)
     }
 

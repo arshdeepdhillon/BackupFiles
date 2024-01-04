@@ -9,6 +9,7 @@ object UploadFolderWorkerConstants {
     const val MAX_RETRY = 3
 
     const val WORK_NAME = "upload_folder_work"
+
     // Required for both backup and sync work
     const val SMB_ID_KEY = "SMB_SERVER_ID"
 }

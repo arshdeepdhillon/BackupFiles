@@ -121,8 +121,7 @@ class UploadDirectory {
     }
 
     private fun setupDependencyInjection() {
-        mockAppModule =
-            MockApplicationModuleImpl(context = context, testScope = testScope, smbDao = smbDao, dirDao = dirDao, smbClient = mockSmbClientApi)
+        mockAppModule = MockApplicationModuleImpl(context = context, testScope = testScope, smbDao = smbDao, dirDao = dirDao, smbClient = mockSmbClientApi)
         AppEntryPoint.setAppModuleForTest(mockAppModule)
         workManager = WorkManager.getInstance(context)
     }
@@ -224,7 +223,6 @@ class UploadDirectory {
 
     @Test
     fun test_create_smb_server_and_upload_a_directory() {
-
         val expectedSyncValue = getString(resource, R.string.sync_status_title) + getString(resource, R.string.not_yet_sync_status)
         val dirPath = listOf("Android", "Media")
 

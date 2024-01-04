@@ -145,8 +145,8 @@ class DirectoryDaoTest {
         tempDirs.removeIf { expDir ->
             val actualSyncDir = dirDao.getPendingSyncDirectories(expDir.smbServerId)[0]
             expDir.dirId == actualSyncDir.dirId &&
-                    expDir.smbServerId == actualSyncDir.smbServerId &&
-                    expDir.dirPath == actualSyncDir.dirPath
+                expDir.smbServerId == actualSyncDir.smbServerId &&
+                expDir.dirPath == actualSyncDir.dirPath
         }
         assertTrue(
             "These Directories should have been synced: '$tempDirs'",

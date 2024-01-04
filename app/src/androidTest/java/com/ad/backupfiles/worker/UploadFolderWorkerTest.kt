@@ -57,7 +57,8 @@ class UploadFolderWorkerTest {
 
     private val SMB_ID: Long = 1
     private val tempFiles: ArrayList<Path> = arrayListOf()
-    private val testDispatcher = StandardTestDispatcher(TestCoroutineScheduler())
+    private val testScheduler = TestCoroutineScheduler()
+    private val testDispatcher = StandardTestDispatcher(testScheduler, name = "UploadFolderWorkerTD")
     private val testScope = TestScope(testDispatcher)
     private lateinit var minimumRequiredData: Data
     private lateinit var smb: SmbServerInfo
@@ -84,11 +85,13 @@ class UploadFolderWorkerTest {
     }
 
     private fun setupWorker() {
-        // Configure WorkManager, change the log level to make it easier to debug and use a SynchronousExecutor here to make it easier to write tests
+        // Configure WorkManager, change the log level to make it easier to debug and use a SynchronousExecutor to make it easier to write tests.
         configuration = Configuration.Builder().setMinimumLoggingLevel(Log.VERBOSE).setExecutor(SynchronousExecutor()).build()
-        WorkManagerTestInitHelper.initializeTestWorkManager(context, configuration) // Initialize WorkManager for instrumentation tests.
+        // Initialize WorkManager for instrumentation tests.
+        WorkManagerTestInitHelper.initializeTestWorkManager(context, configuration)
         workManager = WorkManager.getInstance(context)
-        workerUnderTest = TestListenableWorkerBuilder(context = context) // Setup the test ListenableWorker
+        // Setup the test ListenableWorker.
+        workerUnderTest = TestListenableWorkerBuilder(context = context)
         createTempData()
     }
 
@@ -99,9 +102,7 @@ class UploadFolderWorkerTest {
     }
 
     private fun setupDependencyInjection() {
-        mockAppModule = MockApplicationModuleImpl(
-            context = context, testScope = testScope, smbDao = smbDao, dirDao = dirDao, smbClient = mockSmbClientApi
-        )
+        mockAppModule = MockApplicationModuleImpl(context = context, testScope = testScope, smbDao = smbDao, dirDao = dirDao, smbClient = mockSmbClientApi)
         AppEntryPoint.setAppModuleForTest(mockAppModule)
     }
 
@@ -172,12 +173,12 @@ class UploadFolderWorkerTest {
         smbDao.upsert(smb)
         dirs.forEach { dirDao.insertAndQueueForBackup(it) }
 
-        assertEquals(Result.Success(), worker.startWork().get()) // Start the work synchronously and test the result
-        advanceUntilIdle() // Make sure all work is done before proceeding
-
+        // Start the work synchronously and test the result
+        assertEquals(Result.Success(), worker.startWork().get())
+        advanceUntilIdle()
         dirs.forEach { dirInfo ->
             val syncedDir = dirDao.getDirectoryById(dirInfo.dirId, dirInfo.smbServerId)!!
-            assertNotNull(syncedDir.lastSynced)
+            assertNotNull("Not synced: $syncedDir", syncedDir.lastSynced)
         }
     }
 
@@ -203,15 +204,45 @@ class UploadFolderWorkerTest {
         // Need at least 1 second of delay so initialSyncDirs's lastSynced is different enough between two work requests
         sleep(2000)
         worker = workerUnderTest.setInputData(minimumRequiredData).build()
-        println("work2 start")
         assertEquals(Result.Success(), worker.startWork().get())
-        println("work2 end")
         advanceUntilIdle()
 
-        println("advanceUntilIdle done")
         initialSyncDirs.forEach { initialSyncDir ->
             val reSyncedDir = dirDao.getDirectoryById(initialSyncDir.dirId, initialSyncDir.smbServerId)!!
             assert(reSyncedDir.lastSynced!! > initialSyncDir.lastSynced!!)
         }
+    }
+
+    @Test
+    fun test_worker_result_when_work_is_cancelled() = runTest {
+        coEvery { mockSmbClientApi.saveFolder(any(), any(), any(), any()) } returns Unit
+        val request = OneTimeWorkRequestBuilder<UploadFolderWorker>()
+            .setInputData(minimumRequiredData)
+            .build()
+
+        smbDao.upsert(smb)
+        while (tempFiles.size <= 100) {
+            tempFiles.add(createTempFile(prefix = "testFile", suffix = "txt"))
+        }
+        dirs = tempFiles.mapIndexed { i, path ->
+            DirectoryInfo(
+                dirId = i.toLong() + 1,
+                smbServerId = smb.smbServerId,
+                dirPath = path.toUri().toString(),
+                dirName = path.fileName.toString(),
+                lastSynced = null,
+            )
+        }.toCollection(ArrayList())
+        dirs.forEach { dirDao.insertAndQueueForBackup(it) }
+
+        workManager.enqueue(request).result.get()
+        sleep(400L) // Delay the cancel request to allow some work to be done
+        workManager.cancelWorkById(request.id)
+
+        sleep(400L) // Give some time for cancel to propagate
+        assertEquals(WorkInfo.State.CANCELLED, workManager.getWorkInfoById(request.id).get().state)
+
+        advanceUntilIdle()
+        assert(dirDao.getPendingSyncDirectories(smb.smbServerId).isEmpty())
     }
 }

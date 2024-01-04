@@ -90,6 +90,7 @@ interface DirectoryInfoApi {
     /**
      * Deletes all directories to sync for the specified SMB server ID.
      *
+     * **Note:** This is a cleanup task called by [com.ad.backupfiles.worker.UploadFolderWorker].
      * @param smbServerId The ID of the SMB server.
      */
     suspend fun deleteAllPendingSyncDirectories(smbServerId: Long)

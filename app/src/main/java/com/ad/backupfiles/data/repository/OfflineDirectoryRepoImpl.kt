@@ -10,6 +10,7 @@ import com.ad.backupfiles.data.entity.DirectorySyncInfo
 import com.ad.backupfiles.data.entity.toDto
 import com.ad.backupfiles.data.repository.api.DirectoryInfoApi
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Instant
 
 /*
@@ -48,7 +50,7 @@ class OfflineDirectoryRepoImpl(
         return try {
             directoryDao.insertAndQueueForBackup(dir)
         } catch (e: SQLException) {
-            Log.e("insertDirectory", "Failed to insert directory: ${e.message}", e.cause)
+            Log.e(TAG, "Failed to insert directory: ${e.message}", e.cause)
             null
         }
     }
@@ -106,16 +108,8 @@ class OfflineDirectoryRepoImpl(
      */
     @Transaction
     override suspend fun processSyncedDirectory(syncedDirectory: DirectorySyncInfo) {
-        externalScope.launch {
-            println("before processSyncedDirectory")
-            directoryDao.updateSyncTime(
-                syncedDirectory.dirId,
-                syncedDirectory.smbServerId,
-                Instant.now().epochSecond,
-            )
-            println("after processSyncedDirectory")
-            directoryDao.deleteFromSync(syncedDirectory)
-        }
+        directoryDao.updateSyncTime(syncedDirectory.dirId, syncedDirectory.smbServerId, Instant.now().epochSecond)
+        directoryDao.deleteFromSync(syncedDirectory)
     }
 
     /**
@@ -123,7 +117,9 @@ class OfflineDirectoryRepoImpl(
      */
     @Transaction
     override suspend fun deleteAllPendingSyncDirectories(smbServerId: Long) {
-        externalScope.launch {
+        // When the UploadFolderWorker is cancelled, the coroutine scope will be cancelled,
+        // however the following cleanup task must continue. Therefore we must run in NonCancellable context.
+        withContext(NonCancellable) {
             directoryDao.deleteAllFromSync(smbServerId)
         }
     }

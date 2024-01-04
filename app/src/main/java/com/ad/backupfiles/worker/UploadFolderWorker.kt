@@ -71,6 +71,7 @@ class UploadFolderWorker(appContext: Context, workerParams: WorkerParameters) : 
                     notificationTitle = notificationTitle,
                 )
             }.onCompletion { failure: Throwable? ->
+                Log.d(TAG, "On Completion: $failure")
                 if (failure == null) {
                     updateNotificationMessage(
                         message = if (isSync) "Sync successful" else "Backup successful",
@@ -78,11 +79,9 @@ class UploadFolderWorker(appContext: Context, workerParams: WorkerParameters) : 
                         notificationTitle = notificationTitle,
                     )
                 } else if (failure is CancellationException) {
-                    Log.d(TAG, "onCompletion else: $failure")
                     dirInfoApi.deleteAllPendingSyncDirectories(smbServerId)
                 }
             }.collect { dirToSync ->
-                Log.d(TAG, "doWork: Before launch")
                 smbClientApi.saveFolder(
                     AppEntryPoint.appModule.appContext,
                     smbDto,

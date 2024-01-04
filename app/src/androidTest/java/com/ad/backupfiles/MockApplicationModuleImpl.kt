@@ -9,20 +9,21 @@ import com.ad.backupfiles.data.repository.api.DirectoryInfoApi
 import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
 import com.ad.backupfiles.di.api.ApplicationModuleApi
 import com.ad.backupfiles.smb.api.SMBClientApi
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
 
 /*
  * @author : Arshdeep Dhillon
  * @created : 29-Dec-23
 */
+@OptIn(ExperimentalCoroutinesApi::class)
 class MockApplicationModuleImpl(
     private val context: Context,
-    private val testScope: CoroutineScope,
+    private val testScope: TestScope,
     private val dirDao: DirectoryDao,
     private val smbDao: SmbServerDao,
     private val smbClient: SMBClientApi,
 ) : ApplicationModuleApi {
-
     override val smbServerApi: SmbServerInfoApi by lazy {
         OfflineSmbServerRepoImpl(smbDao)
     }
