@@ -19,8 +19,8 @@ import com.ad.backupfiles.worker.CANCEL_ACTION_KEY
  */
 class UploadCancelReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        intent.getStringExtra(CANCEL_ACTION_KEY)?.let { workerTag: String ->
-            WorkManager.getInstance(context).cancelAllWorkByTag(workerTag)
+        intent.getStringExtra(CANCEL_ACTION_KEY)?.let { workerType: String ->
+            WorkManager.getInstance(context).cancelAllWorkByTag(workerType)
         }
     }
 }

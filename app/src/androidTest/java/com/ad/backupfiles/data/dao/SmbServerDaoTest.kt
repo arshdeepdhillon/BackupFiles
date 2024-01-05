@@ -3,8 +3,8 @@ package com.ad.backupfiles.data.dao
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
+import com.ad.backupfiles.TestDispatcherRule
 import com.ad.backupfiles.data.BackupFilesDatabase
-import com.ad.backupfiles.data.TestDispatcherRule
 import com.ad.backupfiles.data.entity.SmbServerInfo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -35,10 +35,7 @@ class SmbServerDaoTest {
     @Before
     fun setup() {
         // Setup in-memory database for testing
-        backupDb = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            BackupFilesDatabase::class.java,
-        ).build()
+        backupDb = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), BackupFilesDatabase::class.java).build()
         smbDao = backupDb.smbServerDao()
 
         runTest {

@@ -42,7 +42,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.backupfiles.R
 import com.ad.backupfiles.data.entity.SmbServerInfo
-import com.ad.backupfiles.di.AppViewModelFactory
+import com.ad.backupfiles.di.ApplicationViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.shared.TopAppBar
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
@@ -59,7 +59,7 @@ import com.ad.backupfiles.ui.utils.TestTag.Companion.SMB_ADD_TAG
  * A stateless singleton representing navigation details
  */
 object HomeDestination : NavigationDestination {
-    override val route = "Home"
+    override val route = "home"
     override val titleRes = R.string.app_name
 }
 
@@ -77,7 +77,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     handleFABClick: () -> Unit,
     handleItemClick: (Long) -> Unit,
-    viewModel: HomeViewModel = viewModel(factory = AppViewModelFactory.Factory),
+    viewModel: HomeViewModel = viewModel(factory = ApplicationViewModelFactory.Factory),
 ) {
     val viewState by viewModel.viewState.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

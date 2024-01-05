@@ -49,7 +49,13 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+//            excludes += "/META-INF/*"
+            excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE*}"
+
+        }
+        jniLibs {
+            // See https://github.com/mockk/mockk/issues/819#issuecomment-1731796944
+            useLegacyPackaging = true
         }
     }
 }
@@ -87,19 +93,28 @@ dependencies {
     // WorkManger
     implementation(libs.androidx.workRuntimeKtx)
 
-    // For test
+    // Instrumentation tests
     androidTestImplementation(composeBom)
     implementation(libs.androidx.uiautomator)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.composeUiJunit4)
     androidTestImplementation(libs.androidx.espressoCore)
+    androidTestImplementation(libs.androidx.test)
+    androidTestImplementation(libs.androidx.workerTest)
+    androidTestImplementation(libs.kotlin.coroutineTest)
     androidTestImplementation(libs.cashturbine)
+    androidTestImplementation(libs.bundles.mockkBundle)
+    androidTestImplementation(libs.androidx.navigationTest)
     debugImplementation(libs.androidx.composeUiTooling)
     debugImplementation(libs.androidx.composeUiTestManifest)
+
 
     // Unit tests
     testImplementation(libs.kotlin.coroutineTest)
     testImplementation(libs.cashturbine)
     testImplementation(libs.junit)
-    testImplementation(libs.bundles.mockkBundle)
+    testImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.agent)
+    testImplementation(libs.androidx.test)
+    testImplementation(libs.androidx.workerTest)
 }

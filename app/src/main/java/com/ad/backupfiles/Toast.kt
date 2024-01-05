@@ -14,8 +14,11 @@ import androidx.annotation.StringRes
  */
 object Toast {
 
-    private const val MAX_ARG_LEN = 20
-    private const val MAX_TRUNK_LEN = 15
+    /** String is truncated if it exceeds this limit. */
+    private const val MAX_STR_LENGTH = 20
+
+    /** Maximum length of string to keep. */
+    private const val MAX_TRUNCATE_LEN = 15
 
     /**
      * Displays a toast message with the specified string resource.
@@ -37,14 +40,14 @@ object Toast {
     }
 
     /**
-     * Truncate and ellipsis long strings if they exceed [MAX_ARG_LEN].
+     * Truncate and ellipsis long strings if they exceed [MAX_STR_LENGTH].
      *
      * @param args The list of nullable strings to process.
      * @return An array of processed strings.
      */
     private fun padArgs(args: List<String?>): Array<String> {
         return args.filterNotNull().map { str ->
-            if (str.length > MAX_ARG_LEN) str.take(MAX_TRUNK_LEN).trim() + ".." else str
+            if (str.length > MAX_STR_LENGTH) str.take(MAX_TRUNCATE_LEN).trim() + ".." else str
         }.toTypedArray()
     }
 

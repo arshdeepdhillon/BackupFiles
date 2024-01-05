@@ -9,6 +9,7 @@ import com.ad.backupfiles.data.repository.api.SmbServerInfoApi
 import com.ad.backupfiles.di.api.ApplicationModuleApi
 import com.ad.backupfiles.smb.SMBClientImpl
 import com.ad.backupfiles.smb.api.SMBClientApi
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,9 +23,13 @@ import kotlinx.coroutines.SupervisorJob
  * Default implementation of the [ApplicationModuleApi] interface which provides dependencies for the application.
  *
  * @property context The Android application context used for various operations within the application.
+ * @property defaultDispatcher The coroutine dispatcher to be used for background tasks (default is [Dispatchers.Default]).
  */
-class ApplicationModuleImpl(private val context: Context) : ApplicationModuleApi {
-    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+class ApplicationModuleImpl(private val context: Context, private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default) : ApplicationModuleApi {
+    /**
+     * The coroutine scope associated with the application.
+     */
+    private val applicationScope = CoroutineScope(SupervisorJob() + defaultDispatcher)
 
     /**
      * @see ApplicationModuleApi.smbServerApi
@@ -37,10 +42,7 @@ class ApplicationModuleImpl(private val context: Context) : ApplicationModuleApi
      * @see ApplicationModuleApi.directoryInfoApi
      */
     override val directoryInfoApi: DirectoryInfoApi by lazy {
-        OfflineDirectoryRepoImpl(
-            BackupFilesDatabase.getDatabase(context).directoryDao(),
-            applicationScope,
-        )
+        OfflineDirectoryRepoImpl(BackupFilesDatabase.getDatabase(context).directoryDao(), applicationScope)
     }
 
     /**

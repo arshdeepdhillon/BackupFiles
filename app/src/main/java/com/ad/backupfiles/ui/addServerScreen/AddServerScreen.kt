@@ -22,14 +22,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.backupfiles.R
-import com.ad.backupfiles.di.AppViewModelFactory
+import com.ad.backupfiles.di.ApplicationViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
 import com.ad.backupfiles.ui.shared.InputForm
 import com.ad.backupfiles.ui.shared.TopAppBar
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.SmbServerData
 import com.ad.backupfiles.ui.utils.TestTag.Companion.SAVE_INPUT_FORM_BUTTON
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /*
  * @author : Arshdeep Dhillon
@@ -58,7 +60,7 @@ fun AddScreen(
     handleNavBack: () -> Unit,
     handleNavUp: () -> Unit,
     canNavBack: Boolean = true,
-    viewModel: AddServerViewModel = viewModel(factory = AppViewModelFactory.Factory),
+    viewModel: AddServerViewModel = viewModel(factory = ApplicationViewModelFactory.Factory),
 ) {
     val viewState by viewModel.viewState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -78,7 +80,7 @@ fun AddScreen(
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.save()
-                    handleNavBack()
+                    withContext(Dispatchers.Main) { handleNavBack() }
                 }
             },
             modifier = Modifier

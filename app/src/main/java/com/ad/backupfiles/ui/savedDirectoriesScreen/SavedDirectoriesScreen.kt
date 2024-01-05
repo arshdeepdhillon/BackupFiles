@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui.savedDirectoriesScreen
 
 import android.content.Intent
 import android.net.Uri
@@ -36,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,13 +45,13 @@ import com.ad.backupfiles.R
 import com.ad.backupfiles.Toast
 import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.SmbServerInfo
-import com.ad.backupfiles.di.AppViewModelFactory
+import com.ad.backupfiles.di.ApplicationViewModelFactory
 import com.ad.backupfiles.ui.navigation.NavigationDestination
+import com.ad.backupfiles.ui.savedDirectoriesScreen.SavedDirectoriesViewModel.ErrorUiState
 import com.ad.backupfiles.ui.shared.GeneralAlert
-import com.ad.backupfiles.ui.shared.SelectableItemsBody
 import com.ad.backupfiles.ui.shared.TopAppBar
-import com.ad.backupfiles.ui.smbServer.SharedContentScreenViewModel.ErrorUiState
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
+import com.ad.backupfiles.ui.utils.TestTag.Companion.PICK_DIR_TAG
 
 /*
  * @author : Arshdeep Dhillon
@@ -60,9 +61,9 @@ import com.ad.backupfiles.ui.theme.BackupFilesTheme
 /**
  * A stateless singleton representing navigation details
  */
-object SharedContentScreenDestination : NavigationDestination {
-    override val route = "shared_content_smb_server"
-    override val titleRes = R.string.smb_server_saved_title
+object SavedDirectoriesScreenDestination : NavigationDestination {
+    override val route = "saved_directories"
+    override val titleRes = R.string.smb_server_saved_directories_title
 
     /**
      * Used for retrieving a specific [SmbServerInfo] to display
@@ -73,10 +74,11 @@ object SharedContentScreenDestination : NavigationDestination {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun SharedContentScreen(
+fun SavedDirectoriesScreen(
     handleNavUp: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SharedContentScreenViewModel = viewModel(factory = AppViewModelFactory.Factory),
+    viewModel: SavedDirectoriesViewModel = viewModel(factory = ApplicationViewModelFactory.Factory),
+    syncTrackerViewModel: SyncTrackerViewModel = viewModel(factory = ApplicationViewModelFactory.Factory),
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
@@ -105,7 +107,7 @@ fun SharedContentScreen(
 
     // When in selection mode and back button is pressed, clear selected items
     BackHandler(enabled = inSelectionMode) {
-        viewModel.onClearSelectionState()
+        syncTrackerViewModel.onClearSelectionState()
 
         // The parent compo ItemListBody know
         clearSelectionState = true
@@ -142,7 +144,7 @@ fun SharedContentScreen(
                     }
                 } else {
                     TopAppBar(
-                        title = stringResource(SharedContentScreenDestination.titleRes),
+                        title = stringResource(SavedDirectoriesScreenDestination.titleRes),
                         canNavBack = true,
                         onNavUp = handleNavUp,
                     )
@@ -166,7 +168,9 @@ fun SharedContentScreen(
                         dirPickerLauncher.launch(null)
                     },
                     shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier.padding(dimensionResource(id = R.dimen.m_pad)),
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.m_pad))
+                        .testTag(PICK_DIR_TAG),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -180,7 +184,7 @@ fun SharedContentScreen(
         SelectableItemsBody(
             modifier = Modifier.padding(innerPadding),
             savedDirs = uiState.savedDirectories,
-            onItemSelect = { item: Pair<Boolean, DirectoryDto> -> viewModel.onDirectorySelected(item) },
+            onItemSelect = { item: Pair<Boolean, DirectoryDto> -> syncTrackerViewModel.onDirectorySelected(item) },
             resetSelectionState = clearSelectionState,
         ) {
             inSelectionMode = it
@@ -190,7 +194,7 @@ fun SharedContentScreen(
                 handleAccept = {
                     isSyncDialogActive = false // Hide the dialog
                     clearSelectionState = true // Clear the selected items
-                    viewModel.syncSelectedFolder()
+                    viewModel.queueSyncWork(syncTrackerViewModel.directoriesToSync())
                 },
                 titleId = R.string.confirm_title_alert,
                 bodyId = R.string.sync_body_alert,
@@ -219,8 +223,8 @@ private fun AdditionalSettings(onSyncClick: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-private fun SharedContentScreenPreview() {
+private fun SavedDirectoriesScreenPreview() {
     BackupFilesTheme {
-        SharedContentScreen(handleNavUp = {})
+        SavedDirectoriesScreen(handleNavUp = {})
     }
 }

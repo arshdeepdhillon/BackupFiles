@@ -9,6 +9,9 @@ class TestTag {
     companion object {
         const val NO_SAVED_SMBS_MSG_TAG = "no_saved_smbs_message"
         const val SMB_ADD_TAG = "add_smb_fab"
+        const val PICK_DIR_TAG = "pick_dir_fab"
+        const val EDIT_SMB_SERVER_FAB = "edit_smb_server_fab"
+        const val SYNC_STATUS_TITLE = "sync_status_text"
         const val LAZY_COLUMN_TAG = "lazy_column"
         const val SMB_IP_INPUT_TEXT = "smb_ip_input_text"
         const val USERNAME_INPUT_TEXT = "username_input_text"
@@ -21,6 +24,7 @@ class TestTag {
         const val SMB_DELETE_BUTTON = "smb_delete_button"
         const val SMB_CONNECT_BUTTON = "smb_connect_button"
         const val SMB_DELETE_ALERT = "smb_delete_alert"
+        const val TOP_APP_BAR_BACK_BUTTON = "top_app_bar_back_button"
         const val EDIT_SCREEN_FOOTER = "edit_screen_footer"
         const val CHECK_BOX = "circle_check_box"
     }

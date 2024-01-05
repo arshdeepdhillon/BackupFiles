@@ -1,4 +1,4 @@
-package com.ad.backupfiles.data
+package com.ad.backupfiles
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,12 +24,14 @@ class TestDispatcherRule(
     private val testDispatcher: TestDispatcher = StandardTestDispatcher(name = "MyTestDispatcher"),
 ) : TestWatcher() {
     override fun starting(description: Description) {
+        super.starting(description)
         // During testing, mock the main dispatcher using this test dispatcher
         // which will be used throughout the application
         Dispatchers.setMain(testDispatcher)
     }
 
     override fun finished(description: Description) {
+        super.finished(description)
         Dispatchers.resetMain()
     }
 }

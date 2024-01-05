@@ -70,7 +70,7 @@ data class DirectoryDto(
 )
 
 /**
- * Converts from DirectoryInfo to DirectoryDto object.
+ * Converts from [DirectoryInfo] to [DirectoryDto] object.
  */
 fun DirectoryInfo.toDto(): DirectoryDto = DirectoryDto(
     dirId = this.dirId,

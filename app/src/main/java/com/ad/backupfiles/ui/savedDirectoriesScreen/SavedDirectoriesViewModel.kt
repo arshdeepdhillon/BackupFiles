@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.smbServer
+package com.ad.backupfiles.ui.savedDirectoriesScreen
 
 import android.net.Uri
 import androidx.annotation.StringRes
@@ -19,12 +19,11 @@ import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.data.entity.DirectoryInfo
 import com.ad.backupfiles.data.entity.toDto
 import com.ad.backupfiles.di.api.ApplicationModuleApi
-import com.ad.backupfiles.worker.BACKUP_FOLDER_TAG
-import com.ad.backupfiles.worker.BACKUP_FOLDER_WORK_NAME
-import com.ad.backupfiles.worker.SMB_ID_INT_KEY
-import com.ad.backupfiles.worker.SYNC_FOLDER_TAG
 import com.ad.backupfiles.worker.UploadFolderWorker
-import com.ad.backupfiles.worker.WORKER_TAG
+import com.ad.backupfiles.worker.UploadFolderWorkerConstants.SMB_ID_KEY
+import com.ad.backupfiles.worker.UploadFolderWorkerConstants.WORKER_TYPE_TAG
+import com.ad.backupfiles.worker.UploadFolderWorkerConstants.WORK_NAME
+import com.ad.backupfiles.worker.WorkerType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -44,19 +43,17 @@ import java.util.concurrent.TimeUnit
  */
 
 /**
- * Displays content from SMB server.
+ * Displays saved directories for the selected SMB server.
  */
-class SharedContentScreenViewModel(
+class SavedDirectoriesViewModel(
     @Suppress("unused") private val stateHandle: SavedStateHandle,
-    private val appModule: ApplicationModuleApi,
+    private val appModuleApi: ApplicationModuleApi,
 ) : ViewModel() {
 
-    /** A mutable set containing the Ids of selected directories.*/
-    private var selectedDirectoryIds = mutableListOf<Long>()
-
-    private val smbServerId: Long = checkNotNull(stateHandle[SharedContentScreenDestination.argKey])
-    private val workManager = WorkManager.getInstance(appModule.appContext)
-    private val wmConstraints =
+    private val smbServerId: Long =
+        checkNotNull(stateHandle[SavedDirectoriesScreenDestination.argKey])
+    private val workManager = WorkManager.getInstance(appModuleApi.appContext)
+    private val workManagerConstraints =
         Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
     private val _errorState = MutableSharedFlow<ErrorUiState>()
     val errorState: SharedFlow<ErrorUiState> = _errorState.asSharedFlow()
@@ -66,7 +63,7 @@ class SharedContentScreenViewModel(
      * Holds current UI state
      */
     var uiState: StateFlow<SMBContentUiState> =
-        appModule.directoryInfoApi.getAllSavedDirectoriesStream(smbServerId).filterNotNull()
+        appModuleApi.directoryInfoApi.getAllSavedDirectoriesStream(smbServerId).filterNotNull()
             .map { smbServerWithSavedDir ->
                 SMBContentUiState(savedDirectories = smbServerWithSavedDir.savedDirs.map { it.toDto() })
             }.stateIn(
@@ -96,12 +93,8 @@ class SharedContentScreenViewModel(
     fun saveDirectory(persistableDirUri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             val dirName: String? =
-                DocumentFile.fromTreeUri(appModule.appContext, persistableDirUri)?.name
-            if (appModule.directoryInfoApi.isDirectorySaved(
-                    smbServerId,
-                    persistableDirUri.toString(),
-                )
-            ) {
+                DocumentFile.fromTreeUri(appModuleApi.appContext, persistableDirUri)?.name
+            if (appModuleApi.directoryInfoApi.isDirectorySaved(smbServerId, persistableDirUri.toString())) {
                 _errorState.emit(
                     ErrorUiState.Error(
                         resId = R.string.error_folder_already_saved,
@@ -131,8 +124,8 @@ class SharedContentScreenViewModel(
      * @return [Long] id of the saved directory or null if Uri is invalid.
      */
     private suspend fun save(dirToSaveUri: Uri): Long? {
-        return DocumentFile.fromTreeUri(appModule.appContext, dirToSaveUri)?.let { doc ->
-            return appModule.directoryInfoApi.insertDirectory(
+        return DocumentFile.fromTreeUri(appModuleApi.appContext, dirToSaveUri)?.let { doc ->
+            return appModuleApi.directoryInfoApi.insertDirectory(
                 DirectoryInfo(
                     smbServerId = smbServerId,
                     dirPath = dirToSaveUri.toString(),
@@ -142,22 +135,23 @@ class SharedContentScreenViewModel(
         }
     }
 
+    /**
+     * Queues the backup for the specified directory ID using WorkManager.
+     * @param dirId The ID of the directory to be backed up.
+     */
     private fun runBackupWorker(dirId: Long) {
         viewModelScope.launch {
-            appModule.directoryInfoApi.insertDirectoriesToSync(smbServerId, mutableListOf(dirId))
+            appModuleApi.directoryInfoApi.insertDirectoriesToSync(smbServerId, mutableListOf(dirId))
             val backupWork = OneTimeWorkRequestBuilder<UploadFolderWorker>()
-                .addTag(BACKUP_FOLDER_TAG)
-                .setConstraints(wmConstraints)
+                .addTag(WorkerType.BACKUP.name)
+                .setConstraints(workManagerConstraints)
                 .setBackoffCriteria(BackoffPolicy.LINEAR, MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
                 .setInputData(
-                    workDataOf(
-                        SMB_ID_INT_KEY to smbServerId,
-                        WORKER_TAG to BACKUP_FOLDER_TAG,
-                    ),
+                    workDataOf(SMB_ID_KEY to smbServerId, WORKER_TYPE_TAG to WorkerType.BACKUP.name),
                 )
                 .build()
             workManager.beginUniqueWork(
-                BACKUP_FOLDER_WORK_NAME,
+                WORK_NAME,
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 backupWork,
             ).enqueue()
@@ -165,24 +159,35 @@ class SharedContentScreenViewModel(
     }
 
     /**
+     * Queues synchronization work for the selected directories.
      *
+     * This function initiates the synchronization process for the provided list of directory IDs.
+     * It checks if the list is not empty, then launches a coroutine within the ViewModel's scope
+     * to perform the following tasks:
+     *
+     * 1. Persists the selected directories to be synchronized by inserting into database.
+     *
+     * 2. Enqueues a OneTimeWorkRequest to perform the synchronization work asynchronously using WorkManager.
+     *
+     * @param directoryIdsToSync A MutableList of Long representing the IDs of selected directories
+     *                            to be synchronized.
      */
-    fun syncSelectedFolder() {
-        if (selectedDirectoryIds.isNotEmpty()) {
+    fun queueSyncWork(directoryIdsToSync: MutableList<Long>) {
+        if (directoryIdsToSync.isNotEmpty()) {
             viewModelScope.launch {
-                appModule.directoryInfoApi.insertDirectoriesToSync(
+                appModuleApi.directoryInfoApi.insertDirectoriesToSync(
                     smbServerId,
-                    selectedDirectoryIds,
+                    directoryIdsToSync,
                 )
                 val syncWork = OneTimeWorkRequestBuilder<UploadFolderWorker>()
-                    .addTag(SYNC_FOLDER_TAG)
+                    .addTag(WorkerType.SYNC.name)
                     .setInputData(
                         workDataOf(
-                            SMB_ID_INT_KEY to smbServerId,
-                            WORKER_TAG to SYNC_FOLDER_TAG,
+                            SMB_ID_KEY to smbServerId,
+                            WORKER_TYPE_TAG to WorkerType.SYNC.name,
                         ),
                     )
-                    .setConstraints(wmConstraints)
+                    .setConstraints(workManagerConstraints)
                     .setBackoffCriteria(
                         BackoffPolicy.LINEAR,
                         MIN_BACKOFF_MILLIS,
@@ -191,35 +196,12 @@ class SharedContentScreenViewModel(
                     .build()
 
                 workManager.beginUniqueWork(
-                    BACKUP_FOLDER_WORK_NAME,
+                    WORK_NAME,
                     ExistingWorkPolicy.APPEND_OR_REPLACE,
                     syncWork,
                 ).enqueue()
             }
         }
-    }
-
-    /**
-     * Handles the selection or deselection of a directory item.
-     *
-     * @param item A Pair representing selection status of the folder
-     * @property Pair.first  folder is selected if true, otherwise it's unselected
-     * @property Pair.second [DirectoryDto] contains details about the folder.
-     */
-    fun onDirectorySelected(item: Pair<Boolean, DirectoryDto>) {
-        if (item.first) {
-            selectedDirectoryIds.add(item.second.dirId)
-        } else {
-            selectedDirectoryIds.remove(item.second.dirId)
-        }
-    }
-
-    /**
-     * Clears the selection state.
-     */
-    fun onClearSelectionState() {
-        // Do appropriate cleanup related to selected directories here.
-        selectedDirectoryIds.clear()
     }
 }
 

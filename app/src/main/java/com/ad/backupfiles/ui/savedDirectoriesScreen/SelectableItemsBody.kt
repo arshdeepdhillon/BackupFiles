@@ -1,4 +1,4 @@
-package com.ad.backupfiles.ui.shared
+package com.ad.backupfiles.ui.savedDirectoriesScreen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -58,6 +58,7 @@ import com.ad.backupfiles.data.entity.DirectoryDto
 import com.ad.backupfiles.ui.theme.BackupFilesTheme
 import com.ad.backupfiles.ui.utils.TestTag.Companion.CHECK_BOX
 import com.ad.backupfiles.ui.utils.TestTag.Companion.LAZY_COLUMN_TAG
+import com.ad.backupfiles.ui.utils.TestTag.Companion.SYNC_STATUS_TITLE
 import java.text.DateFormat
 import java.time.Instant
 import java.util.Locale
@@ -207,7 +208,11 @@ fun ItemDetails(
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             Text(
-                                text = "Synced: " + (formatDate(lastSynced) ?: "Not Yet"),
+                                modifier = Modifier.testTag(SYNC_STATUS_TITLE),
+                                text = stringResource(R.string.sync_status_title) + (
+                                    formatDate(lastSynced)
+                                        ?: stringResource(R.string.not_yet_sync_status)
+                                    ),
                                 style = MaterialTheme.typography.labelSmall,
                             )
                         }
