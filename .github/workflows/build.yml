@@ -81,11 +81,11 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          arch: x86_64
+          arch: x86
           disable-animations: true
           disk-size: 6000M
           heap-size: 600M
-          script: ./gradlew connectedDebugAndroidTest --daemon
+          script: ./gradlew connectedCheck --daemon
 
       - name: Upload test reports
         if: always()
