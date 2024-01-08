@@ -21,7 +21,7 @@ androidTestCore = "1.5.0"
 cashTurbine = "0.9.0"
 espressoCore = "3.5.1"
 uiAutomator = "2.2.0"
-mockkVersion = "1.13.8"
+mockkVersion = "1.13.9"
 junit = "4.13.2"
 
 
