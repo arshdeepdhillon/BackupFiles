@@ -61,7 +61,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import java.util.regex.Pattern
@@ -72,8 +71,7 @@ import java.util.regex.Pattern
 */
 @OptIn(ExperimentalCoroutinesApi::class)
 @LargeTest
-@Ignore
-class UploadDirectory {
+class UploadDirectoryTest {
     // "sdk_" text was retrieved from root view of Directory picker
     private val rootDirPathPattern: Pattern = Pattern.compile("sdk_.*", Pattern.CASE_INSENSITIVE)
     private val testDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
