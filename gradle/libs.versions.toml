@@ -12,7 +12,7 @@ worker = "2.8.1"
 androidGradlePlugin = "8.1.0"
 kotlin = "1.9.21"
 kotlinCoroutineTest = "1.6.4"
-kotlinAnnotationPlugin = "1.9.21-1.0.16"
+kotlinAnnotationPlugin = "1.9.22-1.0.18"
 
 
 # Test
