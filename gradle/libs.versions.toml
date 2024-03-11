@@ -18,7 +18,7 @@ kotlinAnnotationPlugin = "1.9.21-1.0.16"
 # Test
 androidJunit = "1.1.5"
 androidTestCore = "1.5.0"
-cashTurbine = "0.9.0"
+cashTurbine = "1.1.0"
 espressoCore = "3.5.1"
 uiAutomator = "2.2.0"
 mockkVersion = "1.13.8"
